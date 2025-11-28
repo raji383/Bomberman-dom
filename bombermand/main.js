@@ -1,6 +1,6 @@
-import { Game } from "../bombermand/core/game.js"
-import { variables } from "../bombermand/core/variables.js"
-import { Enemies } from "../bombermand/core/enemies.js"
+import { Game } from "./core/game.js"
+import { variables } from "./core/variables.js"
+import { Enemies } from "./core/enemies.js"
 
 
 
@@ -97,10 +97,9 @@ export function startGame() {
         btn.onclick = (e) => {
             overlay.remove();
             if (e.target.dataset.diff === 'easy') {
-                const uiEl = document.getElementById('ui');
-                if (uiEl) uiEl.style.display = 'flex';
+                document.getElementById('ui').style.display = 'flex';
                 game.maxEnemies = 4;
-                if (blur) blur.style.filter = 'none'
+                blur.style.filter = 'none'
                 game.startDraw = true
 
             } else if (e.target.dataset.diff === 'medium') {
@@ -141,7 +140,7 @@ export function startGame() {
 
     const pauseEl = document.getElementById('pause');
 
-    pauseEl?.addEventListener('click', () => {
+    pauseEl.addEventListener('click', () => {
         game.pause = false
         blur.style.filter = 'none'
     })
