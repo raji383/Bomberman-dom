@@ -1,12 +1,12 @@
 import { freamwork } from "./index.js";
 import { render } from "./render.js";
-import { notfound } from "../app/notfound.js";
+import { notfound } from "./notfound.js";
 
 let isRenderScheduled = false;
 
 function flushRouterRender() {
     isRenderScheduled = false; 
-    const path = window.location.hash.slice(2) || freamwork.defaultRoute || '';
+    const path = window.location.pathname || '/';
     const componentCreator = freamwork.routes[path] || notfound;
     
     
@@ -40,12 +40,12 @@ export function addRoute(path, component) {
 };
 
 export const push = (path) => {
-    const newHash = `#/${path}`;
-     window.location.hash = newHash;    
+ history.pushState({}, "", path)
+ router();
 }
 
 export function initRouter() {
-const component = freamwork.routes[window.location.hash.slice(2)] || notfound ;
+const component = freamwork.routes[window.location.pathname] || notfound ;
 if (component) {    
     freamwork.mount(component);
 }           
