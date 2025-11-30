@@ -36,6 +36,8 @@ export function createRealElement(vNode) {
 
   // CHILDREN
   const children = vNode.children || [];
+  console.log(children);
+  
   children.forEach(child => {
     if (child) element.appendChild(createRealElement(child));
   });

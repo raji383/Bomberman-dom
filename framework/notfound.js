@@ -17,7 +17,7 @@ export function notfound() {
 
                     events: {
                         click: () => {
-                             freamwork.push('');
+                             freamwork.push('/');
                         }
                     },
                     children: ["Go to Home"]

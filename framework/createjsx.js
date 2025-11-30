@@ -1,8 +1,13 @@
 import { freamwork } from "./index.js";
 
- export function createElement({ tag, attrs = {}, children = [], events = {} }) {
-    return { tag, attrs, children, events };
+export function createElement({ tag, attrs = {}, children = [], events = {} }) {
+  if (!Array.isArray(children)) {
+    children = [children];
   }
+  children = children.flat().filter(c => c !== null && c !== false && c !== undefined);
+  return { tag, attrs, children, events };
+}
+
 
   export  function mount(component) {
    freamwork.newDOM = component

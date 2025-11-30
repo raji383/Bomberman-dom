@@ -13,8 +13,13 @@ function getNextExistingElement(newChildren, oldKeyedMap, i, el) {
   return null;
 }
 
-export function render(newTree, container, oldTree=null) {   
-    updateElement(oldTree, newTree, container);
+export function render(newTree, container, oldTree = null) {
+  if (!oldTree) {
+      const newnode = createRealElement(newTree)
+     container.appendChild(newnode)
+     return              
+  }
+  updateElement(oldTree, newTree, container);
 }
 function updateElement(oldVNode, newVNode, parent) {
   if (!newVNode) {
@@ -24,7 +29,7 @@ function updateElement(oldVNode, newVNode, parent) {
   if (!oldVNode) {
     const el = createRealElement(newVNode);
     parent.appendChild(el);
-    if (typeof newVNode === 'object') newVNode.el = el;    
+    if (typeof newVNode === 'object') newVNode.el = el;
     return;
   }
 
@@ -49,7 +54,7 @@ function updateElement(oldVNode, newVNode, parent) {
   }
 
   const el = oldVNode.el;
-  if (!el) {    
+  if (!el) {
     const newEl = createRealElement(newVNode);
     parent.appendChild(newEl);
     newVNode.el = newEl;
@@ -101,7 +106,7 @@ function updateElement(oldVNode, newVNode, parent) {
   Object.keys(oldEvents).forEach((eventType) => {
     const oldHandler = oldEvents[eventType];
     const newHandler = newEvents[eventType];
-  if (!(eventType in newHandler)) {          
+    if (!(eventType in newHandler)) {
       eventQueue.push(() => el.removeEventListener(eventType, oldHandler));
     }
   });
@@ -109,14 +114,14 @@ function updateElement(oldVNode, newVNode, parent) {
   Object.keys(newEvents).forEach((eventType) => {
     const oldHandler = oldEvents[eventType];
     const newHandler = newEvents[eventType];
-if (!(eventType in oldHandler)){  
+    if (!(eventType in oldHandler)) {
       eventQueue.push(() => el.addEventListener(eventType, newHandler));
     }
   });
 
   queueMicrotask(() => {
-    while (eventQueue && eventQueue.length > 0) {      
-      const fn = eventQueue.shift();    
+    while (eventQueue && eventQueue.length > 0) {
+      const fn = eventQueue.shift();
       fn();
     }
   });
@@ -139,12 +144,12 @@ if (!(eventType in oldHandler)){
     if (oldChild) {
       updateElement(oldChild, newChild, el);
       if (typeof newChild === 'object') {
-        realDOMNode = newChild.el;        
+        realDOMNode = newChild.el;
       } else {
         realDOMNode = el.childNodes[i];
       }
       oldKeyedMap.delete(key);
-      if (realDOMNode && realDOMNode.nextSibling !== nextSiblingReference) {        
+      if (realDOMNode && realDOMNode.nextSibling !== nextSiblingReference) {
         el.insertBefore(realDOMNode, nextSiblingReference);
       }
     } else {
