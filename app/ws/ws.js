@@ -147,18 +147,16 @@ function startGameLoop() {
 
   function gameLoop(timestamp) {
     const loopId = requestAnimationFrame(gameLoop);
-    freamwork.setState({ gameLoopId: loopId });
+   // freamwork.setState({ gameLoopId: loopId });
 
     frameCount++;
     if (timestamp >= lastFpsUpdate + 1000) {
-      freamwork.setState({ fps: frameCount });
+     // freamwork.setState({ fps: frameCount });
       frameCount = 0;
       lastFpsUpdate = timestamp;
     }
-
     handleContinuousInput();
   }
-
   gameLoop();
 }
 

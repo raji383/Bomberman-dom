@@ -216,8 +216,6 @@ class GameRoom {
         updated = true;
       }
     });
-
-    // Remove exploded bombs
     bombsToRemove.forEach(bombId => {
       this.bombs.delete(bombId);
     });

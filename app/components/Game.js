@@ -5,7 +5,7 @@ const GRID_SIZE = 13;
 const CELL_SIZE = 40;
 
 export default function GameScreen() {
-  const { players, blocks, walls, bombs, powerups, explosions, myId, ws, gameStarted, messages, chatInput = "" } = freamwork.state;
+  const { players, blocks, walls, bombs, powerups, explosions, myId, ws, gameStarted, messages, chatInput = "", keys = {} } = freamwork.state;
 
   // Vérifier le gagnant
   const alivePlayers = Object.values(players).filter(p => p.lives > 0);
@@ -14,28 +14,27 @@ export default function GameScreen() {
   const isWinner = winner && winner.id === myId;
 
   const handleKeyDown = (e) => {
+
     if (!gameStarted || isGameOver) return;
-    
+
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
       e.preventDefault();
     }
-    
-    const keys = { ...freamwork.state.keys, [e.key]: true };
-    freamwork.setState({ keys });
-    
+
+    const newKeys = { ...keys, [e.key]: true };
+    freamwork.setState({ keys: newKeys });
+
     if (ws) {
       if (e.key === ' ') {
-        // Placer une bombe
         const player = players[myId];
         if (player && player.lives > 0) {
           const bombX = Math.floor(player.x);
           const bombY = Math.floor(player.y);
           const bombId = `${bombX},${bombY}`;
-          
-          // Vérifier le nombre maximum de bombes
+
           const playerBombs = Object.values(bombs).filter(b => b.playerId === myId).length;
           const maxBombs = player.powerups?.bombs || 1;
-          
+
           if (!bombs[bombId] && playerBombs < maxBombs) {
             ws.send(JSON.stringify({
               type: 'player_action',
@@ -49,23 +48,30 @@ export default function GameScreen() {
             }));
           }
         }
+      } else if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        // Envoyer le mouvement directement
+        ws.send(JSON.stringify({
+          type: 'player_action',
+          action: 'move',
+          data: { key: e.key },
+          playerId: myId
+        }));
       }
     }
   };
 
   const handleKeyUp = (e) => {
-    const keys = { ...freamwork.state.keys, [e.key]: false };
-    freamwork.setState({ keys });
+    const newKeys = { ...keys, [e.key]: false };
+    freamwork.setState({ keys: newKeys });
   };
 
-  // Gestion du chat
   const handleChatInput = (e) => {
     freamwork.setState({ chatInput: e.target.value });
   };
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    
+
     if (chatInput.trim() && ws) {
       ws.send(JSON.stringify({
         type: 'chat_message',
@@ -76,21 +82,15 @@ export default function GameScreen() {
     }
   };
 
-  // Gestion des événements clavier
-  if (typeof window !== 'undefined') {
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-  }
-
   // Créer la grille de jeu
   const grid = [];
-  
+
   for (let y = 0; y < GRID_SIZE; y++) {
     for (let x = 0; x < GRID_SIZE; x++) {
       const cellId = `${x},${y}`;
       let cellClass = 'cell pixel-art';
       let cellContent = null;
-      
+
       // Vérifier le contenu de la cellule
       if (walls.has(cellId)) {
         cellClass += ' wall-cell';
@@ -129,25 +129,24 @@ export default function GameScreen() {
           attrs: { class: `powerup pixel-sprite ${powerupType}` }
         });
       }
-      
+
       // Vérifier les joueurs dans cette cellule
-      const playerInCell = Object.values(players).find(p => 
+      const playerInCell = Object.values(players).find(p =>
         Math.floor(p.x) === x && Math.floor(p.y) === y && p.lives > 0
       );
-      
+
       if (playerInCell) {
-        // Utiliser la couleur du backend
         const playerClass = `player-${playerInCell.index + 1}`;
         const playerColor = playerInCell.color || '#3498db';
-        
+
         cellClass += ` player-cell ${playerClass}`;
         if (playerInCell.id === myId) {
           cellClass += ' current-player';
         }
-        
+
         cellContent = createElement({
           tag: "div",
-          attrs: { 
+          attrs: {
             class: `player pixel-sprite ${playerClass}`,
             style: {
               backgroundColor: playerColor,
@@ -160,7 +159,7 @@ export default function GameScreen() {
       grid.push(
         createElement({
           tag: "div",
-          attrs: { 
+          attrs: {
             class: cellClass,
             style: {
               position: 'absolute',
@@ -178,7 +177,18 @@ export default function GameScreen() {
 
   return createElement({
     tag: "div",
-    attrs: { class: "game-screen pixel-theme" },
+    attrs: {
+      class: "game-screen pixel-theme",
+      tabindex: "0"
+
+    },
+    events: {
+      keydown: handleKeyDown,
+      keyup: handleKeyUp,
+      mount: (el) => {
+        el.focus();                // <-- 🔥 Focus automatiquement
+      },
+    },
     children: [
       // Écran de fin de jeu
       isGameOver && createElement({
@@ -193,18 +203,19 @@ export default function GameScreen() {
           createElement({
             tag: "p",
             attrs: { class: "pixel-text" },
-            children: [winner ? 
+            children: [winner ?
               `Félicitations ${winner.nickname}! Tu es le dernier survivant!` :
               "Tous les joueurs sont éliminés!"
             ]
           }),
           createElement({
             tag: "button",
-            attrs: { 
+            attrs: {
               class: "restart-btn pixel-button",
-              events: {
-                click: () => window.location.reload()
-              }
+
+            },
+            events: {
+              click: () => window.location.reload()
             },
             children: ["🔄 Rejouer"]
           })
@@ -214,7 +225,7 @@ export default function GameScreen() {
       // Interface de jeu principale
       createElement({
         tag: "div",
-        attrs: { 
+        attrs: {
           class: "game-container pixel-border",
           style: {
             width: `${GRID_SIZE * CELL_SIZE}px`,
@@ -223,7 +234,7 @@ export default function GameScreen() {
         },
         children: grid
       }),
-      
+
       // Interface utilisateur avec chat
       createElement({
         tag: "div",
@@ -242,16 +253,16 @@ export default function GameScreen() {
                 const isAlive = player.lives > 0;
                 const playerClass = `player-${player.index + 1}`;
                 const playerColor = player.color || '#3498db';
-                
+
                 return createElement({
                   tag: "div",
-                  attrs: { 
+                  attrs: {
                     class: `player-card pixel-card ${playerClass} ${player.id === myId ? 'my-player' : ''} ${!isAlive ? 'dead' : ''}`
                   },
                   children: [
                     createElement({
                       tag: "div",
-                      attrs: { 
+                      attrs: {
                         class: "player-header",
                         style: { borderLeft: `4px solid ${playerColor}` }
                       },
@@ -262,7 +273,7 @@ export default function GameScreen() {
                           children: [
                             createElement({
                               tag: "div",
-                              attrs: { 
+                              attrs: {
                                 class: `player-avatar pixel-sprite ${playerClass}`,
                                 style: { backgroundColor: playerColor }
                               }
@@ -293,7 +304,7 @@ export default function GameScreen() {
                     isAlive && player.powerups && createElement({
                       tag: "div",
                       attrs: { class: "player-powerups" },
-                      children: Object.entries(player.powerups).map(([type, value]) => 
+                      children: Object.entries(player.powerups).map(([type, value]) =>
                         createElement({
                           tag: "span",
                           attrs: { class: `powerup-badge pixel-badge ${type}` },
@@ -306,7 +317,7 @@ export default function GameScreen() {
               })
             ]
           }),
-          
+
           createElement({
             tag: "div",
             attrs: { class: "right-panel" },
@@ -318,7 +329,7 @@ export default function GameScreen() {
                   createElement({
                     tag: "div",
                     attrs: { class: "fps-counter pixel-text" },
-                    children: [`📊 FPS: ${Math.round(freamwork.state.fps)}`]
+                    children: [`📊 FPS: ${Math.round(60)}`]
                   }),
                   createElement({
                     tag: "div",
@@ -329,14 +340,15 @@ export default function GameScreen() {
                         children: ["🎮 Flèches = Déplacement"]
                       }),
                       createElement({
-                        tag: "p", 
+                        tag: "p",
                         children: ["␣ Espace = Bombe"]
                       })
                     ]
                   })
                 ]
               }),
-               // chat 
+
+              // Chat 
               createElement({
                 tag: "div",
                 attrs: { class: "chat-section pixel-panel" },
@@ -349,16 +361,16 @@ export default function GameScreen() {
                   createElement({
                     tag: "div",
                     attrs: { class: "chat-messages" },
-                    children: messages.length === 0 ? 
+                    children: messages.length === 0 ?
                       createElement({
                         tag: "p",
                         attrs: { class: "pixel-text" },
                         children: ["Aucun message..."]
                       }) :
-                      messages.map((msg) => 
+                      messages.map((msg) =>
                         createElement({
                           tag: "div",
-                          attrs: { 
+                          attrs: {
                             class: `message ${msg.isSystem ? 'system' : ''} ${msg.player === players[myId]?.nickname ? 'own' : ''} pixel-text`
                           },
                           children: [
@@ -366,7 +378,7 @@ export default function GameScreen() {
                               tag: "strong",
                               children: [`${msg.player}: ${msg.text} `]
                             }),
-                            
+
                           ]
                         })
                       )
@@ -374,7 +386,7 @@ export default function GameScreen() {
                   createElement({
                     tag: "form",
                     attrs: { class: "chat-form" },
-                    events: { submit: handleSendMessage ,},
+                    events: { submit: handleSendMessage },
                     children: [
                       createElement({
                         tag: "input",
@@ -391,7 +403,7 @@ export default function GameScreen() {
                       }),
                       createElement({
                         tag: "button",
-                        attrs: { 
+                        attrs: {
                           type: "submit",
                           class: "pixel-button"
                         },

@@ -103,21 +103,24 @@ function updateElement(oldVNode, newVNode, parent) {
   const newEvents = newVNode.events || {};
 
 
-  Object.keys(oldEvents).forEach((eventType) => {
-    const oldHandler = oldEvents[eventType];
-    const newHandler = newEvents[eventType];
-    if (!(eventType in newHandler)) {
-      eventQueue.push(() => el.removeEventListener(eventType, oldHandler));
-    }
-  });
+Object.keys(oldEvents || {}).forEach((eventType) => {
+  const oldHandler = oldEvents[eventType];
+  const newHandler = newEvents ? newEvents[eventType] : undefined;
 
-  Object.keys(newEvents).forEach((eventType) => {
-    const oldHandler = oldEvents[eventType];
-    const newHandler = newEvents[eventType];
-    if (!(eventType in oldHandler)) {      
-      eventQueue.push(() => el.addEventListener(eventType, newHandler));
-    }
-  });
+  if (!newHandler || newHandler !== oldHandler) {
+    eventQueue.push(() => el.removeEventListener(eventType, oldHandler));
+  }
+});
+
+Object.keys(newEvents || {}).forEach((eventType) => {
+  const oldHandler = oldEvents ? oldEvents[eventType] : undefined;
+  const newHandler = newEvents[eventType];
+
+  if (!oldHandler || newHandler !== oldHandler) {    
+    eventQueue.push(() => el.addEventListener(eventType, newHandler));
+  }
+});
+
 
   queueMicrotask(() => {
     while (eventQueue && eventQueue.length > 0) {
