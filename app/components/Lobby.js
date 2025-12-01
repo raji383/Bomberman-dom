@@ -1,9 +1,12 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
+import { push } from "../../framework/route.js";
 
 export default function LobbyScreen() {
-  const { players, countdown, roomId, messages, chatInput = "" } = freamwork.state;
-
+  const { players, countdown, roomId, messages, chatInput = "" ,ws} = freamwork.state;
+  if (!ws){
+    push('/')
+  }
   const handleChatInput = (e) => {
     freamwork.setState({ chatInput: e.target.value });
   };

@@ -1,12 +1,17 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
+import { push } from "../../framework/route.js";
 
 const GRID_SIZE = 13;
 const CELL_SIZE = 40;
 
 export default function GameScreen() {
   const { players, blocks, walls, bombs, powerups, explosions, myId, ws, gameStarted, messages, chatInput = "", keys = {} } = freamwork.state;
+  if (!ws){
+    push("/")
+  }
 
+  // Vérifier le gagnant
   const alivePlayers = Object.values(players).filter(p => p.lives > 0);
   const isGameOver = alivePlayers.length <= 1 && gameStarted;
   const winner = isGameOver ? alivePlayers[0] : null;
@@ -189,6 +194,7 @@ export default function GameScreen() {
       },
     },
     children: [
+      // Écran de fin de jeu
       isGameOver && createElement({
         tag: "div",
         attrs: { class: "game-over-screen pixel-art" },
@@ -196,20 +202,33 @@ export default function GameScreen() {
           createElement({
             tag: "h1",
             attrs: { class: "pixel-text" },
-            children: [isWinner ? "🎉 win ! 🎉" : "💀 game end "]
+            children: [isWinner ? "🎉 VICTOIRE! 🎉" : "💀 FIN DU JEU"]
           }),
           createElement({
             tag: "p",
             attrs: { class: "pixel-text" },
             children: [winner ?
-              `you are the winnner ${winner.nickname}!  ` :
-              ""
-              
+              `Félicitations ${winner.nickname}! Tu es le dernier survivant!` :
+              "Tous les joueurs sont éliminés!"
             ]
           }),
+          createElement({
+            tag: "button",
+            attrs: {
+              class: "restart-btn pixel-button",
+
+            },
+            events: {
+              click: () => {
+                window.location.reload()
+              }
+            },
+            children: ["🔄 Rejouer"]
+          })
         ]
       }),
 
+      // Interface de jeu principale
       createElement({
         tag: "div",
         attrs: {
