@@ -1,12 +1,15 @@
 import { createElement } from "../../framework/createjsx.js";
 import { connectToServer } from "../web/webSocket.js";
+import { freamwork } from "../../framework/index.js";
 export default function WaitingRoom() {
     // start timers after component mount
+
     setTimeout(() => {
         if (window.__waitingTimersStarted) return;
         window.__waitingTimersStarted = true;
 
         let countdown = 10;
+        console.log(freamwork.state);
 
         const countdownTimer = setInterval(() => {
             const countdownElement = document.getElementById('countdown');
@@ -28,21 +31,13 @@ export default function WaitingRoom() {
                 }
                 setTimeout(() => {
                     alert('🎮 The game is starting now!');
+                            console.log(freamwork.state);
+
                 }, 500);
             }
         }, 1000);
 
-        // players simulation
-        let players = 3;
-        setInterval(() => {
-            const currentPlayersElement = document.getElementById('currentPlayers');
-            const progressFill = document.getElementById('progressFill');
-            if (currentPlayersElement && players < 4 && Math.random() > 0.5) {
-                players++;
-                currentPlayersElement.textContent = players;
-                if (progressFill) progressFill.style.width = (players / 4) * 100 + '%';
-            }
-        }, 3000);
+        // player count is managed by the server; UI will update from freamwork.state when broadcasts arrive
 
         // tips rotation
         const tips = [
@@ -67,6 +62,13 @@ export default function WaitingRoom() {
         const t = document.getElementById('tipText');
         if (t) t.style.transition = 'opacity 0.3s';
     }, 0);
+
+    // compute players and progress from framework state so re-renders show correct values
+    const playersCount = typeof freamwork.state.players === 'number'
+        ? freamwork.state.players
+        : (Array.isArray(freamwork.state.playerName) ? freamwork.state.playerName.length : 0);
+    const maxPlayers = freamwork.state.maxPlayers || 4;
+    const progressWidth = `${Math.max(0, Math.min(100, (playersCount / maxPlayers) * 100))}%`;
 
     return createElement({
         tag: "div",
@@ -109,7 +111,7 @@ export default function WaitingRoom() {
                                     },
                                 ]
                             },
-                            { tag: "div", attrs: { class: "status-badge" }, children: ["✓ أنت جاهز"] }
+                            { tag: "div", attrs: { class: "status-badge" }, children: ["✓ You are ready"] }
                         ]
                     },
                     {
@@ -120,12 +122,12 @@ export default function WaitingRoom() {
                                 tag: "div",
                                 attrs: { class: "info-card" },
                                 children: [
-                                    { tag: "div", attrs: { class: "info-label" }, children: ["👥 عدد اللاعبين"] },
+                                    { tag: "div", attrs: { class: "info-label" }, children: ["👥 Players"] },
                                     {
                                         tag: "div",
                                         attrs: { class: "info-value players-count" },
                                         children: [
-                                            { tag: "span", attrs: { id: "currentPlayers" }, children: ["3"] },
+                                            { tag: "span", attrs: { id: "currentPlayers" }, children: [String(playersCount)] },
                                             " / ",
                                             { tag: "span", attrs: { id: "maxPlayers" }, children: ["4"] }
                                         ]
@@ -136,7 +138,7 @@ export default function WaitingRoom() {
                                 tag: "div",
                                 attrs: { class: "info-card" },
                                 children: [
-                                    { tag: "div", attrs: { class: "info-label" }, children: ["⏰ بدء اللعبة خلال"] },
+                                    { tag: "div", attrs: { class: "info-label" }, children: ["⏰ Game starts in"] },
                                     { tag: "div", attrs: { class: "info-value countdown", id: "countdown" }, children: ["10"] }
                                 ]
                             }
@@ -151,9 +153,9 @@ export default function WaitingRoom() {
                     {
                         tag: "div",
                         attrs: { class: "progress-bar" },
-                        children: [
-                            { tag: "div", attrs: { class: "progress-fill", id: "progressFill", style: "width: 0%" }, children: [] }
-                        ]
+                            children: [
+                                { tag: "div", attrs: { class: "progress-fill", id: "progressFill", style: `width: ${progressWidth}` }, children: [] }
+                            ]
                     },
                     {
                         tag: "div",

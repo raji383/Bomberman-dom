@@ -5,11 +5,9 @@ const { WebSocketServer } = require('ws');
 
 
 const server = http.createServer((req, res) => {
-    // sanitize request path and remove querystring
     const urlPath = decodeURIComponent((req.url || '').split('?')[0]);
     let requested = urlPath === '/' || urlPath === '' ? '/index.html' : urlPath;
 
-    // map framework files directly, otherwise serve from /app
     let filePath;
     if (requested.startsWith('/framework/')) {
         filePath = path.join(__dirname, requested);
@@ -26,7 +24,6 @@ const server = http.createServer((req, res) => {
         '.json': 'application/json',
     };
 
-    // if it's a directory, serve index.html, if missing try .html fallback
     fs.stat(filePath, (statErr, stats) => {
         if (!statErr && stats.isDirectory()) {
             filePath = path.join(filePath, 'index.html');
@@ -69,17 +66,46 @@ function sendFile(filePath, res, types) {
     };
 }
 const wss = new WebSocketServer({ server });
+// keep track of connected players
+const players = new Set();
+
+function broadcastPlayers() {
+    const payload = JSON.stringify({ type: 'players', count: players.size, players: Array.from(players) });
+    wss.clients.forEach((client) => {
+        if (client.readyState === client.OPEN) client.send(payload);
+    });
+}
+
 wss.on('connection', (ws) => {
     console.log('New client connected');
+
     ws.on('message', (message) => {
         try {
             const data = JSON.parse(message);
             console.log('Received:', data);
             if (data.type === 'join') {
-                console.log(`Player joined: ${data.nickname}`);
+                const nick = String(data.nickname || 'anonymous');
+                // attach nickname to socket and add to players set
+                ws.nickname = nick;
+                players.add(nick);
+                console.log(`Player joined: ${nick}`);
+                // acknowledge to the joining client
+                if (ws.readyState === ws.OPEN) {
+                    ws.send(JSON.stringify({ type: 'joined', nickname: nick }));
+                }
+                // broadcast updated players list to everyone
+                broadcastPlayers();
             }
         } catch (error) {
             console.error('Error parsing message:', error);
+        }
+    });
+
+    ws.on('close', () => {
+        if (ws.nickname) {
+            players.delete(ws.nickname);
+            console.log(`Player left: ${ws.nickname}`);
+            broadcastPlayers();
         }
     });
 });
