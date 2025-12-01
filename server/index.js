@@ -94,14 +94,17 @@ class GameRoom {
       this.countdown = null;
     }
 
-    if (this.players.size >= 2 && !this.gameStarted) {
+    if (this.players.size > 2 && !this.gameStarted) {
       if (this.players.size === 4) {
-        this.sendSystemMessage("Room full! Starting in 5 seconds...");
-        this.startCountdown(5);
+        this.sendSystemMessage("Room full! Starting in 10 seconds...");
+        this.startCountdown(10);
       } else {
             this.sendSystemMessage("Starting in 10 seconds!");
             this.startCountdown(10);
       }
+    }else if (this.players.size == 2 && !this.gameStarted){
+        this.sendSystemMessage("Starting in 20 seconds!");
+         this.startCountdown(20);
     }
   }
 
