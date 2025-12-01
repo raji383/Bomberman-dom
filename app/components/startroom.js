@@ -3,7 +3,6 @@ import { connectToServer } from "../web/webSocket.js";
 
 export default function Room() {
 
-    console.log(12);
 
     return createElement({
         tag: "div",
@@ -56,8 +55,8 @@ export default function Room() {
                         events: {
                             keydown: (e) => {
                                 if (e.key === "Enter") {
-                                    console.log(e.target.value);
                                     connectToServer(e.target.value);
+                                    window.location.assign("http://localhost:3000/waiting");
                                 }
                             }
                         }

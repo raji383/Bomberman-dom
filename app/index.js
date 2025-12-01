@@ -1,5 +1,6 @@
 import { freamwork } from "../framework/index.js";
 import { initRouter } from "../framework/route.js";
+import Game from "./components/Game.js";
 import Room from "./components/startroom.js";
 import WaitingRoom from "./components/waitingRoom.js";
 
@@ -12,6 +13,6 @@ freamwork.state = {
 
 freamwork.addRoute('/', Room)
 freamwork.addRoute('/waiting', WaitingRoom)
-freamwork.addRoute('/StartGAme', Game)
+freamwork.addRoute('#/StartGAme', Game)
 initRouter();
 
