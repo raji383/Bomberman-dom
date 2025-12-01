@@ -128,8 +128,7 @@ function connectToServer(nickname) {
 function handleServerMessage(data) {  
   switch(data.type) {
     case 'room_assigned':
-      console.log(data.chatMessage);
-      
+      console.log(data.chatMessage);     
       freamwork.setState({ 
         roomId: data.roomId,
         myId: data.playerId,
@@ -144,7 +143,6 @@ function handleServerMessage(data) {
       break;
       
     case 'game_start':
-      console.log(data.chatMessage);
       freamwork.setState({ 
         gameStarted: true,
         players: data.players || {},
@@ -153,8 +151,6 @@ function handleServerMessage(data) {
         powerups: data.powerups || {},
         bombs: data.bombs || {},
         explosions: new Set(),
-
-
       });
       push('game');
       startGameLoop();
@@ -230,7 +226,7 @@ function handleServerMessage(data) {
       break;
       
     default:
-      console.log('❓ Message inconnu:', data.type);
+      console.log( 'Message inconnu:', data.type);
   }
 }
 

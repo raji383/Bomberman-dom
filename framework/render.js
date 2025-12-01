@@ -114,7 +114,7 @@ function updateElement(oldVNode, newVNode, parent) {
   Object.keys(newEvents).forEach((eventType) => {
     const oldHandler = oldEvents[eventType];
     const newHandler = newEvents[eventType];
-    if (!(eventType in oldHandler)) {
+    if (!(eventType in oldHandler)) {      
       eventQueue.push(() => el.addEventListener(eventType, newHandler));
     }
   });

@@ -755,6 +755,132 @@ body {
     text-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
     animation: victory-pulse 1s ease-in-out infinite;
 }
+/* Styles améliorés pour le chat */
+.chat-section {
+  background: rgba(52, 73, 94, 0.6);
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 2px solid #34495e;
+  display: flex;
+  flex-direction: column;
+  height: 400px; /* Hauteur fixe pour le conteneur */
+}
+
+.chat-messages {
+  flex: 1;
+  background: rgba(44, 62, 80, 0.8);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow-y: auto;
+  border: 2px solid #34495e;
+  font-size: 0.7rem;
+  min-height: 200px;
+  max-height: 300px;
+  scroll-behavior: smooth; /* Animation fluide pour le scroll */
+}
+
+.message {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border-left: 3px solid transparent;
+  animation: message-appear 0.3s ease-out;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+@keyframes message-appear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message.system {
+  background: rgba(243, 156, 18, 0.2);
+  color: #f39c12;
+  font-style: italic;
+  border-left-color: #f39c12;
+}
+
+.message.own {
+  background: rgba(52, 152, 219, 0.2);
+  border-left-color: #3498db;
+}
+
+.message:not(.system):not(.own) {
+  background: rgba(149, 165, 166, 0.2);
+  border-left-color: #95a5a6;
+}
+
+/* Scrollbar personnalisée */
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: rgba(52, 73, 94, 0.5);
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #3498db;
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: #2980b9;
+}
+
+.chat-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto; /* Pousser le formulaire vers le bas */
+}
+
+.chat-form input {
+  flex: 1;
+  padding: 0.8rem;
+  border: 2px solid #34495e;
+  border-radius: 8px;
+  background: #2c3e50;
+  color: white;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+}
+
+.chat-form button {
+  padding: 0.8rem 1.5rem;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.chat-form button:hover {
+  background: #2980b9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chat-section {
+    height: 300px;
+  }
+  
+  .chat-messages {
+    max-height: 200px;
+  }
+}
 
 @keyframes victory-pulse {
     0%, 100% { transform: scale(1); }

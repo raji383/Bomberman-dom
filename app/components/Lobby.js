@@ -10,7 +10,7 @@ export default function LobbyScreen() {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    
+
     if (chatInput.trim() && freamwork.state.ws) {
       freamwork.state.ws.send(JSON.stringify({
         type: 'chat_message',
@@ -18,9 +18,19 @@ export default function LobbyScreen() {
         playerId: freamwork.state.myId
       }));
       freamwork.setState({ chatInput: "" });
+
+      const form = e.target;
+      const chatSection = form.parentElement; 
+      if (chatSection) {
+        const chatMessages = chatSection.children[1]; 
+        if (chatMessages && chatMessages.classList.contains('chat-messages')) {
+          setTimeout(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }, 100);
+        }
+      }
     }
   };
-
   const playerCount = Object.keys(players).length;
   const isFull = playerCount >= 4;
 
@@ -32,7 +42,7 @@ export default function LobbyScreen() {
         tag: "h1",
         children: ["💣 Salon de Jeu"]
       }),
-      
+
       createElement({
         tag: "div",
         attrs: { class: "lobby-info" },
@@ -67,8 +77,7 @@ export default function LobbyScreen() {
           })
         ]
       }),
-      
-      // Liste des joueurs
+
       createElement({
         tag: "div",
         attrs: { class: "players-section" },
@@ -80,21 +89,21 @@ export default function LobbyScreen() {
           createElement({
             tag: "div",
             attrs: { class: "players-grid" },
-            children: playerCount === 0 ? 
+            children: playerCount === 0 ?
               createElement({
                 tag: "p",
                 children: ["Aucun joueur pour le moment..."]
               }) :
-              Object.values(players).map((player, index) => 
+              Object.values(players).map((player, index) =>
                 createElement({
                   tag: "div",
-                  attrs: { 
+                  attrs: {
                     class: `player-card ${player.id === freamwork.state.myId ? 'my-player' : ''}`
                   },
                   children: [
                     createElement({
                       tag: "div",
-                      attrs: { 
+                      attrs: {
                         class: "player-avatar",
                         style: { backgroundColor: player.color }
                       },
@@ -121,7 +130,7 @@ export default function LobbyScreen() {
           })
         ]
       }),
-      
+
       // Chat
       createElement({
         tag: "div",
@@ -133,28 +142,42 @@ export default function LobbyScreen() {
           }),
           createElement({
             tag: "div",
-            attrs: { class: "chat-messages" },
-            children: messages.length === 0 ? 
+            attrs: {
+              class: "chat-messages",
+
+            },
+            events: {
+              created: (element) => {
+                scrollToBottom(element);
+              },
+              updated: (element) => {
+                scrollToBottom(element);
+
+              }
+            },
+            children: messages.length === 0 ?
               createElement({
                 tag: "p",
                 children: ["Aucun message..."]
               }) :
-              messages.map((msg, index) => 
+              messages.map((msg, index) =>
                 createElement({
                   tag: "div",
-                  attrs: { 
+                  attrs: {
                     class: `message ${msg.isSystem ? 'system' : ''} ${msg.player === freamwork.state.players[freamwork.state.myId]?.nickname ? 'own' : ''}`
                   },
                   children: [
                     createElement({
                       tag: "strong",
-                      children: [`${msg.player}:${msg.text} `]
+                      children: [`${msg.player}: ${msg.text}`]
                     }),
-                    
+
                   ]
                 })
               )
+
           }),
+
           createElement({
             tag: "form",
             attrs: { class: "chat-form" },

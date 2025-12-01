@@ -16,7 +16,6 @@ export default function GameScreen() {
   const handleKeyDown = (e) => {
     if (!gameStarted || isGameOver) return;
     
-    // Empêcher le défilement de la page avec les flèches
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
       e.preventDefault();
     }

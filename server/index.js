@@ -4,7 +4,6 @@ import { readFile } from 'fs/promises';
 import { join, extname, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { WebSocketServer } from 'ws';
-import { type } from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -43,7 +42,6 @@ class GameRoom {
     this.blocks.clear();
     this.powerups.clear();
 
-    // Murs extérieurs et pattern damier
     for (let y = 0; y < GRID_SIZE; y++) {
       for (let x = 0; x < GRID_SIZE; x++) {
         if (x === 0 || y === 0 || x === GRID_SIZE - 1 || y === GRID_SIZE - 1) {
@@ -54,7 +52,6 @@ class GameRoom {
       }
     }
 
-    // Blocs destructibles (éviter les positions de départ)
     const startPositions = [
       { x: 1, y: 1 }, { x: 2, y: 1 }, { x: 1, y: 2 },
       { x: 11, y: 1 }, { x: 10, y: 1 }, { x: 11, y: 2 },
@@ -69,7 +66,6 @@ class GameRoom {
         if (Math.random() < 0.7) {
           this.blocks.add(`${x},${y}`);
 
-          // Ajouter des power-ups aléatoires sous certains blocs
           if (Math.random() < 0.2) {
             const powerupTypes = ['bombs', 'flames', 'speed'];
             const type = powerupTypes[Math.floor(Math.random() * powerupTypes.length)];
@@ -81,16 +77,13 @@ class GameRoom {
   }
 
   addPlayer(player) {
-    console.log(`🎮 ${player.nickname} rejoint la room ${this.id}`);
     this.players.set(player.id, player);
 
-    this.sendSystemMessage(`${player.nickname} a rejoint la partie!`);
+    this.sendSystemMessage(`${player.nickname} joined the game!`);
     this.broadcast({
       type: 'players_update',
       players: this.getPlayersList()
     });
-
-    console.log(`👥 Room ${this.id}: ${this.players.size}/4 joueurs`);
 
     if (this.joinTimer) {
       clearTimeout(this.joinTimer);
@@ -103,16 +96,11 @@ class GameRoom {
 
     if (this.players.size >= 2 && !this.gameStarted) {
       if (this.players.size === 4) {
-        this.sendSystemMessage("🎯 Room pleine! Démarrage dans 5 secondes...");
+        this.sendSystemMessage("Room full! Starting in 5 seconds...");
         this.startCountdown(5);
       } else {
-        this.sendSystemMessage("⏳ En attente de joueurs... Démarrage dans 20 secondes");
-        this.joinTimer = setTimeout(() => {
-          if (this.players.size >= 2 && !this.gameStarted) {
-            this.sendSystemMessage("🚀 Démarrage dans 10 secondes!");
+            this.sendSystemMessage("Starting in 10 seconds!");
             this.startCountdown(10);
-          }
-        }, 20000);
       }
     }
   }
@@ -120,8 +108,8 @@ class GameRoom {
   removePlayer(playerId) {
     const player = this.players.get(playerId);
     if (player) {
-      console.log(`👋 ${player.nickname} quitte la room ${this.id}`);
-      this.sendSystemMessage(`${player.nickname} a quitté la partie`);
+      console.log(`${player.nickname} left room ${this.id}`);
+      this.sendSystemMessage(`${player.nickname} left the game`);
     }
 
     this.players.delete(playerId);
@@ -139,7 +127,6 @@ class GameRoom {
   }
 
   startCountdown(seconds) {
-    console.log(`⏰ Compte à rebours room ${this.id}: ${seconds}s`);
     let countdown = seconds;
 
     this.broadcast({
@@ -167,9 +154,9 @@ class GameRoom {
     this.generateMap();
 
     const startPositions = [
-      { x: 1.5, y: 1.5, color: '#3498db' },    // Bleu
-      { x: 11.5, y: 1.5, color: '#e74c3c' },   // Rouge
-      { x: 1.5, y: 11.5, color: '#2ecc71' },   // Vert
+      { x: 1.5, y: 1.5, color: '#3498db' },    // Blue
+      { x: 11.5, y: 1.5, color: '#e74c3c' },   // Red
+      { x: 1.5, y: 11.5, color: '#2ecc71' },   // Green
       { x: 11.5, y: 11.5, color: '#f39c12' }   // Orange
     ];
 
@@ -184,7 +171,7 @@ class GameRoom {
       index++;
     }
 
-    this.sendSystemMessage("🎮 LA PARTIE COMMENCE! COMBATTEZ!");
+    this.sendSystemMessage("🎮 THE GAME STARTS! FIGHT!");
 
     this.broadcast({
       type: 'game_start',
@@ -195,7 +182,7 @@ class GameRoom {
       bombs: {},
     });
 
-    // Démarrer la boucle de jeu serveur
+    // Start server game loop
     this.startServerGameLoop();
   }
 
@@ -207,7 +194,7 @@ class GameRoom {
       const deltaTime = (now - lastUpdate) / 1000;
       lastUpdate = now;
 
-      // Mettre à jour les bombes
+      // Update bombs
       this.updateBombs(deltaTime);
 
     }, 50); // 20 FPS
@@ -227,7 +214,7 @@ class GameRoom {
       }
     });
 
-    // Supprimer les bombes explosées
+    // Remove exploded bombs
     bombsToRemove.forEach(bombId => {
       this.bombs.delete(bombId);
     });
@@ -270,7 +257,7 @@ class GameRoom {
     this.broadcast({
       type: 'chat_message',
       message: {
-        player: "Système",
+        player: "System",
         text: text,
         isSystem: true,
         timestamp: Date.now()
@@ -375,7 +362,7 @@ class GameRoom {
 
       this.powerups.delete(cellId);
 
-      this.sendSystemMessage(`${player.nickname} a collecté un power-up ${powerup.type}!`);
+      this.sendSystemMessage(`${player.nickname} collected a ${powerup.type} power-up!`);
 
       this.broadcast({
         type: 'powerup_collected',
@@ -473,7 +460,7 @@ class GameRoom {
 
     this.checkPlayerHit(bomb.x, bomb.y, playersHit);
 
-    // Appliquer les dégâts aux joueurs
+    // Apply damage to players
     playersHit.forEach(playerId => {
       const player = this.players.get(playerId);
       if (player && player.lives > 0) {
@@ -486,7 +473,7 @@ class GameRoom {
         });
 
         if (player.lives <= 0) {
-          this.sendSystemMessage(`💀 ${player.nickname} a été éliminé!`);
+          this.sendSystemMessage(`💀 ${player.nickname} has been eliminated!`);
         }
       }
     });
@@ -522,7 +509,6 @@ class GameRoom {
 
   checkGameOver() {
     const alivePlayers = Array.from(this.players.values()).filter(p => p.lives > 0);
-
     if (alivePlayers.length <= 1) {
       setTimeout(() => {
         this.broadcast({
@@ -546,14 +532,14 @@ class GameRoom {
         try {
           player.ws.send(messageStr);
         } catch (error) {
-          console.error('❌ Erreur envoi message:', error);
+          console.error('Error sending message:', error);
         }
       }
     });
   }
 }
 
-// Serveur HTTP
+// HTTP Server
 const server = createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://${req.headers.host}`);
@@ -564,7 +550,7 @@ const server = createServer(async (req, res) => {
     const safePath = pathname.replace(/^\/+/, '');
     if (safePath.includes('..')) {
       res.writeHead(400, { 'Content-Type': 'text/plain' });
-      res.end('Chemin invalide');
+      res.end('Invalid path');
       return;
     }
 
@@ -587,31 +573,31 @@ const server = createServer(async (req, res) => {
         } catch (e) { }
       }
       res.writeHead(404, { 'Content-Type': 'text/html' });
-      res.end('<h1>404 - Fichier non trouvé</h1>');
+      res.end('<h1>404 - File not found</h1>');
     }
   } catch (e) {
-    console.error('❌ Erreur serveur:', e);
+    console.error('Server error:', e);
     res.writeHead(500, { 'Content-Type': 'text/plain' });
-    res.end('Erreur interne du serveur');
+    res.end('Internal server error');
   }
 });
 
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
-  console.log('🔌 Nouvelle connexion client');
+  console.log('New client connected');
 
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
       handleMessage(ws, data);
     } catch (error) {
-      console.error('❌ Erreur parsing message:', error);
+      console.error('Message parsing error:', error);
     }
   });
 
   ws.on('close', () => {
-    console.log('🔌 Client déconnecté');
+    console.log('Client disconnected');
     const player = Array.from(players.values()).find(p => p.ws === ws);
     if (player && player.roomId) {
       const room = rooms.get(player.roomId);
@@ -623,7 +609,7 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('error', (error) => {
-    console.error('❌ Erreur WebSocket:', error);
+    console.error('WebSocket error:', error);
   });
 });
 
@@ -639,7 +625,7 @@ function handleMessage(ws, data) {
       handlePlayerAction(ws, data);
       break;
     default:
-      console.log('❓ Message type inconnu:', data.type);
+      console.log('Unknown message type:', data.type);
   }
 }
 
@@ -661,7 +647,7 @@ function handleJoin(ws, data) {
     const newRoomId = generateId();
     room = new GameRoom(newRoomId);
     rooms.set(newRoomId, room);
-    console.log(`✅ Nouvelle room créée: ${newRoomId}`);
+    console.log(`New room created: ${newRoomId}`);
   }
 
   player.roomId = room.id;
@@ -675,7 +661,7 @@ function handleJoin(ws, data) {
     chatMessage : room.chatMessage
   }));
 
-  console.log(`🎮 ${data.nickname} a rejoint room ${room.id}`);
+  console.log(`${data.nickname} joined room ${room.id}`);
 }
 
 function findAvailableRoom() {
@@ -727,18 +713,15 @@ function generateId() {
   return Math.random().toString(36).substr(2, 9);
 }
 
-// Nettoyage des rooms vides
 setInterval(() => {
   for (const [roomId, room] of rooms.entries()) {
     if (room.players.size === 0) {
       rooms.delete(roomId);
-      console.log(`🧹 Room vide nettoyée: ${roomId}`);
     }
   }
 }, 30000);
 
 server.listen(PORT, () => {
-  console.log(`✅ Serveur démarré: http://localhost:${PORT}/`);
-  console.log(`✅ WebSocket: ws://localhost:${PORT}/`);
-  console.log(`🎯 Prêt pour les connexions!`);
+  console.log(`Server started: http://localhost:${PORT}/`);
+  console.log(`WebSocket: ws://localhost:${PORT}/`);
 });
