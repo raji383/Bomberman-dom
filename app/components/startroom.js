@@ -1,4 +1,5 @@
 import { createElement } from "../../framework/createjsx.js";
+import { connectToServer } from "../web/webSocket.js";
 
 export default function Room() {
 
@@ -16,7 +17,7 @@ export default function Room() {
             {
                 tag: "div",
                 attrs: { class: "subtitle" },
-                children: ["استعد للمغامرة!"]
+                children:["Get ready for the adventure!"]
             },
             {
                 tag: "div",
@@ -43,37 +44,59 @@ export default function Room() {
             },
             {
                 tag: "div",
-                attrs: { class: "loading-bar" },
+                attrs: { class: "player-name-container" },
                 children: [
+                    {
+                        tag: "input",
+                        attrs: {
+                            type: "text",
+                            placeholder: "Enter player name",
+                            class: "player-name-input"
+                        },
+                        events: {
+                            keydown: (e) => {
+                                if (e.key === "Enter") {
+                                    console.log(e.target.value);
+                                    connectToServer(e.target.value);
+                                }
+                            }
+                        }
+                    }
+                    ,
                     {
                         tag: "div",
-                        attrs: { class: "loading-progress" },
-                        children: []
-                    }
-                ]
-            },
-            {
-                tag: "div",
-                attrs: { class: "loading-text" },
-                children: [
-                    "جاري التحميل",
-                    {
-                        tag: "span",
-                        attrs: { class: "dots" },
+                        attrs: { class: "loading-bar" },
                         children: [
-                            { tag: "span", children: ["."] },
-                            { tag: "span", children: ["."] },
-                            { tag: "span", children: ["."] }
+                            {
+                                tag: "div",
+                                attrs: { class: "loading-progress" },
+                                children: []
+                            }
                         ]
+                    },
+                    {
+                        tag: "div",
+                        attrs: { class: "loading-text" },
+                        children: [
+                            "Enter player name",
+                            {
+                                tag: "span",
+                                attrs: { class: "dots" },
+                                children: [
+                                    { tag: "span", children: ["."] },
+                                    { tag: "span", children: ["."] },
+                                    { tag: "span", children: ["."] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        tag: "div",
+                        attrs: { class: "tips" },
+                        children: ["💡 Tip: Use bombs wisely to defeat your enemies!"]
                     }
                 ]
-            },
-            {
-                tag: "div",
-                attrs: { class: "tips" },
-                children: ["💡 نصيحة: استخدم القنابل بذكاء لهزيمة أعدائك!"]
             }
         ]
-    }
-    );
+    });
 }

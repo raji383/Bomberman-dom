@@ -227,7 +227,15 @@ body {
     animation: loading 2s infinite;
     box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
 }
-
+.player-name-input{
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+    width: 200px;
+    text-align: center;
+}
 @keyframes loading {
     0% {
         width: 0%;

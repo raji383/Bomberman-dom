@@ -1,6 +1,8 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const { WebSocketServer } = require('ws');
+
 
 const server = http.createServer((req, res) => {
     let filePath;
@@ -27,7 +29,7 @@ const server = http.createServer((req, res) => {
     if (types[ext]) contentType = types[ext];
 
     fs.readFile(filePath, (err, data) => {
-        if (err) {            
+        if (err) {
             res.writeHead(404);
             return res.end("404 Not Found");
         }
@@ -36,7 +38,21 @@ const server = http.createServer((req, res) => {
         res.end(data);
     });
 });
-
+const wss = new WebSocketServer({ server });
+wss.on('connection', (ws) => {
+    console.log('New client connected');
+    ws.on('message', (message) => {
+        try {
+            const data = JSON.parse(message);
+            console.log('Received:', data);
+            if (data.type === 'join') {
+                console.log(`Player joined: ${data.nickname}`);
+            }
+        } catch (error) {
+            console.error('Error parsing message:', error);
+        }
+    });
+});
 server.listen(3000, () => {
     console.log("Server running on http://localhost:3000");
 });
