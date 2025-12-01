@@ -27,7 +27,7 @@ const server = http.createServer((req, res) => {
     if (types[ext]) contentType = types[ext];
 
     fs.readFile(filePath, (err, data) => {
-        if (err) {
+        if (err) {            
             res.writeHead(404);
             return res.end("404 Not Found");
         }

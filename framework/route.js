@@ -5,15 +5,15 @@ import { notfound } from "./notfound.js";
 let isRenderScheduled = false;
 
 function flushRouterRender() {
-    isRenderScheduled = false; 
+    isRenderScheduled = false;
     const path = window.location.pathname || '/';
     const componentCreator = freamwork.routes[path] || notfound;
-    
-    
-    if (componentCreator) { 
-        freamwork.newDOM = componentCreator;    
-        const newDom = freamwork.newDOM();      
-        render(newDom, freamwork.parent, freamwork.OldDOM); 
+
+
+    if (componentCreator) {
+        freamwork.newDOM = componentCreator;
+        const newDom = freamwork.newDOM();
+        render(newDom, freamwork.parent, freamwork.OldDOM);
         freamwork.OldDOM = newDom;
     } else {
         console.error(`Route not found for path: /${path}`);
@@ -23,12 +23,12 @@ function flushRouterRender() {
 function enqueueRender() {
     if (!isRenderScheduled) {
         isRenderScheduled = true;
-        setTimeout(flushRouterRender, 0); 
+        setTimeout(flushRouterRender, 0);
     }
 }
 
-export function router() {    
-    enqueueRender(); 
+export function router() {
+    enqueueRender();
 };
 
 export function addRoute(path, component) {
@@ -37,18 +37,21 @@ export function addRoute(path, component) {
         return;
     }
     freamwork.routes[path] = component;
+
 };
 
 export const push = (path) => {
- history.pushState({}, "", path)
- router();
+    history.pushState({}, "", path)
+    router();
 }
 
 export function initRouter() {
-const component = freamwork.routes[window.location.pathname] || notfound ;
-if (component) {    
-    freamwork.mount(component);
-}           
-  window.addEventListener("hashchange",  router);
+    console.log('l', freamwork.routes[window.location.pathname])
+
+    const component = freamwork.routes[window.location.pathname] || notfound;
+    if (component) {
+        freamwork.mount(component);
+    }
+    window.addEventListener("hashchange", router);
 
 }
