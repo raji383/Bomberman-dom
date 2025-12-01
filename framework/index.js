@@ -5,18 +5,17 @@ import { mount } from "./createjsx.js";
 
 class Framework {
     constructor() {
+            //state
         this.state = {};
         this.parent = document.getElementById("app");
-
+             // dom
         this.OldDOM = null;
         this.newDOM = null;
-
-        // APIs
+             // diff
         this.render = render;
         this.mount = mount;
         this.setState = setState;
-
-        // Router
+            // route
         this.defaultRoute = '';
         this.routes = {};
         this.addRoute = addRoute;
