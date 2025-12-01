@@ -1,4 +1,3 @@
-// app/components/Game.js
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
 
@@ -338,8 +337,7 @@ export default function GameScreen() {
                   })
                 ]
               }),
-
-              // Chat pendant le jeu
+               // chat 
               createElement({
                 tag: "div",
                 attrs: { class: "chat-section pixel-panel" },
@@ -358,7 +356,7 @@ export default function GameScreen() {
                         attrs: { class: "pixel-text" },
                         children: ["Aucun message..."]
                       }) :
-                      messages.slice(-8).map((msg, index) => 
+                      messages.map((msg) => 
                         createElement({
                           tag: "div",
                           attrs: { 
@@ -367,9 +365,9 @@ export default function GameScreen() {
                           children: [
                             createElement({
                               tag: "strong",
-                              children: [`${msg.player}: `]
+                              children: [`${msg.player}: ${msg.text} `]
                             }),
-                            msg.text
+                            
                           ]
                         })
                       )
@@ -377,7 +375,7 @@ export default function GameScreen() {
                   createElement({
                     tag: "form",
                     attrs: { class: "chat-form" },
-                    events: { submit: handleSendMessage },
+                    events: { submit: handleSendMessage ,},
                     children: [
                       createElement({
                         tag: "input",

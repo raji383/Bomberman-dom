@@ -7,7 +7,6 @@ import GameScreen from "./components/Game.js";
 
 // État global
 freamwork.state = {
-  screen: "nickname",
   playerName: "",
   chatInput: "",
   roomId: null,
@@ -32,5 +31,4 @@ freamwork.state = {
 freamwork.addRoute("/", NicknameScreen);
 freamwork.addRoute("/lobby", LobbyScreen);
 freamwork.addRoute("/game", GameScreen);
-
 initRouter();

@@ -1,4 +1,3 @@
-// app/components/Lobby.js
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
 
@@ -34,7 +33,6 @@ export default function LobbyScreen() {
         children: ["💣 Salon de Jeu"]
       }),
       
-      // Informations de la room
       createElement({
         tag: "div",
         attrs: { class: "lobby-info" },

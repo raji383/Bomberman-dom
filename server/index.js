@@ -4,6 +4,7 @@ import { readFile } from 'fs/promises';
 import { join, extname, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { WebSocketServer } from 'ws';
+import { type } from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -33,6 +34,7 @@ class GameRoom {
     this.powerups = new Map();
     this.lastBombId = 0;
     this.gameLoop = null;
+    this.chatMessage = []
   }
 
   generateMap() {
@@ -54,19 +56,19 @@ class GameRoom {
 
     // Blocs destructibles (éviter les positions de départ)
     const startPositions = [
-      {x: 1, y: 1}, {x: 2, y: 1}, {x: 1, y: 2},
-      {x: 11, y: 1}, {x: 10, y: 1}, {x: 11, y: 2},
-      {x: 1, y: 11}, {x: 2, y: 11}, {x: 1, y: 10},
-      {x: 11, y: 11}, {x: 10, y: 11}, {x: 11, y: 10}
+      { x: 1, y: 1 }, { x: 2, y: 1 }, { x: 1, y: 2 },
+      { x: 11, y: 1 }, { x: 10, y: 1 }, { x: 11, y: 2 },
+      { x: 1, y: 11 }, { x: 2, y: 11 }, { x: 1, y: 10 },
+      { x: 11, y: 11 }, { x: 10, y: 11 }, { x: 11, y: 10 }
     ];
-    
+
     for (let y = 1; y < GRID_SIZE - 1; y++) {
       for (let x = 1; x < GRID_SIZE - 1; x++) {
         if (this.walls.has(`${x},${y}`)) continue;
         if (startPositions.some(pos => pos.x === x && pos.y === y)) continue;
         if (Math.random() < 0.7) {
           this.blocks.add(`${x},${y}`);
-          
+
           // Ajouter des power-ups aléatoires sous certains blocs
           if (Math.random() < 0.2) {
             const powerupTypes = ['bombs', 'flames', 'speed'];
@@ -81,7 +83,7 @@ class GameRoom {
   addPlayer(player) {
     console.log(`🎮 ${player.nickname} rejoint la room ${this.id}`);
     this.players.set(player.id, player);
-    
+
     this.sendSystemMessage(`${player.nickname} a rejoint la partie!`);
     this.broadcast({
       type: 'players_update',
@@ -90,7 +92,6 @@ class GameRoom {
 
     console.log(`👥 Room ${this.id}: ${this.players.size}/4 joueurs`);
 
-    // Nettoyer les timers existants
     if (this.joinTimer) {
       clearTimeout(this.joinTimer);
       this.joinTimer = null;
@@ -100,7 +101,6 @@ class GameRoom {
       this.countdown = null;
     }
 
-    // Logique de compte à rebours
     if (this.players.size >= 2 && !this.gameStarted) {
       if (this.players.size === 4) {
         this.sendSystemMessage("🎯 Room pleine! Démarrage dans 5 secondes...");
@@ -123,14 +123,13 @@ class GameRoom {
       console.log(`👋 ${player.nickname} quitte la room ${this.id}`);
       this.sendSystemMessage(`${player.nickname} a quitté la partie`);
     }
-    
+
     this.players.delete(playerId);
     this.broadcast({
       type: 'players_update',
       players: this.getPlayersList()
     });
 
-    // Nettoyer si room vide
     if (this.players.size === 0) {
       if (this.joinTimer) clearTimeout(this.joinTimer);
       if (this.countdown) clearInterval(this.countdown);
@@ -142,19 +141,19 @@ class GameRoom {
   startCountdown(seconds) {
     console.log(`⏰ Compte à rebours room ${this.id}: ${seconds}s`);
     let countdown = seconds;
-    
+
     this.broadcast({
       type: 'countdown',
       countdown: countdown
     });
-    
+
     this.countdown = setInterval(() => {
       countdown--;
       this.broadcast({
         type: 'countdown',
         countdown: countdown
       });
-      
+
       if (countdown <= 0) {
         clearInterval(this.countdown);
         this.countdown = null;
@@ -164,18 +163,16 @@ class GameRoom {
   }
 
   startGame() {
-    console.log(`🎮 Démarrage du jeu dans room ${this.id}`);
     this.gameStarted = true;
     this.generateMap();
 
-    // Positions de départ et couleurs fixes
     const startPositions = [
-      {x: 1.5, y: 1.5, color: '#3498db'},    // Bleu
-      {x: 11.5, y: 1.5, color: '#e74c3c'},   // Rouge
-      {x: 1.5, y: 11.5, color: '#2ecc71'},   // Vert
-      {x: 11.5, y: 11.5, color: '#f39c12'}   // Orange
+      { x: 1.5, y: 1.5, color: '#3498db' },    // Bleu
+      { x: 11.5, y: 1.5, color: '#e74c3c' },   // Rouge
+      { x: 1.5, y: 11.5, color: '#2ecc71' },   // Vert
+      { x: 11.5, y: 11.5, color: '#f39c12' }   // Orange
     ];
-    
+
     let index = 0;
     for (const player of this.players.values()) {
       player.x = startPositions[index].x;
@@ -195,7 +192,7 @@ class GameRoom {
       blocks: Array.from(this.blocks),
       players: this.getPlayersState(),
       powerups: Object.fromEntries(this.powerups),
-      bombs: {}
+      bombs: {},
     });
 
     // Démarrer la boucle de jeu serveur
@@ -204,7 +201,7 @@ class GameRoom {
 
   startServerGameLoop() {
     let lastUpdate = Date.now();
-    
+
     this.gameLoop = setInterval(() => {
       const now = Date.now();
       const deltaTime = (now - lastUpdate) / 1000;
@@ -222,7 +219,7 @@ class GameRoom {
 
     this.bombs.forEach((bomb, bombId) => {
       bomb.timer -= deltaTime;
-      
+
       if (bomb.timer <= 0) {
         bombsToRemove.push(bombId);
         this.explodeBomb(bombId);
@@ -258,7 +255,7 @@ class GameRoom {
     this.players.forEach(player => {
       state[player.id] = {
         x: player.x,
-        y: player.y, 
+        y: player.y,
         lives: player.lives,
         powerups: player.powerups,
         nickname: player.nickname,
@@ -300,7 +297,7 @@ class GameRoom {
     let newX = player.x;
     let newY = player.y;
 
-    switch(data.key) {
+    switch (data.key) {
       case 'ArrowUp':
         newY = player.y - speed;
         break;
@@ -315,12 +312,10 @@ class GameRoom {
         break;
     }
 
-    // Vérifier les collisions avec précision
     if (this.isValidPosition(newX, newY, player)) {
       player.x = newX;
       player.y = newY;
 
-      // Vérifier si le joueur collecte un power-up
       this.checkPowerupCollection(player);
 
       this.broadcast({
@@ -333,26 +328,23 @@ class GameRoom {
   }
 
   isValidPosition(x, y, player) {
-    // Limites de la carte
     if (x < 0.3 || x > 12.7 || y < 0.3 || y > 12.7) {
       return false;
     }
 
-    // Vérifier les collisions avec les murs et blocs
     const playerRadius = 0.3;
     const corners = [
-      {x: x - playerRadius, y: y - playerRadius},
-      {x: x + playerRadius, y: y - playerRadius},
-      {x: x - playerRadius, y: y + playerRadius},
-      {x: x + playerRadius, y: y + playerRadius}
+      { x: x - playerRadius, y: y - playerRadius },
+      { x: x + playerRadius, y: y - playerRadius },
+      { x: x - playerRadius, y: y + playerRadius },
+      { x: x + playerRadius, y: y + playerRadius }
     ];
 
     for (const corner of corners) {
       const cellX = Math.floor(corner.x);
       const cellY = Math.floor(corner.y);
       const cellId = `${cellX},${cellY}`;
-      
-      // Éviter les collisions avec les murs et blocs
+
       if (this.walls.has(cellId) || this.blocks.has(cellId)) {
         return false;
       }
@@ -368,9 +360,8 @@ class GameRoom {
 
     if (this.powerups.has(cellId)) {
       const powerup = this.powerups.get(cellId);
-      
-      // Appliquer le power-up
-      switch(powerup.type) {
+
+      switch (powerup.type) {
         case 'bombs':
           player.powerups.bombs = (player.powerups.bombs || 1) + 1;
           break;
@@ -382,12 +373,10 @@ class GameRoom {
           break;
       }
 
-      // Supprimer le power-up
       this.powerups.delete(cellId);
-      
+
       this.sendSystemMessage(`${player.nickname} a collecté un power-up ${powerup.type}!`);
-      
-      // Mettre à jour tous les clients
+
       this.broadcast({
         type: 'powerup_collected',
         playerId: player.id,
@@ -406,27 +395,23 @@ class GameRoom {
     const bombY = Math.floor(data.y);
     const bombId = `${bombX},${bombY}`;
 
-    // Vérifications
     if (this.walls.has(bombId) || this.blocks.has(bombId) || this.bombs.has(bombId)) {
       return;
     }
 
-    // Vérifier si le joueur est proche de la bombe
     const playerCellX = Math.floor(player.x);
     const playerCellY = Math.floor(player.y);
     if (playerCellX !== bombX || playerCellY !== bombY) {
       return;
     }
 
-    // Vérifier le nombre maximum de bombes
     const playerBombs = Array.from(this.bombs.values()).filter(b => b.playerId === playerId).length;
     const maxBombs = player.powerups?.bombs || 1;
-    
+
     if (playerBombs >= maxBombs) {
       return;
     }
 
-    // Placer la bombe
     const bomb = {
       id: ++this.lastBombId,
       playerId: playerId,
@@ -457,42 +442,35 @@ class GameRoom {
     const blocksRemoved = [];
     const playersHit = new Set();
 
-    // Directions: haut, droite, bas, gauche
     const directions = [
-      {dx: 0, dy: -1}, {dx: 1, dy: 0}, 
-      {dx: 0, dy: 1}, {dx: -1, dy: 0}
+      { dx: 0, dy: -1 }, { dx: 1, dy: 0 },
+      { dx: 0, dy: 1 }, { dx: -1, dy: 0 }
     ];
 
-    // Explosion dans toutes les directions
     directions.forEach(dir => {
       for (let i = 1; i <= bomb.flames; i++) {
         const expX = bomb.x + dir.dx * i;
         const expY = bomb.y + dir.dy * i;
         const expId = `${expX},${expY}`;
 
-        // Arrêter si on rencontre un mur
         if (this.walls.has(expId)) break;
 
         explosions.add(expId);
 
-        // Vérifier si on touche un bloc
         if (this.blocks.has(expId)) {
           blocksRemoved.push(expId);
           this.blocks.delete(expId);
           break;
         }
 
-        // Vérifier si on touche un joueur
         this.checkPlayerHit(expX, expY, playersHit);
 
-        // Vérifier si on rencontre une autre bombe (explosion en chaîne)
         if (this.bombs.has(expId)) {
           this.explodeBomb(expId);
         }
       }
     });
 
-    // Vérifier aussi la cellule de la bombe pour les joueurs
     this.checkPlayerHit(bomb.x, bomb.y, playersHit);
 
     // Appliquer les dégâts aux joueurs
@@ -500,7 +478,7 @@ class GameRoom {
       const player = this.players.get(playerId);
       if (player && player.lives > 0) {
         player.lives--;
-        
+
         this.broadcast({
           type: 'player_damage',
           playerId: playerId,
@@ -513,7 +491,6 @@ class GameRoom {
       }
     });
 
-    // Envoyer l'explosion aux clients
     this.broadcast({
       type: 'explosion',
       explosions: Array.from(explosions),
@@ -522,14 +499,12 @@ class GameRoom {
       powerups: Object.fromEntries(this.powerups)
     });
 
-    // Nettoyer les explosions après 500ms
     setTimeout(() => {
       this.broadcast({
         type: 'clear_explosions'
       });
     }, 500);
 
-    // Vérifier si la partie est terminée
     setTimeout(() => {
       this.checkGameOver();
     }, 1000);
@@ -537,9 +512,9 @@ class GameRoom {
 
   checkPlayerHit(x, y, playersHit) {
     this.players.forEach(player => {
-      if (player.lives > 0 && 
-          Math.floor(player.x) === x && 
-          Math.floor(player.y) === y) {
+      if (player.lives > 0 &&
+        Math.floor(player.x) === x &&
+        Math.floor(player.y) === y) {
         playersHit.add(player.id);
       }
     });
@@ -547,7 +522,7 @@ class GameRoom {
 
   checkGameOver() {
     const alivePlayers = Array.from(this.players.values()).filter(p => p.lives > 0);
-    
+
     if (alivePlayers.length <= 1) {
       setTimeout(() => {
         this.broadcast({
@@ -555,8 +530,6 @@ class GameRoom {
           winner: alivePlayers[0] || null,
           players: this.getPlayersState()
         });
-        
-        // Arrêter la boucle de jeu
         if (this.gameLoop) {
           clearInterval(this.gameLoop);
           this.gameLoop = null;
@@ -611,7 +584,7 @@ const server = createServer(async (req, res) => {
           res.writeHead(200, { 'Content-Type': 'text/html' });
           res.end(indexContent);
           return;
-        } catch (e) {}
+        } catch (e) { }
       }
       res.writeHead(404, { 'Content-Type': 'text/html' });
       res.end('<h1>404 - Fichier non trouvé</h1>');
@@ -623,7 +596,6 @@ const server = createServer(async (req, res) => {
   }
 });
 
-// WebSocket Server
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
@@ -656,7 +628,7 @@ wss.on('connection', (ws) => {
 });
 
 function handleMessage(ws, data) {
-  switch(data.type) {
+  switch (data.type) {
     case 'join':
       handleJoin(ws, data);
       break;
@@ -680,31 +652,29 @@ function handleJoin(ws, data) {
     roomId: null,
     joinedAt: Date.now()
   };
-  
+
   players.set(playerId, player);
-  
-  // Trouver une room disponible
+
   let room = findAvailableRoom();
-  
-  // Créer nouvelle room si nécessaire
+
   if (!room) {
     const newRoomId = generateId();
     room = new GameRoom(newRoomId);
     rooms.set(newRoomId, room);
     console.log(`✅ Nouvelle room créée: ${newRoomId}`);
   }
-  
+
   player.roomId = room.id;
   room.addPlayer(player);
-  
-  // Envoyer confirmation au joueur
+
   ws.send(JSON.stringify({
     type: 'room_assigned',
     roomId: room.id,
     playerId: playerId,
-    players: room.getPlayersList()
+    players: room.getPlayersList(),
+    chatMessage : room.chatMessage
   }));
-  
+
   console.log(`🎮 ${data.nickname} a rejoint room ${room.id}`);
 }
 
@@ -720,17 +690,23 @@ function findAvailableRoom() {
 function handleChatMessage(ws, data) {
   const player = Array.from(players.values()).find(p => p.ws === ws);
   if (!player || !player.roomId) return;
-  
+
   const room = rooms.get(player.roomId);
   if (!room) return;
-  
+
   const chatMessage = {
     player: player.nickname,
     text: data.message,
     timestamp: Date.now(),
     isSystem: false
   };
-  
+  room.chatMessage.push({
+    player: player.nickname,
+    text: data.message,
+    timestamp: Date.now(),
+    isSystem: false
+  })
+
   room.broadcast({
     type: 'chat_message',
     message: chatMessage
@@ -740,10 +716,10 @@ function handleChatMessage(ws, data) {
 function handlePlayerAction(ws, data) {
   const player = Array.from(players.values()).find(p => p.ws === ws);
   if (!player || !player.roomId) return;
-  
+
   const room = rooms.get(player.roomId);
   if (!room || !room.gameStarted) return;
-  
+
   room.handlePlayerAction(player.id, data.action, data.data);
 }
 

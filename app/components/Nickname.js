@@ -1,4 +1,3 @@
-// app/components/Nickname.js
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
 import { push } from "../../framework/route.js";
@@ -13,7 +12,6 @@ export default function NicknameScreen() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (playerName && playerName.trim()) {
-      console.log("🔗 Connexion au serveur avec:", playerName.trim());
       connectToServer(playerName.trim());
     }
   };
@@ -97,7 +95,6 @@ function connectToServer(nickname) {
     const ws = new WebSocket('ws://localhost:8080');
     
     ws.onopen = () => {
-      console.log('✅ Connecté au serveur');
       ws.send(JSON.stringify({
         type: 'join',
         nickname: nickname
@@ -107,37 +104,37 @@ function connectToServer(nickname) {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log('📨 Message serveur:', data.type);
+        console.log(' Message serveur:', data.type);
         handleServerMessage(data);
       } catch (error) {
-        console.error('❌ Erreur parsing message:', error);
+        console.error(' Erreur parsing message:', error);
       }
     };
 
     ws.onclose = () => {
-      console.log('🔌 Déconnecté du serveur');
+      console.log('Déconnecté du serveur');
     };
 
     ws.onerror = (error) => {
-      console.error('❌ Erreur WebSocket:', error);
-      alert('❌ Impossible de se connecter au serveur. Vérifie qu\'il est démarré.');
+      console.error(' Erreur WebSocket:', error);
     };
 
     freamwork.setState({ ws: ws });
   } catch (error) {
-    console.error('❌ Erreur connexion:', error);
-    alert('❌ Impossible de se connecter au serveur');
+    console.error(' Erreur connexion:', error);
   }
 }
 
 function handleServerMessage(data) {  
   switch(data.type) {
     case 'room_assigned':
-      console.log('🎯 Room assignée:', data.roomId);
+      console.log(data.chatMessage);
+      
       freamwork.setState({ 
         roomId: data.roomId,
         myId: data.playerId,
-        players: data.players || {}
+        players: data.players || {},
+        messages : data.chatMessage
       });
       push('lobby');
       break;
@@ -147,7 +144,7 @@ function handleServerMessage(data) {
       break;
       
     case 'game_start':
-      console.log('🎮 Démarrage du jeu!');
+      console.log(data.chatMessage);
       freamwork.setState({ 
         gameStarted: true,
         players: data.players || {},
@@ -155,7 +152,9 @@ function handleServerMessage(data) {
         blocks: new Set(data.blocks || []),
         powerups: data.powerups || {},
         bombs: data.bombs || {},
-        explosions: new Set()
+        explosions: new Set(),
+
+
       });
       push('game');
       startGameLoop();
@@ -236,7 +235,7 @@ function handleServerMessage(data) {
 }
 
 function startGameLoop() {
-  let lastTime = 0;
+  //let lastTime = 0;
   let frameCount = 0;
   let lastFpsUpdate = 0;
 
@@ -252,7 +251,6 @@ function startGameLoop() {
       lastFpsUpdate = timestamp;
     }
 
-    // Input continu
     handleContinuousInput();
   }
 
@@ -260,10 +258,8 @@ function startGameLoop() {
 }
 
 function handleContinuousInput() {
-  const { keys, ws, myId, gameStarted } = freamwork.state;
-  
+  const { keys, ws, myId, gameStarted } = freamwork.state;  
   if (!ws || !myId || !gameStarted) return;
-
   ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].forEach(key => {
     if (keys[key]) {
       ws.send(JSON.stringify({
