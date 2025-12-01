@@ -7,7 +7,6 @@ const CELL_SIZE = 40;
 export default function GameScreen() {
   const { players, blocks, walls, bombs, powerups, explosions, myId, ws, gameStarted, messages, chatInput = "", keys = {} } = freamwork.state;
 
-  // Vérifier le gagnant
   const alivePlayers = Object.values(players).filter(p => p.lives > 0);
   const isGameOver = alivePlayers.length <= 1 && gameStarted;
   const winner = isGameOver ? alivePlayers[0] : null;
@@ -186,11 +185,10 @@ export default function GameScreen() {
       keydown: handleKeyDown,
       keyup: handleKeyUp,
       mount: (el) => {
-        el.focus();                // <-- 🔥 Focus automatiquement
+        el.focus();                
       },
     },
     children: [
-      // Écran de fin de jeu
       isGameOver && createElement({
         tag: "div",
         attrs: { class: "game-over-screen pixel-art" },
@@ -198,31 +196,20 @@ export default function GameScreen() {
           createElement({
             tag: "h1",
             attrs: { class: "pixel-text" },
-            children: [isWinner ? "🎉 VICTOIRE! 🎉" : "💀 FIN DU JEU"]
+            children: [isWinner ? "🎉 win ! 🎉" : "💀 game end "]
           }),
           createElement({
             tag: "p",
             attrs: { class: "pixel-text" },
             children: [winner ?
-              `Félicitations ${winner.nickname}! Tu es le dernier survivant!` :
-              "Tous les joueurs sont éliminés!"
+              `you are the winnner ${winner.nickname}!  ` :
+              ""
+              
             ]
           }),
-          createElement({
-            tag: "button",
-            attrs: {
-              class: "restart-btn pixel-button",
-
-            },
-            events: {
-              click: () => window.location.reload()
-            },
-            children: ["🔄 Rejouer"]
-          })
         ]
       }),
 
-      // Interface de jeu principale
       createElement({
         tag: "div",
         attrs: {
@@ -235,7 +222,6 @@ export default function GameScreen() {
         children: grid
       }),
 
-      // Interface utilisateur avec chat
       createElement({
         tag: "div",
         attrs: { class: "game-ui pixel-ui" },

@@ -133,6 +133,9 @@ export function connectToServer(nickname) {
         gameStarted: false,
         players: data.players || freamwork.state.players
       });
+      setTimeout(()=>{
+          window.location.pathname = "/"
+      },3000)
       break;
       
     default:

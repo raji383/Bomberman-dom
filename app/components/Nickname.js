@@ -1,6 +1,7 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
-import {connectToServer} from "../ws/ws.js"
+import { connectToServer } from "../ws/ws.js";
+
 export default function NicknameScreen() {
   const { playerName } = freamwork.state;
 
@@ -26,7 +27,7 @@ export default function NicknameScreen() {
       createElement({
         tag: "p",
         attrs: { class: "subtitle" },
-        children: ["Rejoins la bataille et sois le dernier survivant!"]
+        children: ["Join the battle and be the last survivor!"]
       }),
       createElement({
         tag: "form",
@@ -37,7 +38,7 @@ export default function NicknameScreen() {
             tag: "input",
             attrs: {
               type: "text",
-              placeholder: "Entre ton pseudo",
+              placeholder: "Enter your nickname",
               maxlength: "15",
               required: true,
               value: playerName || "",
@@ -50,7 +51,7 @@ export default function NicknameScreen() {
           createElement({
             tag: "button",
             attrs: { type: "submit" },
-            children: ["🎮 Rejoindre la partie"]
+            children: ["🎮 Join Game"]
           })
         ]
       }),
@@ -60,26 +61,26 @@ export default function NicknameScreen() {
         children: [
           createElement({
             tag: "h3",
-            children: ["🎯 Comment jouer?"]
+            children: ["🎯 How to Play?"]
           }),
           createElement({
             tag: "ul",
             children: [
               createElement({
                 tag: "li",
-                children: ["👥 2-4 joueurs par partie"]
-              }),
-              createElement({
-                tag: "li", 
-                children: ["💣 Place des bombes avec ESPACE"]
+                children: ["👥 2-4 players per match"]
               }),
               createElement({
                 tag: "li",
-                children: ["🎮 Déplace-toi avec les FLÈCHES"]
+                children: ["💣 Place bombs with SPACE"]
               }),
               createElement({
                 tag: "li",
-                children: ["⚡ Collecte les power-ups pour améliorer tes capacités"]
+                children: ["🎮 Move using the ARROW KEYS"]
+              }),
+              createElement({
+                tag: "li",
+                children: ["⚡ Collect power-ups to boost your abilities"]
               })
             ]
           })
@@ -88,5 +89,3 @@ export default function NicknameScreen() {
     ]
   });
 }
-
-
