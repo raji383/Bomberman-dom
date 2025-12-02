@@ -1,4 +1,5 @@
 // backend/server.js
+import { time } from "console";
 import http from "http";
 import { WebSocketServer } from "ws";
 
@@ -16,12 +17,12 @@ const wsServer = new WebSocketServer({ server, path: "/ws" });
 const players = new Set();
 
 function broadcastPlayers() {
-    const payload = JSON.stringify({ type: 'players', count: players.size, players: Array.from(players) });
+    const payload = JSON.stringify({ type: 'players', count: players.size, players: Array.from(players), time: Time });
     wsServer.clients.forEach((c) => {
         if (c.readyState === c.OPEN) c.send(payload);
     });
 }
-
+let Time = 20;
 wsServer.on("connection", (client) => {
 
     client.on("message", (msg) => {
@@ -32,10 +33,21 @@ wsServer.on("connection", (client) => {
                 client.nickname = nick;
                 players.add(nick);
                 console.log('Player joined:', nick);
+                if (Time == 20) {
+                    const d = setInterval(() => {
+                        Time--;
+                        if (Time == 0) {
+                            Time = 20;
+                            clearInterval(d);
+                        }
+                    }, 1000);
+                }
+                console.log("Time", Time);
+
                 // ack
-                if (client.readyState === client.OPEN) client.send(JSON.stringify({ type: 'joined', nickname: nick }));
-                broadcastPlayers();
-            } 
+                if (client.readyState === client.OPEN) client.send(JSON.stringify({ type: 'joined', nickname: nick, time: Time }));
+                broadcastPlayers(Time);
+            }
         } catch (err) {
             console.log('Non-JSON message:', msg.toString());
         }

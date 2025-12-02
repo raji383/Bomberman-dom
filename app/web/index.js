@@ -8,6 +8,7 @@ import WaitingRoom from "../components/waitingRoom.js";
 // 🚀 framework config
 freamwork.state = {
   playerName: [],
+  timer:0,
 };
 
 freamwork.addRoute("/", Room);

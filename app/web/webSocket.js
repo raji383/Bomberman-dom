@@ -18,6 +18,9 @@ export function connectToServer(name) {
                     try {
                         freamwork.setState({ players: data.count, playersList: data.players, playerName: data.players });
                         freamwork.state.playerName.push(name);
+                        
+                        freamwork.state.timer = data.time;
+                        console.log("dfd",data);
                         render()
                     } catch (e) {
                         console.warn('Failed to set framework state for players', e);

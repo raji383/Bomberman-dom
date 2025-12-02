@@ -1,66 +1,69 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
 export default function WaitingRoom() {
-    // start timers after component mount
 
-    setTimeout(() => {
-        if (window.__waitingTimersStarted) return;
-        window.__waitingTimersStarted = true;
+    // ensure timers object exists
+    window.__waitingTimers = window.__waitingTimers || {};
 
-        let countdown = 10;
-        console.log(freamwork.state);
+    // cleanup old timers (important!)
+    if (window.__waitingTimers.countdown) {
+        clearInterval(window.__waitingTimers.countdown);
+    }
+    if (window.__waitingTimers.tips) {
+        clearInterval(window.__waitingTimers.tips);
+    }
 
-        const countdownTimer = setInterval(() => {
-            const countdownElement = document.getElementById('countdown');
-            const progressFill = document.getElementById('progressFill');
-            if (countdownElement) countdown--;
-            if (countdownElement) countdownElement.textContent = countdown;
+    // start countdown timer
+    let countdown = freamwork.state.timer;
 
-            // update progress bar
-            if (progressFill) {
-                const progress = ((10 - countdown) / 10) * 100;
-                progressFill.style.width = Math.max(0, Math.min(100, progress)) + '%';
+    window.__waitingTimers.countdown = setInterval(() => {
+        const countdownElement = document.getElementById('countdown');
+        const progressFill = document.getElementById('progressFill');
+
+        countdown--;
+        if (countdownElement) countdownElement.textContent = countdown;
+
+        if (progressFill) {
+            const progress = ((10 - countdown) / 10) * 100;
+            progressFill.style.width = Math.max(0, Math.min(100, progress)) + '%';
+        }
+
+        if (countdown <= 0) {
+            clearInterval(window.__waitingTimers.countdown);
+            if (countdownElement) {
+                countdownElement.textContent = 'Start!';
+                countdownElement.style.color = '#4cd137';
             }
+        }
 
-            if (countdown <= 0) {
-                clearInterval(countdownTimer);
-                if (countdownElement) {
-                    countdownElement.textContent = 'Start!';
-                    countdownElement.style.color = '#4cd137';
-                }
-               
-            }
-        }, 1000);
+    }, 1000);
 
-        // player count is managed by the server; UI will update from freamwork.state when broadcasts arrive
 
-        // tips rotation
-        const tips = [
-            'Use bombs to destroy crates and find power-ups!',
-            'Beware of getting trapped by your own bombs!',
-            'Collect speed items to outrun your opponents!',
-            'Increasing bomb power makes explosions larger!',
-            'Use walls as cover from enemy explosions!'
-        ];
+    // tips rotation
+    const tips = [
+        "Use bombs to destroy crates and find power-ups!",
+        "Beware of getting trapped by your own bombs!",
+        "Collect speed items to outrun your opponents!",
+        "Increasing bomb power makes explosions larger!",
+        "Use walls as cover from enemy explosions!"
+    ];
 
-        let tipIndex = 0;
-        setInterval(() => {
-            const tipElement = document.getElementById('tipText');
-            if (!tipElement) return;
-            tipIndex = (tipIndex + 1) % tips.length;
-            tipElement.style.opacity = '0';
-            setTimeout(() => {
-                tipElement.textContent = tips[tipIndex];
-                tipElement.style.opacity = '1';
-            }, 300);
-        }, 5000);
-        const t = document.getElementById('tipText');
-        if (t) t.style.transition = 'opacity 0.3s';
-    }, 0);
+    let tipIndex = 0;
 
-    // compute players and progress from framework state so re-renders show correct values
+    window.__waitingTimers.tips = setInterval(() => {
+        const tipElement = document.getElementById('tipText');
+        if (!tipElement) return;
 
-console.log("dd",freamwork.state);
+        tipIndex = (tipIndex + 1) % tips.length;
+        tipElement.style.opacity = '0';
+
+        setTimeout(() => {
+            tipElement.textContent = tips[tipIndex];
+            tipElement.style.opacity = '1';
+        }, 300);
+
+    }, 5000);
+
 
     return createElement({
         tag: "div",
@@ -120,7 +123,7 @@ console.log("dd",freamwork.state);
                                         attrs: { class: "info-value players-count" },
                                         children: [
                                             { tag: "span", attrs: { id: "currentPlayers" }, children: [freamwork.state.playerName.length || "1"] },
-                                            " / ",
+                                            { tag: "span", attrs: { id: "currentPlayers" }, children: ["/"] },
                                             { tag: "span", attrs: { id: "maxPlayers" }, children: ["4"] }
                                         ]
                                     }
@@ -131,7 +134,7 @@ console.log("dd",freamwork.state);
                                 attrs: { class: "info-card" },
                                 children: [
                                     { tag: "div", attrs: { class: "info-label" }, children: ["⏰ Game starts in"] },
-                                    { tag: "div", attrs: { class: "info-value countdown", id: "countdown" }, children: ["10"] }
+                                    { tag: "div", attrs: { class: "info-value countdown", id: "countdown" }, children: [freamwork.state.timer] }
                                 ]
                             }
                         ]
