@@ -27,7 +27,8 @@ class GameRoom {
     this.countdown = null;
     this.joinTimer = null;
     this.gameLoop = null;
-    this.chatMessage = []
+    this.chatMessage = [];
+    this.Time = null
   }
   addPlayer(player) {
     this.players.set(player.id, player);
@@ -50,7 +51,15 @@ class GameRoom {
     if (this.players.size > 2 && !this.gameStarted) {
       if (this.players.size === 4) {
         this.sendSystemMessage("Room full! Starting in 10 seconds...");
-        this.startCountdown(10);
+        if (this.Time>=10){
+
+          this.startCountdown(10);
+        }else {
+          this.startCountdown(this.Time);
+        }
+      }else{
+        this.sendSystemMessage("Starting in 20 seconds!");
+        this.startCountdown(this.Time || 20);
       }   
     }  else if (this.players.size == 2 && !this.gameStarted){
         this.sendSystemMessage("Starting in 20 seconds!");
@@ -79,20 +88,20 @@ class GameRoom {
     }
   }
   startCountdown(seconds) {
-    let countdown = seconds;
+     this.Time = seconds;
     this.broadcast({
       type: 'countdown',
-      countdown: countdown
+      countdown: this.Time
     });
 
     this.countdown = setInterval(() => {
-      countdown--;
+      this.Time--;
       this.broadcast({
         type: 'countdown',
-        countdown: countdown
+        countdown: this.Time
       });
 
-      if (countdown <= 0) {
+      if (this.Time <= 0) {
         clearInterval(this.countdown);
         this.countdown = null;
         this.startGame();
