@@ -70,7 +70,6 @@ class GameRoom {
   removePlayer(playerId) {
     const player = this.players.get(playerId);
     if (player) {
-      console.log(`${player.nickname} left room ${this.id}`);
       this.sendSystemMessage(`${player.nickname} left the game`);
     }
 
@@ -81,10 +80,26 @@ class GameRoom {
     });
 
     if (this.players.size === 0 || this.players.size === 1) {
-      if (this.joinTimer) clearTimeout(this.joinTimer);
-      if (this.countdown) clearInterval(this.countdown);
-      if (this.gameLoop) clearInterval(this.gameLoop);
-      this.gameStarted = false;
+      if (!this.gameStarted){
+        if (this.countdown) {
+          clearInterval(this.countdown);
+          this.countdown = null;
+          this.sendSystemMessage("Not enough players. Countdown stopped.");
+          this.Time = null;
+          this.broadcast({
+            type: 'countdown',
+            countdown: null
+          });
+        }
+
+      }else{
+
+        if (this.joinTimer) clearTimeout(this.joinTimer);
+        if (this.countdown) clearInterval(this.countdown);
+        if (this.gameLoop) clearInterval(this.gameLoop);
+        this.gameStarted = false;
+       
+      }
     }
   }
   startCountdown(seconds) {
