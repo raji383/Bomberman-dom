@@ -10,7 +10,7 @@ freamwork.state = {
   roomId: null,
   myId: null,
   ws: null,
-  players: {},
+  players: [],
   messages: [],
   countdown: null,
   gameStarted: false,

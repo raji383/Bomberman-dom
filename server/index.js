@@ -92,6 +92,18 @@ class GameRoom {
       }
     }
   }
+  startGame() {
+    const playerList = Array.from(this.players.values());
+    this.broadcast({
+      type: 'game_start',
+      message: 'The game has started!',
+      players: playerList
+
+    });
+    console.log(playerList);
+    this.gameStarted = true;
+  }
+
   startCountdown(seconds) {
      this.Time = seconds;
     this.broadcast({
@@ -126,7 +138,7 @@ class GameRoom {
     }));
   }
 
- 
+
 
   sendSystemMessage(text) {
     this.broadcast({
@@ -168,7 +180,15 @@ const server = createServer(async (req, res) => {
       return;
     }
 
-    const fullPath = join(ROOT, safePath || 'app/index.html');
+    // map some special folders into the `app` directory
+    let fullPath;
+    if (safePath.startsWith('tools/')) {
+      // serve /tools/* from app/tools
+      const rel = safePath.replace(/^tools\//, '');
+      fullPath = join(ROOT, 'app', 'tools', rel);
+    } else {
+      fullPath = join(ROOT, safePath || 'app/index.html');
+    }
 
     try {
       const fileContent = await readFile(fullPath);
@@ -269,7 +289,7 @@ function handleJoin(ws, data) {
     roomId: room.id,
     playerId: playerId,
     players: room.getPlayersList(),
-    chatMessage : room.chatMessage
+    chatMessage: room.chatMessage
   }));
 
   console.log(`${data.nickname} joined room ${room.id}`);
