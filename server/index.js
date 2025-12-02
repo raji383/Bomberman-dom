@@ -51,11 +51,8 @@ class GameRoom {
       if (this.players.size === 4) {
         this.sendSystemMessage("Room full! Starting in 10 seconds...");
         this.startCountdown(10);
-      } else {
-            this.sendSystemMessage("Starting in 10 seconds!");
-            this.startCountdown(10);
-      }
-    }else if (this.players.size == 2 && !this.gameStarted){
+      }   
+    }  else if (this.players.size == 2 && !this.gameStarted){
         this.sendSystemMessage("Starting in 20 seconds!");
          this.startCountdown(20);
     }
@@ -74,17 +71,15 @@ class GameRoom {
       players: this.getPlayersList()
     });
 
-    if (this.players.size === 0) {
+    if (this.players.size === 0 || this.players.size === 1) {
       if (this.joinTimer) clearTimeout(this.joinTimer);
       if (this.countdown) clearInterval(this.countdown);
       if (this.gameLoop) clearInterval(this.gameLoop);
       this.gameStarted = false;
     }
   }
-
   startCountdown(seconds) {
     let countdown = seconds;
-
     this.broadcast({
       type: 'countdown',
       countdown: countdown

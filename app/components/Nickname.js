@@ -8,7 +8,6 @@ export default function NicknameScreen() {
   const handleInput = (e) => {
     freamwork.setState({ playerName: e.target.value });
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (playerName && playerName.trim()) {

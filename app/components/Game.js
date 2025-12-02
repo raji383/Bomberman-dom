@@ -7,5 +7,4 @@ import { push } from "../../framework/route.js";
 export default function GameScreen() {
 
 
-
 }
