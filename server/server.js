@@ -22,7 +22,7 @@ function broadcastPlayers(Time) {
     });
 }
 function broadcastmap() {
-    const payload = JSON.stringify({ type: 'map', comp: { tag: "div", Children: [{ tag: "h1", Children: ["Map"] }] } });
+    const payload = JSON.stringify({ type: 'map', comp: { tag: "div", children: [{ tag: "h1", children: ["Map"] }] } });
     wsServer.clients.forEach((c) => {
         if (c.readyState === c.OPEN) c.send(payload);
     });
@@ -43,7 +43,7 @@ wsServer.on("connection", (client) => {
                         Time--;
                         if (Time == 0 || players.size == 4 || players.size == 0) {
                             Time = 20;
-                            if (players.size != 0) {
+                            if (players.size > 1) {
                                 broadcastmap();
                             }
                             clearInterval(d);
@@ -65,7 +65,7 @@ wsServer.on("connection", (client) => {
         if (client.nickname) {
             players.delete(client.nickname);
             console.log('Player left:', client.nickname);
-            broadcastPlayers();
+            broadcastPlayers(Time);
         }
     });
 });
