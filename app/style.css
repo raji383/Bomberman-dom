@@ -94,7 +94,7 @@ body {
     padding: 3rem;
     background: rgba(44, 62, 80, 0.95);
     border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     border: 4px solid #3498db;
     max-width: 500px;
     width: 100%;
@@ -105,7 +105,7 @@ body {
     margin-bottom: 1rem;
     color: #3498db;
     font-size: 1.8rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .subtitle {
@@ -191,7 +191,7 @@ body {
     grid-template-rows: auto 1fr;
     gap: 2rem;
     border: 4px solid #3498db;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     font-family: 'Press Start 2P', cursive;
 }
 
@@ -443,8 +443,15 @@ body {
 }
 
 @keyframes bomb-pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 .bomb-timer {
@@ -471,8 +478,15 @@ body {
 }
 
 @keyframes explosion-pulse {
-    from { opacity: 0.7; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1.1); }
+    from {
+        opacity: 0.7;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.1);
+    }
 }
 
 /* Power-ups */
@@ -506,8 +520,15 @@ body {
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
 }
 
 /* Joueurs */
@@ -524,8 +545,15 @@ body {
 }
 
 @keyframes player-float {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-3px) scale(1.05); }
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-3px) scale(1.05);
+    }
 }
 
 /* Couleurs des joueurs */
@@ -554,8 +582,13 @@ body {
 }
 
 @keyframes player-glow {
-    from { box-shadow: 0 0 5px currentColor; }
-    to { box-shadow: 0 0 15px currentColor, 0 0 20px currentColor; }
+    from {
+        box-shadow: 0 0 5px currentColor;
+    }
+
+    to {
+        box-shadow: 0 0 15px currentColor, 0 0 20px currentColor;
+    }
 }
 
 /* === INTERFACE UTILISATEUR === */
@@ -623,10 +656,25 @@ body {
     border: 2px solid;
 }
 
-.player-avatar.player-1 { background: #3498db; border-color: #2980b9; }
-.player-avatar.player-2 { background: #e74c3c; border-color: #c0392b; }
-.player-avatar.player-3 { background: #2ecc71; border-color: #27ae60; }
-.player-avatar.player-4 { background: #f39c12; border-color: #d35400; }
+.player-avatar.player-1 {
+    background: #3498db;
+    border-color: #2980b9;
+}
+
+.player-avatar.player-2 {
+    background: #e74c3c;
+    border-color: #c0392b;
+}
+
+.player-avatar.player-3 {
+    background: #2ecc71;
+    border-color: #27ae60;
+}
+
+.player-avatar.player-4 {
+    background: #f39c12;
+    border-color: #d35400;
+}
 
 .player-name {
     font-weight: bold;
@@ -648,6 +696,8 @@ body {
     gap: 0.3rem;
     flex-wrap: wrap;
 }
+
+
 
 .powerup-badge {
     background: rgba(155, 89, 182, 0.3);
@@ -755,136 +805,148 @@ body {
     text-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
     animation: victory-pulse 1s ease-in-out infinite;
 }
+
 /* Styles améliorés pour le chat */
 .chat-section {
-  background: rgba(52, 73, 94, 0.6);
-  padding: 1.5rem;
-  border-radius: 10px;
-  border: 2px solid #34495e;
-  display: flex;
-  flex-direction: column;
-  height: 400px; /* Hauteur fixe pour le conteneur */
+    background: rgba(52, 73, 94, 0.6);
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 2px solid #34495e;
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    /* Hauteur fixe pour le conteneur */
 }
 
 .chat-messages {
-  flex: 1;
-  background: rgba(44, 62, 80, 0.8);
-  padding: 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-  overflow-y: auto;
-  border: 2px solid #34495e;
-  font-size: 0.7rem;
-  min-height: 200px;
-  max-height: 300px;
-  scroll-behavior: smooth; /* Animation fluide pour le scroll */
+    flex: 1;
+    background: rgba(44, 62, 80, 0.8);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow-y: auto;
+    border: 2px solid #34495e;
+    font-size: 0.7rem;
+    min-height: 200px;
+    max-height: 300px;
+    scroll-behavior: smooth;
+    /* Animation fluide pour le scroll */
 }
 
 .message {
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 5px;
-  border-left: 3px solid transparent;
-  animation: message-appear 0.3s ease-out;
-  word-wrap: break-word;
-  line-height: 1.4;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border-left: 3px solid transparent;
+    animation: message-appear 0.3s ease-out;
+    word-wrap: break-word;
+    line-height: 1.4;
 }
 
 @keyframes message-appear {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .message.system {
-  background: rgba(243, 156, 18, 0.2);
-  color: #f39c12;
-  font-style: italic;
-  border-left-color: #f39c12;
+    background: rgba(243, 156, 18, 0.2);
+    color: #f39c12;
+    font-style: italic;
+    border-left-color: #f39c12;
 }
 
 .message.own {
-  background: rgba(52, 152, 219, 0.2);
-  border-left-color: #3498db;
+    background: rgba(52, 152, 219, 0.2);
+    border-left-color: #3498db;
 }
 
 .message:not(.system):not(.own) {
-  background: rgba(149, 165, 166, 0.2);
-  border-left-color: #95a5a6;
+    background: rgba(149, 165, 166, 0.2);
+    border-left-color: #95a5a6;
 }
 
 /* Scrollbar personnalisée */
 .chat-messages::-webkit-scrollbar {
-  width: 8px;
+    width: 8px;
 }
 
 .chat-messages::-webkit-scrollbar-track {
-  background: rgba(52, 73, 94, 0.5);
-  border-radius: 4px;
+    background: rgba(52, 73, 94, 0.5);
+    border-radius: 4px;
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
-  background: #3498db;
-  border-radius: 4px;
+    background: #3498db;
+    border-radius: 4px;
 }
 
 .chat-messages::-webkit-scrollbar-thumb:hover {
-  background: #2980b9;
+    background: #2980b9;
 }
 
 .chat-form {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: auto; /* Pousser le formulaire vers le bas */
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+    /* Pousser le formulaire vers le bas */
 }
 
 .chat-form input {
-  flex: 1;
-  padding: 0.8rem;
-  border: 2px solid #34495e;
-  border-radius: 8px;
-  background: #2c3e50;
-  color: white;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.7rem;
+    flex: 1;
+    padding: 0.8rem;
+    border: 2px solid #34495e;
+    border-radius: 8px;
+    background: #2c3e50;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
 }
 
 .chat-form button {
-  padding: 0.8rem 1.5rem;
-  background: #3498db;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s;
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.7rem;
-  white-space: nowrap;
+    padding: 0.8rem 1.5rem;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    white-space: nowrap;
 }
 
 .chat-form button:hover {
-  background: #2980b9;
+    background: #2980b9;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .chat-section {
-    height: 300px;
-  }
-  
-  .chat-messages {
-    max-height: 200px;
-  }
+    .chat-section {
+        height: 300px;
+    }
+
+    .chat-messages {
+        max-height: 200px;
+    }
 }
 
 @keyframes victory-pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
 }
 
 .game-over-screen p {
@@ -914,8 +976,15 @@ body {
 
 /* === ANIMATIONS === */
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
 }
 
 /* === RESPONSIVE === */
@@ -923,36 +992,36 @@ body {
     .game-ui {
         grid-template-columns: 1fr;
     }
-    
+
     .game-container {
         transform: scale(0.8);
         transform-origin: top center;
     }
-    
+
     .lobby-screen {
         padding: 1rem;
     }
-    
+
     .players-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .nickname-screen h1 {
         font-size: 1.3rem;
     }
-    
+
     .game-over-screen h1 {
         font-size: 1.5rem;
     }
-    
+
     .right-panel {
         order: -1;
     }
-    
+
     .chat-section {
         max-height: 200px;
     }
-    
+
     .chat-messages {
         max-height: 120px;
         font-size: 0.5rem;
@@ -963,11 +1032,11 @@ body {
     .game-container {
         transform: scale(0.6);
     }
-    
+
     .nickname-screen {
         padding: 1.5rem;
     }
-    
+
     .lobby-screen {
         padding: 0.5rem;
     }

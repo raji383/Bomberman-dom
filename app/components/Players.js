@@ -1,6 +1,6 @@
-;import { createElement } from "../../framework/createjsx.js";
+; import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
- class Players {
+class Players {
     constructor(playerList) {
         this.players = playerList;
         this.list = this.createPlayers();
@@ -36,27 +36,26 @@ class Player {
         this.img = '/tools/player.png';
     }
 
-
-
-
     draw(deltaTime) {
-        
+
         return createElement({
             tag: "div",
             attrs: {
-                id: "p",
+                class: "p",
                 style: `
           position: absolute;
-          left: ${this.x}px;
-          top: ${this.y}px;
+          left: ${this.x}vw;
+          top: ${this.y}vh;
           width: 80px;
           height: 80px;
           background-size: cover;
-          background-image: url('${this.img}');
+          background: url('${this.img}');
           background-repeat: no-repeat;
           image-rendering: pixelated;
           background-position: 80px 0;
           z-index: 10;
+            background: red;
+
         `
             },
             children: []
@@ -65,6 +64,6 @@ class Player {
     }
 }
 export function NEW() {
-    return  new Players(freamwork.state.players);
+    return new Players(freamwork.state.players);
 
 }

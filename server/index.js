@@ -46,17 +46,17 @@ class GameRoom {
         this.sendSystemMessage("Room full! Starting in 10 seconds...");
         if (this.Time>=10){
 
-          this.startCountdown(10);
+          this.startCountdown(3);
         }else {
           this.startCountdown(this.Time);
         }
       }else{
         this.sendSystemMessage("Starting in 20 seconds!");
-        this.startCountdown(this.Time || 20);
+        this.startCountdown(this.Time || 3);
       }   
     }  else if (this.players.size == 2 && !this.gameStarted){
         this.sendSystemMessage("Starting in 20 seconds!");
-         this.startCountdown(20);
+         this.startCountdown(3);
     }
   }
 
