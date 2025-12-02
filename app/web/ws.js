@@ -3,7 +3,7 @@ import { push } from "../../framework/route.js";
 export function connectToServer(nickname) {
   try {
     const ws = new WebSocket('ws://localhost:8080');
-    
+
     ws.onopen = () => {
       ws.send(JSON.stringify({
         type: 'join',
@@ -35,36 +35,37 @@ export function connectToServer(nickname) {
   }
 }
 
- function handleServerMessage(data) {  
-  switch(data.type) {
+function handleServerMessage(data) {
+  switch (data.type) {
     case 'room_assigned':
-      console.log(data.chatMessage);     
-      freamwork.setState({ 
+      console.log(data.chatMessage);
+      freamwork.setState({
         roomId: data.roomId,
         myId: data.playerId,
         players: data.players || {},
-        messages : data.chatMessage
+        messages: data.chatMessage
       });
       push('lobby');
-      break; 
+      break;
     case 'game_start':
-      freamwork.setState({ 
+      freamwork.setState({
         gameStarted: true,
         players: data.players || {},
       });
+      freamwork.state.players = data.players
       push('game');
       startGameLoop();
       break;
-      
+
     case 'countdown':
       freamwork.setState({ countdown: data.countdown });
       break;
-      
+
     case 'chat_message':
       const messages = [...freamwork.state.messages, data.message];
       freamwork.setState({ messages: messages });
-      break; 
-      default:
+      break;
+    default:
       console.log(' Message inconnu:', data.type);
   }
 }
