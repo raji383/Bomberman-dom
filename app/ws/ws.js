@@ -58,6 +58,9 @@ export function connectToServer(nickname) {
     case 'countdown':
       freamwork.setState({ countdown: data.countdown });
       break;
+       case 'players_update':
+      freamwork.setState({ players: data.players || {} });
+      break;
       
     case 'chat_message':
       const messages = [...freamwork.state.messages, data.message];
