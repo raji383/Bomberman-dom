@@ -1,8 +1,9 @@
 import { freamwork } from "../../framework/index.js";
+import { render } from "../../framework/render.js";
 
 export function connectToServer(name) {
     try {
-        const ws = new WebSocket('ws://localhost:3000');
+        const ws = new WebSocket('ws://localhost:8080/ws');
 
         ws.onopen = () => {
             console.log('Connected to server', name);
@@ -13,32 +14,18 @@ export function connectToServer(name) {
             try {
                 const data = JSON.parse(event.data);
                 console.log('Server message:', data.type, data);
-
-                // handle players update broadcast from server
                 if (data.type === 'players') {
-                    // update framework state (players count and list)
                     try {
                         freamwork.setState({ players: data.count, playersList: data.players, playerName: data.players });
+                        freamwork.state.playerName.push(name);
+                        render()
                     } catch (e) {
                         console.warn('Failed to set framework state for players', e);
                     }
 
-                    // update DOM if present
-                    const el = document.getElementById('currentPlayers');
-                    const progress = document.getElementById('progressFill');
-                    if (el) el.textContent = String(data.count);
-                    if (progress && typeof data.count === 'number') {
-                        progress.style.width = (data.count / (data.max || 4)) * 100 + '%';
-                    }
-                    return;
                 }
-
-                if (data.type === 'joined') {
-                    console.log('You joined as', data.nickname);
-                    return;
-                }
-            } catch (error) {
-                console.error(' Erreur parsing message:', error);
+            } catch (err) {
+                console.warn('Failed to parse WS message', err);
             }
         };
 

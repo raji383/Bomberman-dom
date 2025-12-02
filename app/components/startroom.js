@@ -1,4 +1,5 @@
 import { createElement } from "../../framework/createjsx.js";
+import { router } from "../../framework/route.js";
 import { connectToServer } from "../web/webSocket.js";
 
 export default function Room() {
@@ -16,7 +17,7 @@ export default function Room() {
             {
                 tag: "div",
                 attrs: { class: "subtitle" },
-                children:["Get ready for the adventure!"]
+                children: ["Get ready for the adventure!"]
             },
             {
                 tag: "div",
@@ -56,7 +57,9 @@ export default function Room() {
                             keydown: (e) => {
                                 if (e.key === "Enter") {
                                     connectToServer(e.target.value);
-                                    window.location.assign("http://localhost:3000/waiting");
+                                    history.pushState({}, "", "/waiting");
+                                    router();
+
                                 }
                             }
                         }

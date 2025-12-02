@@ -46,7 +46,6 @@ export const push = (path) => {
 }
 
 export function initRouter() {
-    console.log('l', freamwork.routes[window.location.pathname])
 
     const component = freamwork.routes[window.location.pathname] || notfound;
     if (component) {

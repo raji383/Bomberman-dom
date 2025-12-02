@@ -1,5 +1,4 @@
 import { createElement } from "../../framework/createjsx.js";
-import { connectToServer } from "../web/webSocket.js";
 import { freamwork } from "../../framework/index.js";
 export default function WaitingRoom() {
     // start timers after component mount
@@ -29,11 +28,7 @@ export default function WaitingRoom() {
                     countdownElement.textContent = 'Start!';
                     countdownElement.style.color = '#4cd137';
                 }
-                setTimeout(() => {
-                    alert('🎮 The game is starting now!');
-                            console.log(freamwork.state);
-
-                }, 500);
+               
             }
         }, 1000);
 
@@ -64,11 +59,8 @@ export default function WaitingRoom() {
     }, 0);
 
     // compute players and progress from framework state so re-renders show correct values
-    const playersCount = typeof freamwork.state.players === 'number'
-        ? freamwork.state.players
-        : (Array.isArray(freamwork.state.playerName) ? freamwork.state.playerName.length : 0);
-    const maxPlayers = freamwork.state.maxPlayers || 4;
-    const progressWidth = `${Math.max(0, Math.min(100, (playersCount / maxPlayers) * 100))}%`;
+
+console.log("dd",freamwork.state);
 
     return createElement({
         tag: "div",
@@ -127,7 +119,7 @@ export default function WaitingRoom() {
                                         tag: "div",
                                         attrs: { class: "info-value players-count" },
                                         children: [
-                                            { tag: "span", attrs: { id: "currentPlayers" }, children: [String(playersCount)] },
+                                            { tag: "span", attrs: { id: "currentPlayers" }, children: [freamwork.state.playerName.length || "1"] },
                                             " / ",
                                             { tag: "span", attrs: { id: "maxPlayers" }, children: ["4"] }
                                         ]
@@ -153,9 +145,9 @@ export default function WaitingRoom() {
                     {
                         tag: "div",
                         attrs: { class: "progress-bar" },
-                            children: [
-                                { tag: "div", attrs: { class: "progress-fill", id: "progressFill", style: `width: ${progressWidth}` }, children: [] }
-                            ]
+                        children: [
+                            { tag: "div", attrs: { class: "progress-fill", id: "progressFill" }, children: [] }
+                        ]
                     },
                     {
                         tag: "div",
