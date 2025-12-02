@@ -1,5 +1,4 @@
 // backend/server.js
-import { time } from "console";
 import http from "http";
 import { WebSocketServer } from "ws";
 
@@ -16,8 +15,14 @@ const wsServer = new WebSocketServer({ server, path: "/ws" });
 // track connected players by nickname
 const players = new Set();
 
-function broadcastPlayers() {
+function broadcastPlayers(Time) {
     const payload = JSON.stringify({ type: 'players', count: players.size, players: Array.from(players), time: Time });
+    wsServer.clients.forEach((c) => {
+        if (c.readyState === c.OPEN) c.send(payload);
+    });
+}
+function broadcastmap() {
+    const payload = JSON.stringify({ type: 'map', comp: { tag: "div", Children: [{ tag: "h1", Children: ["Map"] }] } });
     wsServer.clients.forEach((c) => {
         if (c.readyState === c.OPEN) c.send(payload);
     });
@@ -36,8 +41,11 @@ wsServer.on("connection", (client) => {
                 if (Time == 20) {
                     const d = setInterval(() => {
                         Time--;
-                        if (Time == 0) {
+                        if (Time == 0 || players.size == 4 || players.size == 0) {
                             Time = 20;
+                            if (players.size != 0) {
+                                broadcastmap();
+                            }
                             clearInterval(d);
                         }
                     }, 1000);

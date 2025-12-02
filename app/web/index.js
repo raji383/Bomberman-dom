@@ -9,11 +9,12 @@ import WaitingRoom from "../components/waitingRoom.js";
 freamwork.state = {
   playerName: [],
   timer:0,
+  mapcomp: null
 };
 
 freamwork.addRoute("/", Room);
 freamwork.addRoute("/waiting", WaitingRoom);
-freamwork.addRoute("#/StartGame", Game);
+freamwork.addRoute("/StartGame", Game);
 initRouter();
 
 

@@ -57,7 +57,6 @@ export default function Room() {
                             keydown: (e) => {
                                 if (e.key === "Enter") {
                                     connectToServer(e.target.value);
-                                    history.pushState({}, "", "/waiting");
                                     router();
 
                                 }

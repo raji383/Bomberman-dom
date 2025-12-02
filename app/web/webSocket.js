@@ -1,5 +1,6 @@
 import { freamwork } from "../../framework/index.js";
 import { render } from "../../framework/render.js";
+import { router } from "../../framework/route.js";
 
 export function connectToServer(name) {
     try {
@@ -18,14 +19,25 @@ export function connectToServer(name) {
                     try {
                         freamwork.setState({ players: data.count, playersList: data.players, playerName: data.players });
                         freamwork.state.playerName.push(name);
-                        
                         freamwork.state.timer = data.time;
-                        console.log("dfd",data);
+                        if (data.count < 4) {
+                            history.pushState({}, "", "/waiting");
+                            router();
+                        }
                         render()
                     } catch (e) {
                         console.warn('Failed to set framework state for players', e);
                     }
 
+                } else if (data.type === 'map') {
+                    try {
+                        freamwork.state.mapcomp = data.comp;
+                        history.pushState({}, "", "/StartGame");
+                        router();
+                        render()
+                    } catch (e) {
+                        console.warn('Failed to set framework state for map', e);
+                    }
                 }
             } catch (err) {
                 console.warn('Failed to parse WS message', err);
