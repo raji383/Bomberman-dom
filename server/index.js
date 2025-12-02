@@ -84,13 +84,11 @@ class GameRoom {
             countdown: null
           });
         }
-
       }else{
 
         if (this.joinTimer) clearTimeout(this.joinTimer);
         if (this.countdown) clearInterval(this.countdown);
-        this.gameStarted = false;
-       
+        this.gameStarted = false;      
       }
     }
   }

@@ -54,8 +54,7 @@ export function connectToServer(nickname) {
       });
       push('game');
       startGameLoop();
-      break;
-      
+      break; 
     case 'countdown':
       freamwork.setState({ countdown: data.countdown });
       break;
