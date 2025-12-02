@@ -1,6 +1,6 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
-import { connectToServer } from "../ws/ws.js";
+import { connectToServer } from "../web/ws.js";
 
 export default function NicknameScreen() {
   const { playerName } = freamwork.state;
