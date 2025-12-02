@@ -1,4 +1,4 @@
-import { createElement } from "../../framework/createjsx.js";
+;import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
  class Players {
     constructor(playerList) {
@@ -40,7 +40,6 @@ class Player {
 
 
     draw(deltaTime) {
-        console.log("da");
         
         return createElement({
             tag: "div",

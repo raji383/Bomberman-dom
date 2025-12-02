@@ -7,7 +7,7 @@ import { NEW } from "./Players.js";
 
 export default function GameScreen() {
     const player = NEW()
-    console.log(player.list);
+    console.log(player.list[0].draw());
     
 
 
