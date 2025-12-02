@@ -25,8 +25,6 @@ class GameRoom {
     this.players = new Map();
     this.gameStarted = false;
     this.countdown = null;
-    this.joinTimer = null;
-    this.gameLoop = null;
     this.chatMessage = [];
     this.Time = null
   }
@@ -38,11 +36,6 @@ class GameRoom {
       type: 'players_update',
       players: this.getPlayersList()
     });
-
-    if (this.joinTimer) {
-      clearTimeout(this.joinTimer);
-      this.joinTimer = null;
-    }
     if (this.countdown) {
       clearInterval(this.countdown);
       this.countdown = null;
@@ -96,7 +89,6 @@ class GameRoom {
 
         if (this.joinTimer) clearTimeout(this.joinTimer);
         if (this.countdown) clearInterval(this.countdown);
-        if (this.gameLoop) clearInterval(this.gameLoop);
         this.gameStarted = false;
        
       }
