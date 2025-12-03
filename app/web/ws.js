@@ -70,10 +70,10 @@ function handleServerMessage(data) {
     case 'move':
       for (let index = 0; index < freamwork.state.player.list.length; index++) {
         const element = freamwork.state.player.list[index];
-        
+
         if (element.id == data.id) {
           console.log(element.id, data.id);
-          
+
           element.update(data.message, true)
         }
       }
@@ -89,7 +89,11 @@ function startGameLoop() {
 
   function gameLoop(timestamp) {
     requestAnimationFrame(gameLoop);
+    for (let index = 0; index < freamwork.state.player.list.length; index++) {
+      const element = freamwork.state.player.list[index];
+      element.update()
 
+    }
     frameCount++;
     if (timestamp >= lastFpsUpdate + 1000) {
       frameCount = 0;
