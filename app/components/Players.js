@@ -20,7 +20,7 @@ export class Players {
 
             let [x, y] = positions[i] || [1, 1];
 
-            return new Player(this, x, y, name, element.id);
+            return new Player(i, x, y, name, element.id);
         });
     }
 }
@@ -29,20 +29,19 @@ export class Players {
 
 
 class Player {
-    constructor(PlayerList, x, y, name, id) {
+    constructor(i, x, y, name, id) {
         this.name = name;
         this.x = x;
         this.y = y;
-        this.playerList = PlayerList;
-        this.img = '/tools/player.png';
+        this.img = `/tools/player${i+1}.png`;
         this.id = id;
         this.inagif = 'down';
         this.frameIndex = 0;
         this.frameCount = 0;
         this.element = null;
 
-        this.frameW = 144;
-        this.frameH = 144;
+        this.frameW = 37;
+        this.frameH = 50;
 
         this.xOffset = 0;
         this.yOffset = 0;
