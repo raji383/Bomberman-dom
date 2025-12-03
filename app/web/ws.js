@@ -14,7 +14,6 @@ export function connectToServer(nickname) {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        console.log(' Message serveur:', data.type);
         handleServerMessage(data);
       } catch (error) {
         console.error(' Erreur parsing message:', error);
@@ -36,6 +35,7 @@ export function connectToServer(nickname) {
 }
 
 function handleServerMessage(data) {
+
   switch (data.type) {
     case 'room_assigned':
       console.log(data.chatMessage);
@@ -55,18 +55,29 @@ function handleServerMessage(data) {
       freamwork.state.players = data.players
       push('game');
       startGameLoop();
-      break; 
+      break;
     case 'countdown':
       freamwork.setState({ countdown: data.countdown });
       break;
-       case 'players_update':
+    case 'players_update':
       freamwork.setState({ players: data.players || {} });
       break;
-      
+
     case 'chat_message':
       const messages = [...freamwork.state.messages, data.message];
       freamwork.setState({ messages: messages });
       break;
+    case 'move':
+      for (let index = 0; index < freamwork.state.player.list.length; index++) {
+        const element = freamwork.state.player.list[index];
+        
+        if (element.id == data.id) {
+          console.log(element.id, data.id);
+          
+          element.update(data.message, true)
+        }
+      }
+      break
     default:
       console.log(' Message inconnu:', data.type);
   }

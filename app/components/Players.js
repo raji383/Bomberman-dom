@@ -1,7 +1,7 @@
-; import { createElement } from "../../framework/createjsx.js";
+import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
 import { router } from "../../framework/route.js";
-class Players {
+export class Players {
     constructor(playerList) {
         this.players = playerList;
         this.list = this.createPlayers();
@@ -20,7 +20,7 @@ class Players {
 
             let [x, y] = positions[i] || [1, 1];
 
-            return new Player(this, x, y, name);
+            return new Player(this, x, y, name, element.id);
         });
     }
 }
@@ -29,21 +29,30 @@ class Players {
 
 
 class Player {
-    constructor(PlayerList, x, y, name) {
+    constructor(PlayerList, x, y, name, id) {
         this.name = name;
         this.x = x;
         this.y = y;
         this.playerList = PlayerList;
         this.img = '/tools/player.png';
+        this.id = id
     }
-    update(e) {
-        console.log(12);
+    update(e, b = false) {
+        if (!b) {
+            console.log(freamwork.state);
 
+        }
         if (e.key === "ArrowLeft") {
             this.x--
             router()
         } else if (e.key === "ArrowRight") {
             this.x++
+            router()
+        } else if (e.key === "ArrowUp") {
+            this.y--
+            router()
+        } else if (e.key === "ArrowDown") {
+            this.y++
             router()
         }
     }
@@ -53,11 +62,16 @@ class Player {
             tag: "div",
             events: {
                 keydown: (e) => {
-                    console.log(12);
-                    
-                    this.update(e)
+
+                    freamwork.state.ws.send(JSON.stringify({
+                        type: 'playermove',
+                        message: { key: e.key },
+                        playerId: freamwork.state.myId
+                    }));
+
                 }
-            },
+            }
+            ,
             attrs: {
                 class: "p",
                 style: `
@@ -80,7 +94,4 @@ class Player {
 
     }
 }
-export function NEW() {
-    return new Players(freamwork.state.players);
 
-}

@@ -44,19 +44,19 @@ class GameRoom {
     if (this.players.size > 2 && !this.gameStarted) {
       if (this.players.size === 4) {
         this.sendSystemMessage("Room full! Starting in 10 seconds...");
-        if (this.Time>=10){
+        if (this.Time >= 10) {
 
           this.startCountdown(3);
-        }else {
+        } else {
           this.startCountdown(this.Time);
         }
-      }else{
+      } else {
         this.sendSystemMessage("Starting in 20 seconds!");
         this.startCountdown(this.Time || 3);
-      }   
-    }  else if (this.players.size == 2 && !this.gameStarted){
-        this.sendSystemMessage("Starting in 20 seconds!");
-         this.startCountdown(3);
+      }
+    } else if (this.players.size == 2 && !this.gameStarted) {
+      this.sendSystemMessage("Starting in 20 seconds!");
+      this.startCountdown(3);
     }
   }
 
@@ -73,7 +73,7 @@ class GameRoom {
     });
 
     if (this.players.size === 0 || this.players.size === 1) {
-      if (!this.gameStarted){
+      if (!this.gameStarted) {
         if (this.countdown) {
           clearInterval(this.countdown);
           this.countdown = null;
@@ -84,11 +84,11 @@ class GameRoom {
             countdown: null
           });
         }
-      }else{
+      } else {
 
         if (this.joinTimer) clearTimeout(this.joinTimer);
         if (this.countdown) clearInterval(this.countdown);
-        this.gameStarted = false;      
+        this.gameStarted = false;
       }
     }
   }
@@ -100,12 +100,11 @@ class GameRoom {
       players: playerList
 
     });
-    console.log(playerList);
     this.gameStarted = true;
   }
 
   startCountdown(seconds) {
-     this.Time = seconds;
+    this.Time = seconds;
     this.broadcast({
       type: 'countdown',
       countdown: this.Time
@@ -246,7 +245,18 @@ wss.on('connection', (ws) => {
     console.error('WebSocket error:', error);
   });
 });
+function handlePlayerMove(ws, data) {
+  const player = Array.from(players.values()).find(p => p.ws === ws);
+  if (!player || !player.roomId) return;
 
+  const room = rooms.get(player.roomId);
+  if (!room) return;
+  room.broadcast({
+    type: 'move',
+    message: data.message,
+    id: data.playerId
+  });
+}
 function handleMessage(ws, data) {
   switch (data.type) {
     case 'join':
@@ -255,6 +265,9 @@ function handleMessage(ws, data) {
     case 'chat_message':
       handleChatMessage(ws, data);
       break;
+    case 'playermove':
+      handlePlayerMove(ws, data)
+      break
     default:
       console.log('Unknown message type:', data.type);
   }

@@ -5,7 +5,7 @@ import LobbyScreen from "./components/Lobby.js";
 import GameScreen from "./components/Game.js";
 
 freamwork.state = {
-  playerName: "",
+  player: null,
   chatInput: "",
   roomId: null,
   myId: null,
