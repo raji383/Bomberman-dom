@@ -1,5 +1,6 @@
 ; import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
+import { router } from "../../framework/route.js";
 class Players {
     constructor(playerList) {
         this.players = playerList;
@@ -35,11 +36,28 @@ class Player {
         this.playerList = PlayerList;
         this.img = '/tools/player.png';
     }
+    update(e) {
+        console.log(12);
 
+        if (e.key === "ArrowLeft") {
+            this.x--
+            router()
+        } else if (e.key === "ArrowRight") {
+            this.x++
+            router()
+        }
+    }
     draw(deltaTime) {
 
         return createElement({
             tag: "div",
+            events: {
+                keydown: (e) => {
+                    console.log(12);
+                    
+                    this.update(e)
+                }
+            },
             attrs: {
                 class: "p",
                 style: `
@@ -49,13 +67,12 @@ class Player {
           width: 80px;
           height: 80px;
           background-size: cover;
-          background: url('${this.img}');
+          background-image: url('${this.img}');
           background-repeat: no-repeat;
           image-rendering: pixelated;
           background-position: 80px 0;
           z-index: 10;
-            background: red;
-
+          background:red;
         `
             },
             children: []
