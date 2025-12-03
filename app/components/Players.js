@@ -56,7 +56,7 @@ class Player {
             router()
         }
     }
-    draw(deltaTime) {
+    draw() {
 
         return createElement({
             tag: "div",
@@ -76,17 +76,16 @@ class Player {
                 class: "p",
                 style: `
           position: absolute;
-          left: ${this.x}vw;
-          top: ${this.y}vh;
-          width: 80px;
-          height: 80px;
-          background-size: cover;
+          left: ${this.x}%;
+          top: ${this.y}%;
+          width: 50px;
+          height: 60px;
+          background-size: 334%;
           background-image: url('${this.img}');
           background-repeat: no-repeat;
           image-rendering: pixelated;
-          background-position: 80px 0;
+          background-position: -2% 0;
           z-index: 10;
-          background:red;
         `
             },
             children: []
