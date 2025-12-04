@@ -12,12 +12,28 @@ export class Boomb {
         this.id = boom.id;
         this.img = '/tools/bomb.png'
     }
+    inrangX(player) {
+        if (player.y == this.y &&
+            player.x < this.x + this.range &&
+            player.x > this.x - this.range) {
+            return true
+        }
+        return false
+    }
+    inrangY(player) {
+        console.log(player,this);
+        
+        if (player.x == this.x &&
+            player.y < this.y + this.range &&
+            player.y > this.y - this.range) {
+            return true
+        }
+        return false
+    }
     exblogen() {
 
         freamwork.state.player.list = freamwork.state.player.list.filter((player) => {
-            if (player.x == this.x) {
-                console.log(freamwork.state.player.list);
-
+            if (this.inrangX(player) || this.inrangY(player)) {
                 return false
             }
             return true

@@ -35,7 +35,7 @@ class Player {
         this.y = y;
         this.img = `/tools/player${i + 1}.png`;
         this.id = id;
-        this.power = 1;
+        this.power = 50;
         this.inagif = 'down';
         this.frameIndex = 0;
         this.frameCount = 0;
