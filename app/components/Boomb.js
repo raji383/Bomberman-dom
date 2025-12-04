@@ -21,7 +21,6 @@ export class Boomb {
         return false
     }
     inrangY(player) {
-        console.log(player,this);
         
         if (player.x == this.x &&
             player.y < this.y + this.range &&
@@ -38,7 +37,6 @@ export class Boomb {
             }
             return true
         })
-        console.log(freamwork.state.player.list);
 
         router()
     }
