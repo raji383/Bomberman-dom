@@ -252,7 +252,7 @@ function handlePlayerMove(ws, data) {
   const room = rooms.get(player.roomId);
   if (!room) return;
   room.broadcast({
-    type: 'move',
+    type: data.type,
     message: data.message,
     id: data.playerId
   });
@@ -266,6 +266,9 @@ function handleMessage(ws, data) {
       handleChatMessage(ws, data);
       break;
     case 'playermove':
+      handlePlayerMove(ws, data)
+      break
+    case 'boomb':
       handlePlayerMove(ws, data)
       break
     default:

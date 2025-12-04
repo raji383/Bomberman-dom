@@ -16,7 +16,8 @@ freamwork.state = {
   gameStarted: false,
   keys: {},
   gameLoopId: null,
-  lastFrameTime: 0
+  lastFrameTime: 0,
+  boombs:[]
 };
 freamwork.addRoute("/", NicknameScreen);
 freamwork.addRoute("/lobby", LobbyScreen);

@@ -33,8 +33,9 @@ class Player {
         this.name = name;
         this.x = x;
         this.y = y;
-        this.img = `/tools/player${i+1}.png`;
+        this.img = `/tools/player${i + 1}.png`;
         this.id = id;
+        this.power = 1;
         this.inagif = 'down';
         this.frameIndex = 0;
         this.frameCount = 0;
@@ -83,6 +84,9 @@ class Player {
         } else if (e.key === "ArrowDown") {
             this.y++;
             this.inagif = 'down';
+        } else if (e.key === " ") {
+
+            
         }
 
         this.Spritesheet();
@@ -95,10 +99,20 @@ class Player {
             tag: "div",
             events: {
                 keydown: (e) => {
-                    if (freamwork.state?.ws) {
+                    if (freamwork.state?.ws && this.id == freamwork.state.myId) {
+                        let type = "playermove";
+
+                        if (e.key === " ") {
+                            type = "boomb";
+                        }
                         freamwork.state.ws.send(JSON.stringify({
-                            type: 'playermove',
-                            message: { key: e.key },
+                            type: type,
+                            message: {
+                                key: e.key,
+                                x: this.x,
+                                y: this.y,
+                                range: this.power
+                            },
                             playerId: freamwork.state.myId
                         }));
                     }

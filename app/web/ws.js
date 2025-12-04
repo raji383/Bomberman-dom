@@ -1,5 +1,6 @@
 import { freamwork } from "../../framework/index.js";
 import { push } from "../../framework/route.js";
+import { Boomb } from "../components/Boomb.js";
 export function connectToServer(nickname) {
   try {
     const ws = new WebSocket('ws://localhost:8080');
@@ -67,7 +68,7 @@ function handleServerMessage(data) {
       const messages = [...freamwork.state.messages, data.message];
       freamwork.setState({ messages: messages });
       break;
-    case 'move':
+    case 'playermove':
       for (let index = 0; index < freamwork.state.player.list.length; index++) {
         const element = freamwork.state.player.list[index];
 
@@ -77,6 +78,19 @@ function handleServerMessage(data) {
           element.update(data.message, true)
         }
       }
+      break
+    case 'boomb':
+      var bom = new Boomb(data.message)
+      freamwork.state.boombs.push(bom)
+      setTimeout(() => {
+        freamwork.state.boombs = freamwork.state.boombs.filter(p => {
+          if (p.id != bom.id) {
+            return true
+          }
+          p.exblogen()
+          return false
+        })
+      }, 3000);
       break
     default:
       console.log(' Message inconnu:', data.type);
