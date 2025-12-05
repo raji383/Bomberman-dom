@@ -4,6 +4,7 @@ import { readFile } from 'fs/promises';
 import { join, extname, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { WebSocketServer } from 'ws';
+import { GameMap } from './map.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -26,7 +27,8 @@ class GameRoom {
     this.gameStarted = false;
     this.countdown = null;
     this.chatMessage = [];
-    this.Time = null
+    this.Time = null;
+    this.map = new GameMap()
   }
   addPlayer(player) {
     this.players.set(player.id, player);
@@ -97,7 +99,8 @@ class GameRoom {
     this.broadcast({
       type: 'game_start',
       message: 'The game has started!',
-      players: playerList
+      players: playerList,
+      map: this.map.map
 
     });
     this.gameStarted = true;
@@ -270,6 +273,8 @@ function handleMessage(ws, data) {
       break
     case 'boomb':
       handlePlayerMove(ws, data)
+      break
+    case 'mapChange':
       break
     default:
       console.log('Unknown message type:', data.type);

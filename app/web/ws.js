@@ -1,6 +1,9 @@
 import { freamwork } from "../../framework/index.js";
 import { push } from "../../framework/route.js";
 import { Boomb } from "../components/Boomb.js";
+
+
+
 export function connectToServer(nickname) {
   try {
     const ws = new WebSocket('ws://localhost:8080');
@@ -52,6 +55,7 @@ function handleServerMessage(data) {
       freamwork.setState({
         gameStarted: true,
         players: data.players || {},
+        map: data.map
       });
       freamwork.state.players = data.players
       push('game');
