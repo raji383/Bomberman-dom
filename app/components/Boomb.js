@@ -1,6 +1,7 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
 import { router } from "../../framework/route.js";
+import { variables } from "../../variables.js";
 
 
 
@@ -42,7 +43,7 @@ export class Boomb {
         router()
     }
     draw() {
-console.log("sdf",this.x);
+        console.log("sdf", this.x);
 
         return createElement({
             tag: "div",
@@ -54,7 +55,8 @@ console.log("sdf",this.x);
                     top: ${this.y}px;
                     z-index: 1000;
                     background-image: url('${this.img}');
-
+                    width: ${variables.GRID_CELL_SIZE_h}px;
+                    height: ${variables.GRID_CELL_SIZE_h}px;
                     `
             }
         })
