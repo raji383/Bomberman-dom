@@ -7,6 +7,8 @@ import { router } from "../../framework/route.js";
 export class Boomb {
     constructor(boom) {
         this.range = boom.range;
+        this.gameWidth = window.innerWidth * (80 / 100);
+        this.gameH = window.innerHeight * (80 / 100);
         this.x = boom.x;
         this.y = boom.y;
         this.id = boom.id;
@@ -21,8 +23,7 @@ export class Boomb {
         return false
     }
     inrangY(player) {
-        console.log(player,this);
-        
+
         if (player.x == this.x &&
             player.y < this.y + this.range &&
             player.y > this.y - this.range) {
@@ -38,11 +39,11 @@ export class Boomb {
             }
             return true
         })
-        console.log(freamwork.state.player.list);
 
         router()
     }
     draw() {
+console.log("sdf",this.x);
 
         return createElement({
             tag: "div",
@@ -50,8 +51,9 @@ export class Boomb {
                 class: "boom",
                 style: `
                     position: absolute;
-                    left: ${this.x}%;
-                    top: ${this.y}%;
+                    left: ${this.x}px;
+                    top: ${this.y}px;
+                    z-index: 1000;
                     background-image: url('${this.img}');
 
                     `

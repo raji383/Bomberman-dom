@@ -172,7 +172,7 @@ body {
 
 .map {
     position: relative;
-    width: 80svw;
+    width: 80svh;
     height: 80svh;
     border: 1px solid red;
 }

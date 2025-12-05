@@ -31,8 +31,8 @@ export class Players {
 class Player {
     constructor(i, x, y, name, id) {
         this.name = name;
-        this.gameWidth = window.innerWidth * (80 / 100);
         this.gameH = window.innerHeight * (80 / 100);
+        this.gameWidth = this.gameH;
         this.img = `/tools/player${i + 1}.png`;
         this.id = id;
 
@@ -44,8 +44,8 @@ class Player {
         this.frameCount = 0;
         this.element = null;
 
-        this.frameW = 37;
-        this.frameH = 50;
+        this.frameW = 35;
+        this.frameH = 35;
 
         this.x = x == 100 ? this.gameWidth * (x / 100) - this.frameW : this.gameWidth * (x / 100);
         this.y = y == 100 ? this.gameH * (y / 100) - this.frameH : this.gameH * (y / 100);
@@ -101,7 +101,6 @@ class Player {
     }
 
     draw() {
-        console.log(this.x, this.y);
 
 
         const x = this.x > this.gameWidth ? `calc(${this.x}px - ${this.frameW}px)` : `${this.x}px`;
@@ -121,7 +120,7 @@ class Player {
                             type: type,
                             message: {
                                 key: e.key,
-                                x: this.x,
+                                x:this.x,
                                 y: this.y,
                                 range: this.power
                             },
@@ -142,6 +141,7 @@ class Player {
                     background-repeat: no-repeat;
                     background-position: ${this.xOffset}px ${this.yOffset}px;
                     image-rendering: pixelated;
+                    background:red;
                     z-index: 10;
                 `
             },
