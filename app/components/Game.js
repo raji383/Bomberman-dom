@@ -9,9 +9,11 @@ export default function GameScreen() {
     if (!freamwork.state.player) {
         freamwork.state.player = new Players(freamwork.state.players)
     }
-    
+
     return createElement({
-        tag: "map", children: [
+        tag: "div",
+        attrs: { class: "map" },
+        children: [
             { tag: "div", children: freamwork.state.player.list.map((p) => { return p.draw() }) }
             ,
             freamwork.state.boombs.map((p) => { return p.draw() })

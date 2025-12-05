@@ -170,6 +170,13 @@ body {
     font-size: 0.9rem;
 }
 
+.map {
+    position: relative;
+    width: 80svw;
+    height: 80svh;
+    border: 1px solid red;
+}
+
 .instructions ul {
     list-style: none;
     text-align: left;

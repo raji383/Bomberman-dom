@@ -13,9 +13,9 @@ export class Players {
 
             let positions = [
                 [1, 1],
-                [1, 10],
-                [10, 1],
-                [10, 10]
+                [100, 1],
+                [1, 100],
+                [100, 100]
             ];
 
             let [x, y] = positions[i] || [1, 1];
@@ -31,11 +31,14 @@ export class Players {
 class Player {
     constructor(i, x, y, name, id) {
         this.name = name;
-        this.x = x;
-        this.y = y;
+        this.gameWidth = window.innerWidth * (80 / 100);
+        this.gameH = window.innerHeight * (80 / 100);
         this.img = `/tools/player${i + 1}.png`;
         this.id = id;
+
         this.power = 50;
+        this.speed = 5;
+
         this.inagif = 'down';
         this.frameIndex = 0;
         this.frameCount = 0;
@@ -43,6 +46,9 @@ class Player {
 
         this.frameW = 37;
         this.frameH = 50;
+
+        this.x = x == 100 ? this.gameWidth * (x / 100) - this.frameW : this.gameWidth * (x / 100);
+        this.y = y == 100 ? this.gameH * (y / 100) - this.frameH : this.gameH * (y / 100);
 
         this.xOffset = 0;
         this.yOffset = 0;
@@ -72,21 +78,21 @@ class Player {
     }
 
     update(e = { key: "" }) {
-        if (e.key === "ArrowLeft") {
-            this.x--;
+        if (e.key === "ArrowLeft" && this.x > 0) {
+            this.x -= this.speed;
             this.inagif = 'left';
-        } else if (e.key === "ArrowRight") {
-            this.x++;
+        } else if (e.key === "ArrowRight" && this.x + this.frameW < this.gameWidth) {
+            this.x += this.speed;
             this.inagif = 'right';
-        } else if (e.key === "ArrowUp") {
-            this.y--;
+        } else if (e.key === "ArrowUp" && this.y > 0) {
+            this.y -= this.speed;
             this.inagif = 'up';
-        } else if (e.key === "ArrowDown") {
-            this.y++;
+        } else if (e.key === "ArrowDown" && this.y + this.frameH < this.gameH) {
+            this.y += this.speed;
             this.inagif = 'down';
         } else if (e.key === " ") {
 
-            
+
         }
 
         this.Spritesheet();
@@ -95,6 +101,12 @@ class Player {
     }
 
     draw() {
+        console.log(this.x, this.y);
+
+
+        const x = this.x > this.gameWidth ? `calc(${this.x}px - ${this.frameW}px)` : `${this.x}px`;
+        const y = this.y > this.gameH ? `calc(${this.y}px - ${this.frameH}px)` : `${this.y}px`;
+
         const el = createElement({
             tag: "div",
             events: {
@@ -122,8 +134,8 @@ class Player {
                 class: "p",
                 style: `
                     position: absolute;
-                    left: ${this.x}%;
-                    top: ${this.y}%;
+                    left: ${x};
+                    top: ${y};
                     width: ${this.frameW}px;
                     height: ${this.frameH}px;
                     background-image: url('${this.img}');
