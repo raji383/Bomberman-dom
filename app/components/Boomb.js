@@ -23,7 +23,6 @@ export class Boomb {
         return false
     }
     inrangY(player) {
-
         if (player.x == this.x &&
             player.y < this.y + this.range &&
             player.y > this.y - this.range) {

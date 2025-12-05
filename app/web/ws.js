@@ -7,6 +7,8 @@ import { Boomb } from "../components/Boomb.js";
 export function connectToServer(nickname) {
   try {
     const ws = new WebSocket('ws://localhost:8080');
+     console.log(21211);
+     
 
     ws.onopen = () => {
       ws.send(JSON.stringify({

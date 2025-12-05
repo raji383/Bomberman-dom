@@ -74,23 +74,23 @@ class GameRoom {
       players: this.getPlayersList()
     });
 
-    if (this.players.size === 0 || this.players.size === 1) {
-      if (!this.gameStarted) {
-        if (this.countdown) {
-          clearInterval(this.countdown);
-          this.countdown = null;
-          this.sendSystemMessage("Not enough players. Countdown stopped.");
-          this.Time = null;
-          this.broadcast({
-            type: 'countdown',
-            countdown: null
-          });
+    if (!this.gameStarted){
+      if (this.players.size === 0 || this.players.size === 1) {
+        if (!this.gameStarted) {
+          if (this.countdown) {
+            clearInterval(this.countdown);
+            this.countdown = null;
+            this.sendSystemMessage("Not enough players. Countdown stopped.");
+            this.Time = null;
+            this.broadcast({
+              type: 'countdown',
+              countdown: null
+            });
+          }
+        } else {
+          if (this.joinTimer) clearTimeout(this.joinTimer);
+          if (this.countdown) clearInterval(this.countdown);
         }
-      } else {
-
-        if (this.joinTimer) clearTimeout(this.joinTimer);
-        if (this.countdown) clearInterval(this.countdown);
-        this.gameStarted = false;
       }
     }
   }
@@ -221,7 +221,6 @@ const server = createServer(async (req, res) => {
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
-  console.log('New client connected');
 
   ws.on('message', (message) => {
     try {
@@ -294,12 +293,12 @@ function handleJoin(ws, data) {
   players.set(playerId, player);
 
   let room = findAvailableRoom();
+  
 
   if (!room) {
     const newRoomId = generateId();
     room = new GameRoom(newRoomId);
     rooms.set(newRoomId, room);
-    console.log(`New room created: ${newRoomId}`);
   }
 
   player.roomId = room.id;
@@ -313,10 +312,10 @@ function handleJoin(ws, data) {
     chatMessage: room.chatMessage
   }));
 
-  console.log(`${data.nickname} joined room ${room.id}`);
 }
 
 function findAvailableRoom() {
+  
   for (const room of rooms.values()) {
     if (!room.gameStarted && room.players.size < 4) {
       return room;
