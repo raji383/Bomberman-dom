@@ -41,7 +41,7 @@ class Player {
         this.img = `/tools/player${i + 1}.png`;
 
         // powerup
-        this.power = 50;
+        this.power = 1;
         this.speed = 5;
 
         // move
@@ -71,6 +71,8 @@ class Player {
             ? this.gameH - this.renderH - variables.GRID_CELL_SIZE_h
             : this.gameH * (y / 100) + variables.GRID_CELL_SIZE_h;
 
+        this.gridX = Math.round(this.x / variables.GRID_CELL_SIZE_w);
+        this.gridY = Math.round(this.y / variables.GRID_CELL_SIZE_h);
         this.loadSprite();
     }
 
@@ -79,8 +81,8 @@ class Player {
         img.src = this.img;
 
         img.onload = () => {
-            this.frameW_original = img.width / 3;  
-            this.frameH_original = img.height / 4; 
+            this.frameW_original = img.width / 3;
+            this.frameH_original = img.height / 4;
             this.spriteLoaded = true;
         };
     }
@@ -120,10 +122,13 @@ class Player {
         }
 
         this.Spritesheet();
-        router(); 
+        router();
     }
 
     draw() {
+        this.gridX = Math.round(this.x / variables.GRID_CELL_SIZE_w);
+        this.gridY = Math.round(this.y / variables.GRID_CELL_SIZE_h);
+
         const el = createElement({
             tag: "div",
             events: {
@@ -135,8 +140,8 @@ class Player {
                             type: type,
                             message: {
                                 key: e.key,
-                                x: this.x,
-                                y: this.y,
+                                x: this.gridX,
+                                y: this.gridY,
                                 range: this.power
                             },
                             playerId: freamwork.state.myId
