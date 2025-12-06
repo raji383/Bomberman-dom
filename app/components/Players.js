@@ -34,9 +34,9 @@ class Player {
         this.name = name;
         this.id = id;
         this.live = 3
-
         this.gameH = window.innerHeight * 0.80;
         this.gameWidth = this.gameH;
+        this.alive = true;
 
         // spr
         this.img = `/tools/player${i + 1}.png`;

@@ -6,7 +6,10 @@ import { Players } from "./Players.js";
 import { variables } from "../../variables.js";
 
 export default function GameScreen() {
-    const { messages, chatInput = "", ws, players, myId, boombs = [], explosion = [], map } = freamwork.state;
+    const { messages, chatInput = "", ws, players, myId, boombs = [], explosion = [], map ,player } = freamwork.state;
+
+    console.log(player);
+    
 
     // Redirect if websocket is not connected
     if (!ws) push('/');
@@ -24,45 +27,43 @@ export default function GameScreen() {
     // Chat message send handler
     const handleSendMessage = (e) => {
         e.preventDefault();
-        if (chatInput.trim() && ws) {
-            ws.send(JSON.stringify({
-                type: 'chat_message',
-                message: chatInput.trim(),
-                playerId: myId
-            }));
-            freamwork.setState({ chatInput: "" });
 
-            // Scroll chat to bottom
-            const chatSection = e.target.parentElement;
-            if (chatSection) {
-                const chatMessages = chatSection.querySelector('.chat-messages');
-                if (chatMessages) {
-                    setTimeout(() => {
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }, 100);
-                }
-            }
+    if (chatInput.trim() && freamwork.state.ws) {
+      freamwork.state.ws.send(JSON.stringify({
+        type: 'chat_message',
+        message: chatInput.trim(),
+        playerId: freamwork.state.myId
+      }));
+
+      freamwork.setState({ chatInput: "" });
+
+      const form = e.target;
+      const chatSection = form.parentElement;
+
+      if (chatSection) {
+        const chatMessages = chatSection.children[1];
+
+        if (chatMessages && chatMessages.classList.contains('chat-messages-loby')) {
+          setTimeout(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }, 100);
         }
+      }
+    }
     };
 
-    // Render the entire game screen
     return createElement({
         tag: "div",
         attrs: { class: "game-container" },
         children: [
-            // Game area
             createElement({
                 tag: "div",
                 attrs: { class: "game-area" },
                 children: [
                     RenderMap(map),
-                    // Players
                     ...freamwork.state.player.list.map((p) => p.draw()),
-                    // Bombs
                     ...boombs.map((b) => b.draw()),
-                    // Explosions
                     ...explosion.map((ex) => ex.draw ? ex.draw() : ex),
-                    // Chat
                     RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myId)
                 ]
             })
@@ -70,7 +71,7 @@ export default function GameScreen() {
     });
 }
 
-// Render the game map tiles
+
 function RenderMap(map) {
     const result = [];
     for (let y = 0; y < map.length; y++) {
@@ -81,7 +82,6 @@ function RenderMap(map) {
     return result;
 }
 
-// Map tile renderer
 function MapDraw(tileType, x, y) {
     let image = "";
     if (tileType === 1) image = "./tools/wall.png";
@@ -105,7 +105,6 @@ function MapDraw(tileType, x, y) {
     });
 }
 
-// Chat section renderer
 function RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myId) {
     return createElement({
         tag: "div",
@@ -121,7 +120,7 @@ function RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myI
                         createElement({
                             tag: "div",
                             attrs: {
-                                class: `message ${msg.isSystem ? 'system' : ''} ${msg.player === freamwork.state.players[myId]?.nickname ? 'own' : ''}`
+                                class: `message ${msg.isSystem ? 'system' : ''} ${msg.player === freamwork.state.player.list[myId]?.name ? 'own' : ''}`
                             },
                             children: [createElement({ tag: "strong", children: [`${msg.player}: ${msg.text}`] })]
                         })
