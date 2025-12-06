@@ -1,135 +1,92 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
-import { push, router } from "../../framework/route.js";
+import { push } from "../../framework/route.js";
 import { Boomb } from "./Boomb.js";
 import { Players } from "./Players.js";
 import { variables } from "../../variables.js";
-var d = true
-
-
-
 
 export default function GameScreen() {
-    const { messages, chatInput = "", ws } = freamwork.state
-    if (!ws) {
-        push('/');
-    }
+    const { messages, chatInput = "", ws, players, myId, boombs = [], explosion = [], map } = freamwork.state;
+
+    // Redirect if websocket is not connected
+    if (!ws) push('/');
+
+    // Initialize Players instance if not present
     if (!freamwork.state.player) {
-        freamwork.state.player = new Players(freamwork.state.players)
+        freamwork.state.player = new Players(players);
     }
+
+    // Chat input handler
     const handleChatInput = (e) => {
-    freamwork.setState({ chatInput: e.target.value });
-  };
+        freamwork.setState({ chatInput: e.target.value });
+    };
 
-  const handleSendMessage = (e) => {
-    e.preventDefault();
+    // Chat message send handler
+    const handleSendMessage = (e) => {
+        e.preventDefault();
+        if (chatInput.trim() && ws) {
+            ws.send(JSON.stringify({
+                type: 'chat_message',
+                message: chatInput.trim(),
+                playerId: myId
+            }));
+            freamwork.setState({ chatInput: "" });
 
-    if (chatInput.trim() && freamwork.state.ws) {
-      freamwork.state.ws.send(JSON.stringify({
-        type: 'chat_message',
-        message: chatInput.trim(),
-        playerId: freamwork.state.myId
-      }));
-
-      freamwork.setState({ chatInput: "" });
-
-      const form = e.target;
-      const chatSection = form.parentElement;
-
-      if (chatSection) {
-        const chatMessages = chatSection.children[1];
-
-        if (chatMessages && chatMessages.classList.contains('chat-messages')) {
-          setTimeout(() => {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-          }, 100);
+            // Scroll chat to bottom
+            const chatSection = e.target.parentElement;
+            if (chatSection) {
+                const chatMessages = chatSection.querySelector('.chat-messages');
+                if (chatMessages) {
+                    setTimeout(() => {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 100);
+                }
+            }
         }
-      }
-    }
-  };
+    };
 
+    // Render the entire game screen
     return createElement({
         tag: "div",
-        attrs: { class: "map" },
+        attrs: { class: "game-container" },
         children: [
-             {tag : "div", attrs: {class: "game-area"}, children:   [createElement({
-        tag: "div",
-        attrs: { class: "chat-section" },
-        children: [
-          createElement({ tag: "h3", children: ["💬 Chat"] }),
-          createElement({
-            tag: "div",
-            attrs: { class: "chat-messages" },
-            children: messages.length === 0
-              ? createElement({ tag: "p", children: ["No messages..."] })
-              : messages.map((msg, index) =>
-                createElement({
-                  tag: "div",
-                  attrs: {
-                    class: `message ${msg.isSystem ? 'system' : ''} ${msg.player === freamwork.state.players[freamwork.state.myId]?.nickname ? 'own' : ''}`
-                  },
-                  children: [createElement({ tag: "strong", children: [`${msg.player}: ${msg.text}`] })]
-                })
-              )
-          }),
-          createElement({
-            tag: "form",
-            attrs: { class: "chat-form" },
-            events: { submit:   handleSendMessage },
-            children: [
-              createElement({
-                tag: "input",
-                attrs: {
-                  type: "text",
-                  placeholder: "Type your message...",
-                  maxlength: "100",
-                  value: chatInput
-                },
-                events: { input: handleChatInput }
-              }),
-              createElement({
-                tag: "button",
-                attrs: { type: "submit" },
-                children: ["📤 Send"]
-              })
-            ]
-          })
-        ]
-   
-    })]},
-          
-
-            RenderMap(),
-            { tag: "div", children: freamwork.state.player.list.map((p) => { return p.draw() }) },
-            freamwork.state.boombs.map((p) => { return p.draw() }),
-            freamwork.state.explosion.map((ex) => { return ex }),
+            // Game area
+            createElement({
+                tag: "div",
+                attrs: { class: "game-area" },
+                children: [
+                    RenderMap(map),
+                    // Players
+                    ...freamwork.state.player.list.map((p) => p.draw()),
+                    // Bombs
+                    ...boombs.map((b) => b.draw()),
+                    // Explosions
+                    ...explosion.map((ex) => ex.draw ? ex.draw() : ex),
+                    // Chat
+                    RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myId)
+                ]
+            })
         ]
     });
-          
-
 }
-function RenderMap() {
-    const result = [];
 
-    for (let y = 0; y < freamwork.state.map.length; y++) {
-        for (let x = 0; x < freamwork.state.map[y].length; x++) {
-            const element = freamwork.state.map[y][x];
-            const tile = MapDraw(element, x, y);
-            result.push(tile);
+// Render the game map tiles
+function RenderMap(map) {
+    const result = [];
+    for (let y = 0; y < map.length; y++) {
+        for (let x = 0; x < map[y].length; x++) {
+            result.push(MapDraw(map[y][x], x, y));
         }
     }
-
-
-
     return result;
 }
 
-function MapDraw(mapElement, x, y) {
+// Map tile renderer
+function MapDraw(tileType, x, y) {
     let image = "";
-
-    if (mapElement === 1) image = "./tools/wall.png";
-    else if (mapElement === 0 || mapElement === 3) image = "./tools/grass.png";
-    else if (mapElement === 2) image = "./tools/box.png";
+    if (tileType === 1) image = "./tools/wall.png";
+    else if (tileType === 0 || tileType === 3) image = "./tools/grass.png";
+    else if (tileType === 2) image = "./tools/box.png";
 
     return createElement({
         tag: "div",
@@ -145,5 +102,53 @@ function MapDraw(mapElement, x, y) {
                 background-image: url('${image}');
             `
         }
+    });
+}
+
+// Chat section renderer
+function RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myId) {
+    return createElement({
+        tag: "div",
+        attrs: { class: "chat-section" },
+        children: [
+            createElement({ tag: "h3", children: ["💬 Chat"] }),
+            createElement({
+                tag: "div",
+                attrs: { class: "chat-messages" },
+                children: messages.length === 0
+                    ? [createElement({ tag: "p", children: ["No messages..."] })]
+                    : messages.map((msg) =>
+                        createElement({
+                            tag: "div",
+                            attrs: {
+                                class: `message ${msg.isSystem ? 'system' : ''} ${msg.player === freamwork.state.players[myId]?.nickname ? 'own' : ''}`
+                            },
+                            children: [createElement({ tag: "strong", children: [`${msg.player}: ${msg.text}`] })]
+                        })
+                    )
+            }),
+            createElement({
+                tag: "form",
+                attrs: { class: "chat-form" },
+                events: { submit: handleSendMessage },
+                children: [
+                    createElement({
+                        tag: "input",
+                        attrs: {
+                            type: "text",
+                            placeholder: "Type your message...",
+                            maxlength: "100",
+                            value: chatInput
+                        },
+                        events: { input: handleChatInput }
+                    }),
+                    createElement({
+                        tag: "button",
+                        attrs: { type: "submit" },
+                        children: ["📤 Send"]
+                    })
+                ]
+            })
+        ]
     });
 }

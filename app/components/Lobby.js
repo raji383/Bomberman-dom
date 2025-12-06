@@ -123,12 +123,12 @@ const handleChatInput = (e) => {
       // Chat
       createElement({
         tag: "div",
-        attrs: { class: "chat-section" },
+        attrs: { class: "chat-section-loby" },
         children: [
           createElement({ tag: "h3", children: ["💬 Chat"] }),
           createElement({
             tag: "div",
-            attrs: { class: "chat-messages" },
+            attrs: { class: "chat-messages-loby" },
             events: {
               created: (element) => { scrollToBottom(element); },
               updated: (element) => { scrollToBottom(element); }
@@ -147,7 +147,7 @@ const handleChatInput = (e) => {
           }),
           createElement({
             tag: "form",
-            attrs: { class: "chat-form" },
+            attrs: { class: "chat-form-loby" },
             events: { submit: handleSendMessage },
             children: [
               createElement({

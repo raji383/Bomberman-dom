@@ -1,1072 +1,868 @@
-/* === RESET & BASE === */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* ==========================================
+   💣 BOMBERMAN MULTIPLAYER - MAGIC CSS
+   ==========================================
+   Covers: Nickname, Lobby, Game screens
+   Features: Centered map, magic effects, glow
+   ========================================== */
+
+/* ==========================================
+   🎨 CSS VARIABLES & ROOT
+   ========================================== */
+:root {
+  /* Primary Colors - Magical Purple/Blue */
+  --primary: #a855f7;
+  --primary-hover: #c084fc;
+  --primary-dark: #9333ea;
+
+  /* Secondary Colors - Cyan Glow */
+  --secondary: #06b6d4;
+  --secondary-hover: #22d3ee;
+  --secondary-dark: #0891b2;
+
+  /* Accent Colors - Golden Magic */
+  --accent: #fbbf24;
+  --accent-hover: #fcd34d;
+
+  /* Background Colors - Deep Space */
+  --bg-dark: #0a0a1a;
+  --bg-medium: #0f0f23;
+  --bg-light: #1a1a3e;
+  --bg-card: rgba(20, 20, 50, 0.85);
+
+  /* Text Colors */
+  --text-primary: #f0f0ff;
+  --text-secondary: #a0a0c0;
+  --text-muted: #606080;
+
+  /* Status Colors */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  /* Magic Shadows & Glows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.6);
+  --glow-primary: 0 0 30px rgba(168, 85, 247, 0.5);
+  --glow-secondary: 0 0 30px rgba(6, 182, 212, 0.5);
+  --glow-accent: 0 0 30px rgba(251, 191, 36, 0.5);
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-full: 50%;
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Fonts */
+  --font-main: "Segoe UI", "Roboto", sans-serif;
+  --font-heading: "Poppins", "Segoe UI", sans-serif;
+}
+
+/* ==========================================
+   🔄 GLOBAL RESET & BASE
+   ========================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
 }
 
 body {
-    font-family: 'Press Start 2P', cursive, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    color: #ecf0f1;
-    overflow-x: hidden;
-    min-height: 100vh;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: crisp-edges;
+  font-family: var(--font-main);
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
 }
 
-#app {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+/* Magic animated background */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+  animation: magicBg 15s ease-in-out infinite alternate;
 }
 
-/* === STYLES PIXEL ART GÉNÉRAUX === */
-.pixel-theme {
-    font-family: 'Press Start 2P', cursive;
-    image-rendering: pixelated;
+@keyframes magicBg {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
 }
 
-.pixel-art {
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
+/* Floating particles effect */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(2px 2px at 40% 70%, rgba(168, 85, 247, 0.4), transparent),
+    radial-gradient(2px 2px at 60% 20%, rgba(6, 182, 212, 0.4), transparent),
+    radial-gradient(2px 2px at 80% 50%, rgba(251, 191, 36, 0.3), transparent),
+    radial-gradient(1px 1px at 10% 60%, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1px 1px at 90% 80%, rgba(168, 85, 247, 0.3), transparent);
+  background-size: 250px 250px;
+  pointer-events: none;
+  z-index: -1;
+  animation: particles 20s linear infinite;
 }
 
-.pixel-border {
-    border: 4px solid #333;
-    box-shadow: 0 0 0 2px #666, 0 0 0 6px #333;
+@keyframes particles {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-250px);
+  }
 }
 
-.pixel-button {
-    font-family: 'Press Start 2P', cursive;
-    border: 3px solid #333;
-    background: #8b5a2b;
-    color: white;
-    padding: 12px 24px;
-    cursor: pointer;
-    transition: all 0.1s;
-    font-size: 12px;
+/* ==========================================
+   🎮 COMMON BUTTON STYLES
+   ========================================== */
+button {
+  font-family: var(--font-main);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 14px 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md), var(--glow-primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
 }
 
-.pixel-button:hover {
-    background: #a56a3a;
-    transform: translateY(-2px);
+/* Magic shimmer effect on buttons */
+button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
 }
 
-.pixel-text {
-    font-family: 'Press Start 2P', cursive;
-    color: #333;
-    font-size: 10px;
+button:hover::before {
+  left: 100%;
 }
 
-.pixel-ui {
-    font-family: 'Press Start 2P', cursive;
+button:hover {
+  background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: var(--shadow-lg), 0 0 50px rgba(168, 85, 247, 0.6);
 }
 
-.pixel-panel {
-    border: 3px solid #333;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 10px;
+button:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: var(--shadow-sm);
 }
 
-.pixel-card {
-    border: 2px solid #333;
-    margin: 5px 0;
-    background: white;
-    padding: 8px;
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.pixel-badge {
-    border: 1px solid #333;
-    padding: 2px 6px;
-    font-size: 8px;
-    background: #ffeaa7;
-    font-family: 'Press Start 2P', cursive;
-}
-.game-area {
-    position: absolute;
-    width: 20svh;
-    height: 80svh;
-    border: 4px solid #3498db;
-    left: -20% ;
-    top: 0%;
-    background: #162447;
-    box-shadow: 0 0 30px rgba(31, 64, 104, 0.4);
-    overflow: hidden;
-    image-rendering: pixelated;
-    z-index: 100000;
+/* ==========================================
+   📝 COMMON INPUT STYLES
+   ========================================== */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  font-family: var(--font-main);
+  font-size: 1rem;
+  padding: 16px 20px;
+  border: 2px solid rgba(168, 85, 247, 0.3);
+  border-radius: var(--radius-md);
+  background: rgba(15, 15, 35, 0.8);
+  color: var(--text-primary);
+  width: 100%;
+  transition: all var(--transition-normal);
+  outline: none;
+  backdrop-filter: blur(10px);
 }
 
-/* === ÉCRAN PSEUDO === */
+input[type="text"]::placeholder {
+  color: var(--text-muted);
+}
+
+input[type="text"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.2), var(--glow-primary);
+  background: rgba(20, 20, 45, 0.9);
+}
+
+input[type="text"]:hover:not(:focus) {
+  border-color: rgba(168, 85, 247, 0.5);
+}
+
+/* ==========================================
+   📋 COMMON CONTAINER STYLES
+   ========================================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  backdrop-filter: blur(20px);
+}
+
+/* ==========================================
+   🏠 NICKNAME SCREEN
+   ========================================== */
 .nickname-screen {
-    text-align: center;
-    padding: 3rem;
-    background: rgba(44, 62, 80, 0.95);
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    border: 4px solid #3498db;
-    max-width: 500px;
-    width: 100%;
-    font-family: 'Press Start 2P', cursive;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  text-align: center;
+  animation: fadeIn 0.8s ease;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Magic glowing title */
 .nickname-screen h1 {
-    margin-bottom: 1rem;
-    color: #3498db;
-    font-size: 1.8rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 4s ease-in-out infinite, float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.5));
 }
 
-.subtitle {
-    color: #bdc3c7;
-    margin-bottom: 2rem;
-    font-size: 0.8rem;
-}
-
-.nickname-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.nickname-form input {
-    padding: 1rem 1.5rem;
-    font-size: 1rem;
-    border: 3px solid #34495e;
-    border-radius: 8px;
-    background: #2c3e50;
-    color: white;
-    transition: all 0.3s ease;
-    font-family: 'Press Start 2P', cursive;
-}
-
-.nickname-form input:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
-}
-
-.nickname-form button {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-    background: linear-gradient(135deg, #3498db, #2980b9);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: bold;
-    font-family: 'Press Start 2P', cursive;
-}
-
-.nickname-form button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-}
-
-.instructions {
-    background: rgba(52, 73, 94, 0.6);
-    padding: 1.5rem;
-    border-radius: 10px;
-    border-left: 4px solid #e74c3c;
-    font-size: 0.7rem;
-}
-
-.instructions h3 {
-    color: #e74c3c;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-}
-
-.map {
-    position: relative;
-    width: 80svh;
-    height: 80svh;
-    border: 1px solid red;
-}
-
-.instructions ul {
-    list-style: none;
-    text-align: left;
-}
-
-.instructions li {
-    padding: 0.5rem 0;
-    color: #bdc3c7;
-}
-
-/* === SALON === */
-.lobby-screen {
-    width: 100%;
-    max-width: 1000px;
-    background: rgba(44, 62, 80, 0.95);
-    border-radius: 20px;
-    padding: 2rem;
-    display: grid;
-    grid-template-rows: auto 1fr;
-    gap: 2rem;
-    border: 4px solid #3498db;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    font-family: 'Press Start 2P', cursive;
-}
-
-.lobby-screen h1 {
-    text-align: center;
-    color: #3498db;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-}
-
-.lobby-info {
-    text-align: center;
-    font-size: 0.9rem;
-    background: rgba(52, 73, 94, 0.6);
-    padding: 1.5rem;
-    border-radius: 10px;
-    border: 2px solid #34495e;
-}
-
-.countdown {
-    color: #e74c3c;
-    font-weight: bold;
-    font-size: 1.2rem;
-    animation: pulse 1s infinite;
-}
-
-.waiting {
-    color: #f39c12;
-}
-
-.full {
-    color: #2ecc71;
-    font-weight: bold;
-}
-
-.players-section {
-    background: rgba(52, 73, 94, 0.6);
-    padding: 1.5rem;
-    border-radius: 10px;
-    border: 2px solid #34495e;
-}
-
-.players-section h3 {
-    color: #3498db;
-    margin-bottom: 1rem;
-    text-align: center;
-    font-size: 1rem;
-}
-
-.players-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.player-card {
-    background: rgba(44, 62, 80, 0.8);
-    padding: 1rem;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    font-size: 0.8rem;
-}
-
-.player-card.my-player {
-    border-color: #3498db;
-    background: rgba(52, 152, 219, 0.2);
-}
-
-.player-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: white;
-    border: 2px solid;
-}
-
-.player-info {
-    flex: 1;
-}
-
-.you-badge {
-    color: #f1c40f;
-    font-size: 0.6rem;
-}
-
-.chat-section {
-    background: rgba(52, 73, 94, 0.6);
-    padding: 1.5rem;
-    border-radius: 10px;
-    border: 2px solid #34495e;
-    display: flex;
-    flex-direction: column;
-}
-
-.chat-section h3 {
-    color: #3498db;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-}
-
-.chat-messages {
-    flex: 1;
-    background: rgba(44, 62, 80, 0.8);
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    max-height: 200px;
-    overflow-y: auto;
-    border: 2px solid #34495e;
-    font-size: 0.7rem;
-}
-
-.message {
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    border-radius: 5px;
-}
-
-.message.system {
-    background: rgba(243, 156, 18, 0.2);
-    color: #f39c12;
-    font-style: italic;
-}
-
-.message.own {
-    background: rgba(52, 152, 219, 0.2);
-}
-
-.chat-form {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.chat-form input {
-    flex: 1;
-    padding: 0.8rem;
-    border: 2px solid #34495e;
-    border-radius: 8px;
-    background: #2c3e50;
-    color: white;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.7rem;
-}
-
-.chat-form button {
-    padding: 0.8rem 1.5rem;
-    background: #3498db;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.7rem;
-}
-
-.chat-form button:hover {
-    background: #2980b9;
-}
-
-/* === JEU PRINCIPAL === */
-.game-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    width: 100%;
-    min-height: 100vh;
-    background: #1a1a2e;
-    font-family: 'Press Start 2P', cursive;
-}
-
-.game-container {
-    position: relative;
-    background: #162447;
-    border: 4px solid #1f4068;
-    border-radius: 8px;
-    box-shadow: 0 0 30px rgba(31, 64, 104, 0.4);
-    overflow: hidden;
-    image-rendering: pixelated;
-}
-
-/* === SPRITES PIXEL ART === */
-.pixel-sprite {
-    width: 100%;
-    height: 100%;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
-}
-
-/* Cellules de base */
-.cell {
-    position: absolute;
-    border: 1px solid rgba(86, 156, 214, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    background-color: #a8e6a3;
-}
-
-/* Murs */
-.wall-cell {
-    background-color: #78909c;
-}
-
-.wall {
-    background-color: #546e7a;
-    border: 3px solid #37474f;
-    box-shadow: inset -3px -3px 0px #455a64;
-}
-
-/* Blocs destructibles */
-.block-cell {
-    background-color: #a8e6a3;
-}
-
-.block {
-    background-color: #8d6e63;
-    border: 3px solid #6d4c41;
-    box-shadow: inset -4px -4px 0px #5d4037;
-}
-
-/* Bombes */
-.bomb-cell {
-    background-color: #a8e6a3;
-}
-
-.bomb {
-    background-color: #2d3436;
-    border: 3px solid #636e72;
-    border-radius: 50%;
-    position: relative;
-    box-shadow: inset -4px -4px 0px #222;
-    animation: bomb-pulse 1s ease-in-out infinite;
-}
-
-@keyframes bomb-pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
-}
-
-.bomb-timer {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-weight: bold;
-    font-size: 10px;
-    text-shadow: 1px 1px 0px #000;
-    font-family: 'Press Start 2P', cursive;
-}
-
-/* Explosions */
-.explosion-cell {
-    background-color: #ff9800;
-}
-
-.explosion {
-    background: radial-gradient(circle, #ff5722 20%, #ff9800 70%);
-    border: 3px solid #ff5722;
-    animation: explosion-pulse 0.3s infinite alternate;
-}
-
-@keyframes explosion-pulse {
-    from {
-        opacity: 0.7;
-        transform: scale(0.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1.1);
-    }
-}
-
-/* Power-ups */
-.powerup-cell {
-    background-color: #a8e6a3;
-}
-
-.powerup {
-    background-size: 70%;
-    background-position: center;
-    border-radius: 50%;
-    animation: float 2s ease-in-out infinite;
-}
-
-.powerup.bombs {
-    background-color: #ffeb3b;
-    border: 3px solid #fbc02d;
-    box-shadow: 0 0 10px #ffeb3b;
-}
-
-.powerup.flames {
-    background-color: #ff5722;
-    border: 3px solid #d84315;
-    box-shadow: 0 0 10px #ff5722;
-}
-
-.powerup.speed {
-    background-color: #4caf50;
-    border: 3px solid #388e3c;
-    box-shadow: 0 0 10px #4caf50;
+@keyframes gradientShift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 @keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-5px);
-    }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
-/* Joueurs */
-.player-cell {
-    background-color: #a8e6a3;
+.nickname-screen .subtitle {
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+  margin-bottom: 50px;
+  max-width: 450px;
 }
 
-.player {
-    border-radius: 50%;
-    position: relative;
-    animation: player-float 2s ease-in-out infinite;
-    border: 3px solid;
-    box-shadow: 0 0 8px currentColor;
+/* Glowing form container */
+.nickname-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), 0 0 60px rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  backdrop-filter: blur(20px);
+  position: relative;
 }
 
-@keyframes player-float {
-
-    0%,
-    100% {
-        transform: translateY(0) scale(1);
-    }
-
-    50% {
-        transform: translateY(-3px) scale(1.05);
-    }
+/* Magic border glow animation */
+.nickname-form::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+  background-size: 400% 400%;
+  border-radius: var(--radius-lg);
+  z-index: -1;
+  animation: borderGlow 6s ease infinite;
+  opacity: 0.5;
 }
 
-/* Couleurs des joueurs */
-.player-1 {
-    background-color: #3498db;
-    border-color: #2980b9;
+@keyframes borderGlow {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
-.player-2 {
-    background-color: #e74c3c;
-    border-color: #c0392b;
+.nickname-form input {
+  font-size: 1.2rem;
+  padding: 18px 24px;
+  text-align: center;
 }
 
-.player-3 {
-    background-color: #2ecc71;
-    border-color: #27ae60;
+.nickname-form button {
+  padding: 18px 36px;
+  font-size: 1.15rem;
+  margin-top: 10px;
 }
 
-.player-4 {
-    background-color: #f39c12;
-    border-color: #d35400;
+/* Instructions Section */
+.instructions {
+  margin-top: 60px;
+  padding: 32px 36px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  max-width: 450px;
+  width: 100%;
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  backdrop-filter: blur(20px);
 }
 
-.current-player .player {
-    animation: player-glow 1s ease-in-out infinite alternate;
+.instructions h3 {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  color: var(--secondary);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
 }
 
-@keyframes player-glow {
-    from {
-        box-shadow: 0 0 5px currentColor;
-    }
-
-    to {
-        box-shadow: 0 0 15px currentColor, 0 0 20px currentColor;
-    }
+.instructions ul {
+  list-style: none;
+  text-align: left;
 }
 
-/* === INTERFACE UTILISATEUR === */
-.game-ui {
-    width: 100%;
-    max-width: 800px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 2rem;
-    align-items: start;
+.instructions li {
+  padding: 12px 0;
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all var(--transition-normal);
+  position: relative;
+  padding-left: 20px;
 }
 
-.players-panel {
-    background: rgba(44, 62, 80, 0.9);
-    padding: 1rem;
-    border-radius: 10px;
-    border: 3px solid #3498db;
-    font-size: 0.7rem;
+.instructions li::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
 }
 
-.players-panel h3 {
-    color: #3498db;
-    margin-bottom: 1rem;
-    text-align: center;
-    font-size: 0.9rem;
+.instructions li:last-child {
+  border-bottom: none;
 }
 
+.instructions li:hover {
+  color: var(--text-primary);
+  padding-left: 28px;
+}
+
+.instructions li:hover::before {
+  opacity: 1;
+}
+
+/* ==========================================
+   🏢 LOBBY SCREEN
+   ========================================== */
+.lobby-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px 10px;
+  animation: fadeIn 0.8s ease;
+}
+
+.lobby-screen h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 40px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.4));
+}
+
+/* Lobby Info */
+.lobby-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  padding: 28px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 650px;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  backdrop-filter: blur(20px);
+}
+
+.lobby-info p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  padding: 10px 20px;
+  background: rgba(15, 15, 35, 0.6);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.lobby-info .countdown {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1.4rem;
+  animation: pulse 1s ease-in-out infinite;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid var(--accent);
+  box-shadow: var(--glow-accent);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+.lobby-info .waiting {
+  color: var(--info);
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid var(--info);
+}
+
+.lobby-info .full {
+  color: var(--success);
+  font-weight: 600;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--success);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+/* Players Section */
+.players-section {
+  width: 100%;
+  max-width: 750px;
+  margin-bottom: 40px;
+}
+
+.players-section h3 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--secondary);
+  margin-bottom: 24px;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.players-grid > p {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  grid-column: 1 / -1;
+}
+
+/* Magic player cards */
 .player-card {
-    background: rgba(52, 73, 94, 0.8);
-    padding: 0.75rem;
-    margin: 0.5rem 0;
-    border-radius: 8px;
-    border-left: 4px solid #3498db;
-    font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 26px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 2px solid rgba(168, 85, 247, 0.2);
+  transition: all var(--transition-normal);
+  backdrop-filter: blur(15px);
+  position: relative;
+  overflow: hidden;
+}
+
+.player-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), transparent);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.player-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: var(--shadow-lg), var(--glow-primary);
+  border-color: var(--primary);
+}
+
+.player-card:hover::before {
+  opacity: 1;
 }
 
 .player-card.my-player {
-    background: rgba(41, 128, 185, 0.3);
-    border: 2px solid #3498db;
-}
-
-.player-card.dead {
-    opacity: 0.6;
-    background: rgba(231, 76, 60, 0.2);
-}
-
-.player-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-}
-
-.player-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  border-color: var(--accent);
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(251, 191, 36, 0.1) 100%);
+  box-shadow: var(--shadow-md), var(--glow-accent);
 }
 
 .player-avatar {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: inline-block;
-    border: 2px solid;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm), 0 0 15px rgba(168, 85, 247, 0.3);
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
 }
 
-.player-avatar.player-1 {
-    background: #3498db;
-    border-color: #2980b9;
+.player-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.player-avatar.player-2 {
-    background: #e74c3c;
-    border-color: #c0392b;
+.player-info strong {
+  font-size: 1.15rem;
+  color: var(--text-primary);
 }
 
-.player-avatar.player-3 {
-    background: #2ecc71;
-    border-color: #27ae60;
+.you-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(251, 191, 36, 0.2);
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
 }
 
-.player-avatar.player-4 {
-    background: #f39c12;
-    border-color: #d35400;
+/* ==========================================
+   💬 CHAT SECTION (Lobby)
+   ========================================== */
+.chat-section-loby {
+  width: 100%;
+  max-width: 650px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  backdrop-filter: blur(20px);
 }
 
-.player-name {
-    font-weight: bold;
-    color: #ecf0f1;
+.chat-section-loby h3 {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  color: var(--secondary);
+  margin-bottom: 20px;
+  text-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
 }
 
-.you-indicator {
-    color: #f1c40f;
-    font-size: 0.5rem;
+.chat-messages-loby {
+  height: 240px;
+  overflow-y: auto;
+  padding: 18px;
+  background: rgba(10, 10, 26, 0.6);
+  border-radius: var(--radius-md);
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.player-lives {
-    color: #e74c3c;
-    font-size: 0.7rem;
+.chat-messages-loby::-webkit-scrollbar {
+  width: 6px;
 }
 
-.player-powerups {
-    display: flex;
-    gap: 0.3rem;
-    flex-wrap: wrap;
+.chat-messages-loby::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-
-
-.powerup-badge {
-    background: rgba(155, 89, 182, 0.3);
-    padding: 0.2rem 0.4rem;
-    border-radius: 10px;
-    font-size: 0.5rem;
-    border: 1px solid #9b59b6;
+.chat-messages-loby::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
 }
 
-/* Informations du jeu */
-.game-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    font-size: 0.7rem;
+.chat-messages-loby > p {
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  margin: auto;
 }
 
-.fps-counter {
-    background: #2c3e50;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-family: 'Press Start 2P', monospace;
-    color: #2ecc71;
-    text-align: center;
-    border: 2px solid #27ae60;
+.chat-form-loby {
+  display: flex;
+  gap: 14px;
 }
 
-.controls-info {
-    background: rgba(52, 152, 219, 0.2);
-    padding: 1rem;
-    border-radius: 8px;
-    border: 2px solid #3498db;
+.chat-form-loby input {
+  flex: 1;
+  padding: 14px 18px;
 }
 
-.controls-info p {
-    color: #3498db;
-    margin: 0.3rem 0;
-    font-size: 0.6rem;
+.chat-form-loby button {
+  padding: 14px 24px;
+  font-size: 0.95rem;
+  white-space: nowrap;
 }
 
-/* === CHAT EN JEU === */
-.right-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+/* ==========================================
+   🎮 GAME SCREEN - CENTERED MAP
+   ========================================== */
+
+/* game-container uses flexbox to center game-area */
+.game-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.game-area {
+  position: relative;
+  width: 750px;
+  height: 650px;
+  overflow: hidden;
+}
+
+.map {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, rgba(15, 15, 35, 0.9) 0%, rgba(10, 10, 26, 1) 100%);
+}
+
+/* Game grid container - centered */
+.game-grid,
+.grid,
+#grid {
+  display: grid;
+  position: relative;
+  box-shadow: 0 0 60px rgba(168, 85, 247, 0.3), 0 0 120px rgba(6, 182, 212, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius-md);
+  border: 3px solid rgba(168, 85, 247, 0.4);
+  overflow: hidden;
+}
+
+/* Chat Section fixed to top-right corner, independent of game-area */
 .chat-section {
-    max-height: 300px;
-    display: flex;
-    flex-direction: column;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 320px;
+  max-height: calc(100vh - 40px);
+  z-index: 1000;
+  background: rgba(20, 20, 50, 0.95);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-lg), 0 0 40px rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-section h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--secondary);
+  margin-bottom: 14px;
+  text-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
 }
 
 .chat-messages {
-    flex: 1;
-    max-height: 200px;
-    overflow-y: auto;
-    background: rgba(44, 62, 80, 0.8);
-    padding: 0.5rem;
-    border-radius: 8px;
-    border: 2px solid #34495e;
-    font-size: 0.6rem;
+  height: 200px;
+  overflow-y: auto;
+  padding: 14px;
+  background: rgba(10, 10, 26, 0.7);
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.chat-form {
-    display: flex;
-    gap: 0.3rem;
-    margin-top: 0.5rem;
-}
-
-.pixel-input {
-    flex: 1;
-    padding: 0.5rem;
-    border: 2px solid #34495e;
-    border-radius: 6px;
-    background: #2c3e50;
-    color: white;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.6rem;
-}
-
-/* === ÉCRAN DE FIN DE JEU === */
-.game-over-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.95);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    color: white;
-    text-align: center;
-    padding: 2rem;
-    font-family: 'Press Start 2P', cursive;
-}
-
-.game-over-screen h1 {
-    font-size: 2rem;
-    color: #f1c40f;
-    margin-bottom: 1rem;
-    text-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
-    animation: victory-pulse 1s ease-in-out infinite;
-}
-
-/* Styles améliorés pour le chat */
-.chat-section {
-    background: rgba(52, 73, 94, 0.6);
-    padding: 1.5rem;
-    border-radius: 10px;
-    border: 2px solid #34495e;
-    display: flex;
-    flex-direction: column;
-    height: 400px;
-    /* Hauteur fixe pour le conteneur */
-}
-
-.chat-messages {
-    flex: 1;
-    background: rgba(44, 62, 80, 0.8);
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    overflow-y: auto;
-    border: 2px solid #34495e;
-    font-size: 0.7rem;
-    min-height: 200px;
-    max-height: 300px;
-    scroll-behavior: smooth;
-    /* Animation fluide pour le scroll */
-}
-
-.message {
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    border-radius: 5px;
-    border-left: 3px solid transparent;
-    animation: message-appear 0.3s ease-out;
-    word-wrap: break-word;
-    line-height: 1.4;
-}
-
-@keyframes message-appear {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.message.system {
-    background: rgba(243, 156, 18, 0.2);
-    color: #f39c12;
-    font-style: italic;
-    border-left-color: #f39c12;
-}
-
-.message.own {
-    background: rgba(52, 152, 219, 0.2);
-    border-left-color: #3498db;
-}
-
-.message:not(.system):not(.own) {
-    background: rgba(149, 165, 166, 0.2);
-    border-left-color: #95a5a6;
-}
-
-/* Scrollbar personnalisée */
 .chat-messages::-webkit-scrollbar {
-    width: 8px;
+  width: 5px;
 }
 
 .chat-messages::-webkit-scrollbar-track {
-    background: rgba(52, 73, 94, 0.5);
-    border-radius: 4px;
+  background: transparent;
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
-    background: #3498db;
-    border-radius: 4px;
+  background: var(--primary);
+  border-radius: 3px;
 }
 
-.chat-messages::-webkit-scrollbar-thumb:hover {
-    background: #2980b9;
+.chat-messages > p {
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  font-size: 0.9rem;
 }
 
 .chat-form {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: auto;
-    /* Pousser le formulaire vers le bas */
+  display: flex;
+  gap: 10px;
 }
 
 .chat-form input {
-    flex: 1;
-    padding: 0.8rem;
-    border: 2px solid #34495e;
-    border-radius: 8px;
-    background: #2c3e50;
-    color: white;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.7rem;
+  flex: 1;
+  padding: 12px 14px;
+  font-size: 0.95rem;
 }
 
 .chat-form button {
-    padding: 0.8rem 1.5rem;
-    background: #3498db;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.7rem;
-    white-space: nowrap;
+  padding: 12px 16px;
+  font-size: 0.9rem;
 }
 
-.chat-form button:hover {
-    background: #2980b9;
+/* ==========================================
+   💬 MESSAGE STYLES
+   ========================================== */
+.message {
+  padding: 10px 14px;
+  background: rgba(30, 30, 60, 0.8);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  word-wrap: break-word;
+  animation: messageSlide 0.3s ease;
+  border-left: 3px solid transparent;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .chat-section {
-        height: 300px;
-    }
-
-    .chat-messages {
-        max-height: 200px;
-    }
+@keyframes messageSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-@keyframes victory-pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.1);
-    }
+.message strong {
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
-.game-over-screen p {
-    font-size: 1rem;
-    margin-bottom: 2rem;
-    color: #ecf0f1;
-}
-
-.restart-btn {
-    background: #e74c3c;
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    font-size: 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: bold;
-    font-family: 'Press Start 2P', cursive;
-    border: 3px solid #c0392b;
-}
-
-.restart-btn:hover {
-    background: #c0392b;
-    transform: scale(1.05);
-}
-
-/* === ANIMATIONS === */
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.7;
-    }
-}
-
-/* === RESPONSIVE === */
-@media (max-width: 768px) {
-    .game-ui {
-        grid-template-columns: 1fr;
-    }
-
-    .game-container {
-        transform: scale(0.8);
-        transform-origin: top center;
-    }
-
-    .lobby-screen {
-        padding: 1rem;
-    }
-
-    .players-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .nickname-screen h1 {
-        font-size: 1.3rem;
-    }
-
-    .game-over-screen h1 {
-        font-size: 1.5rem;
-    }
-
-    .right-panel {
-        order: -1;
-    }
-
-    .chat-section {
-        max-height: 200px;
-    }
-
-    .chat-messages {
-        max-height: 120px;
-        font-size: 0.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .game-container {
-        transform: scale(0.6);
-    }
-
-    .nickname-screen {
-        padding: 1.5rem;
-    }
-
-    .lobby-screen {
-        padding: 0.5rem;
-    }
-}
-
-.boom {
-    
-    background-repeat: no-repeat;
-    image-rendering: pixelated;
-    background-size: cover;
-
-    background-position: -16px 0
+.message.system {
+  background: rgba(59, 130, 246, 0.15); /* Completed rgba with opacity and closing parenthesis */
+  border-left-color: var(--info); /* Added for consistency with status colors */
 }
