@@ -10,21 +10,102 @@ var d = true
 
 
 export default function GameScreen() {
+    const { messages, chatInput = "", ws } = freamwork.state
+    if (!ws) {
+        push('/');
+    }
     if (!freamwork.state.player) {
         freamwork.state.player = new Players(freamwork.state.players)
     }
+    const handleChatInput = (e) => {
+    freamwork.setState({ chatInput: e.target.value });
+  };
+
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+
+    if (chatInput.trim() && freamwork.state.ws) {
+      freamwork.state.ws.send(JSON.stringify({
+        type: 'chat_message',
+        message: chatInput.trim(),
+        playerId: freamwork.state.myId
+      }));
+
+      freamwork.setState({ chatInput: "" });
+
+      const form = e.target;
+      const chatSection = form.parentElement;
+
+      if (chatSection) {
+        const chatMessages = chatSection.children[1];
+
+        if (chatMessages && chatMessages.classList.contains('chat-messages')) {
+          setTimeout(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }, 100);
+        }
+      }
+    }
+  };
 
     return createElement({
         tag: "div",
         attrs: { class: "map" },
         children: [
+             {tag : "div", attrs: {class: "game-area"}, children:   [createElement({
+        tag: "div",
+        attrs: { class: "chat-section" },
+        children: [
+          createElement({ tag: "h3", children: ["💬 Chat"] }),
+          createElement({
+            tag: "div",
+            attrs: { class: "chat-messages" },
+            children: messages.length === 0
+              ? createElement({ tag: "p", children: ["No messages..."] })
+              : messages.map((msg, index) =>
+                createElement({
+                  tag: "div",
+                  attrs: {
+                    class: `message ${msg.isSystem ? 'system' : ''} ${msg.player === freamwork.state.players[freamwork.state.myId]?.nickname ? 'own' : ''}`
+                  },
+                  children: [createElement({ tag: "strong", children: [`${msg.player}: ${msg.text}`] })]
+                })
+              )
+          }),
+          createElement({
+            tag: "form",
+            attrs: { class: "chat-form" },
+            events: { submit:   handleSendMessage },
+            children: [
+              createElement({
+                tag: "input",
+                attrs: {
+                  type: "text",
+                  placeholder: "Type your message...",
+                  maxlength: "100",
+                  value: chatInput
+                },
+                events: { input: handleChatInput }
+              }),
+              createElement({
+                tag: "button",
+                attrs: { type: "submit" },
+                children: ["📤 Send"]
+              })
+            ]
+          })
+        ]
+   
+    })]},
+          
 
             RenderMap(),
             { tag: "div", children: freamwork.state.player.list.map((p) => { return p.draw() }) },
             freamwork.state.boombs.map((p) => { return p.draw() }),
-            freamwork.state.explosion.map((ex) => { return ex })
+            freamwork.state.explosion.map((ex) => { return ex }),
         ]
-    })
+    });
+          
 
 }
 function RenderMap() {

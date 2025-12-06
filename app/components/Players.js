@@ -33,6 +33,7 @@ class Player {
     constructor(i, x, y, name, id) {
         this.name = name;
         this.id = id;
+        this.live = 3
 
         this.gameH = window.innerHeight * 0.80;
         this.gameWidth = this.gameH;

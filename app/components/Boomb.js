@@ -12,6 +12,7 @@ export class Boomb {
 
         this.gridX = boom.x;
         this.gridY = boom.y;
+        this.id = crypto.randomUUID
 
         // convert grid → px
         this.x = this.gridX * variables.GRID_CELL_SIZE_h;

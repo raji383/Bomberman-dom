@@ -7,7 +7,7 @@ export default function LobbyScreen() {
   if (!ws) {
     push('/');
   }
-  const handleChatInput = (e) => {
+const handleChatInput = (e) => {
     freamwork.setState({ chatInput: e.target.value });
   };
 
