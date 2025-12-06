@@ -42,12 +42,14 @@ class Player {
 
         // powerup
         this.power = 1;
-        this.speed = 5;
+        this.speedpoxer = 1;
+        this.speed = this.gameH * (this.speedpoxer / 100);
 
         // move
         this.inagif = 'down';
         this.frameIndex = 0;
         this.frameCount = 0;
+        this.event;
 
         // frame
         this.spriteLoaded = false;
@@ -105,6 +107,19 @@ class Player {
     toGrid(px) {
         return Math.round((px / variables.GRID_CELL_SIZE_h));
     }
+    hndelcollision(gridY, gridX) {
+        const cell = variables.GRID_CELL_SIZE_h;
+
+        if (this.event === "ArrowLeft") {
+            this.x = (gridX + 1) * cell;
+        } else if (this.event === "ArrowRight") {
+            this.x = (gridX * cell) - this.renderW;
+        } else if (this.event === "ArrowUp") {
+            this.y = (gridY + 1) * cell;
+        } else if (this.event === "ArrowDown") {
+            this.y = (gridY * cell) - this.renderH;
+        }
+    }
 
     canMove(newX, newY) {
         const W = this.renderW - 5;
@@ -122,14 +137,17 @@ class Player {
             const gridY = Math.floor(py / variables.GRID_CELL_SIZE_h);
 
             if (gridX < 0 || gridY < 0 ||
-                gridY >= freamwork.state.map.length ||
-                gridX >= freamwork.state.map[0].length)
+                gridY > freamwork.state.map.length - 1 ||
+                gridX > freamwork.state.map[0].length - 1) {
+
                 return false;
+            }
 
             if (freamwork.state.map[gridY][gridX] === 1 ||
-                freamwork.state.map[gridY][gridX] === 2)
+                freamwork.state.map[gridY][gridX] === 2) {
+                this.hndelcollision(gridY, gridX)
                 return false;
-            console.log(55);
+            }
         }
 
         return true;
@@ -138,6 +156,7 @@ class Player {
 
 
     update(e = { key: "" }) {
+        this.event = e.key
         if (e.key === "ArrowLeft" && this.canMove(this.x - this.speed, this.y)) {
             this.x -= this.speed;
             this.inagif = 'left';
