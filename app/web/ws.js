@@ -7,7 +7,6 @@ import { Boomb } from "../components/Boomb.js";
 export function connectToServer(nickname) {
   try {
     const ws = new WebSocket('ws://localhost:8080');
-     console.log(21211);
      
 
     ws.onopen = () => {
@@ -44,7 +43,6 @@ function handleServerMessage(data) {
 
   switch (data.type) {
     case 'room_assigned':
-      console.log(data.chatMessage);
       freamwork.setState({
         roomId: data.roomId,
         myId: data.playerId,
@@ -79,7 +77,6 @@ function handleServerMessage(data) {
         const element = freamwork.state.player.list[index];
 
         if (element.id == data.id) {
-          console.log(element.id, data.id);
 
           element.update(data.message, true)
         }
@@ -94,6 +91,7 @@ function handleServerMessage(data) {
             return true
           }
           p.exblogen()
+          p.smoke()
           return false
         })
       }, 3000);
@@ -109,7 +107,7 @@ function startGameLoop() {
 
   function gameLoop(timestamp) {
     requestAnimationFrame(gameLoop);
-    for (let index = 0; index < freamwork.state.player.list.length; index++) {
+    for (let index = 0; index < freamwork.state.player?.list.length; index++) {
       const element = freamwork.state.player.list[index];
       element.update()
 

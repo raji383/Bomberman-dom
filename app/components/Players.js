@@ -102,21 +102,37 @@ class Player {
         this.xOffset = -(this.frameIndex * this.renderW);
         this.yOffset = -(dirRow * this.renderH);
     }
+    toGrid(px) {
+        return Math.floor((px / variables.GRID_CELL_SIZE_h)+0.5);
+    }
+
+    canMove(newX, newY) {
+        const gridX = this.toGrid(newX);
+        const gridY = this.toGrid(newY);
+
+        if (gridY <= 0 || gridY >= freamwork.state.map.length - 1) return false;
+        if (gridX <= 0 || gridX >= freamwork.state.map[0].length - 1) return false;
+        console.log(gridX, gridY);
+
+        return freamwork.state.map[gridY][gridX] !== 1 &&
+            freamwork.state.map[gridY][gridX] !== 2;
+    }
+
 
     update(e = { key: "" }) {
-        if (e.key === "ArrowLeft" && this.x > variables.GRID_CELL_SIZE_w) {
+        if (e.key === "ArrowLeft" && this.canMove(this.x - this.speed, this.y)) {
             this.x -= this.speed;
             this.inagif = 'left';
 
-        } else if (e.key === "ArrowRight" && this.x + this.renderW < this.gameWidth - variables.GRID_CELL_SIZE_w) {
+        } else if (e.key === "ArrowRight" && this.canMove(this.x + this.speed, this.y)) {
             this.x += this.speed;
             this.inagif = 'right';
 
-        } else if (e.key === "ArrowUp" && this.y > variables.GRID_CELL_SIZE_w) {
+        } else if (e.key === "ArrowUp" && this.canMove(this.x, this.y - this.speed)) {
             this.y -= this.speed;
             this.inagif = 'up';
 
-        } else if (e.key === "ArrowDown" && this.y + this.renderH < this.gameH - variables.GRID_CELL_SIZE_w) {
+        } else if (e.key === "ArrowDown" && this.canMove(this.x, this.y + this.speed)) {
             this.y += this.speed;
             this.inagif = 'down';
         }
@@ -124,6 +140,7 @@ class Player {
         this.Spritesheet();
         router();
     }
+
 
     draw() {
         this.gridX = Math.round(this.x / variables.GRID_CELL_SIZE_w);
