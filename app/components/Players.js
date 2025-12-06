@@ -103,20 +103,38 @@ class Player {
         this.yOffset = -(dirRow * this.renderH);
     }
     toGrid(px) {
-        return Math.floor((px / variables.GRID_CELL_SIZE_h)+0.5);
+        return Math.round((px / variables.GRID_CELL_SIZE_h));
     }
 
     canMove(newX, newY) {
-        const gridX = this.toGrid(newX);
-        const gridY = this.toGrid(newY);
+        const W = this.renderW - 5;
+        const H = this.renderH - 5;
 
-        if (gridY <= 0 || gridY >= freamwork.state.map.length - 1) return false;
-        if (gridX <= 0 || gridX >= freamwork.state.map[0].length - 1) return false;
-        console.log(gridX, gridY);
+        const points = [
+            [newX, newY],               // Top-left
+            [newX + W - 1, newY],       // Top-right
+            [newX, newY + H - 1],       // Bottom-left
+            [newX + W - 1, newY + H - 1]// Bottom-right
+        ];
 
-        return freamwork.state.map[gridY][gridX] !== 1 &&
-            freamwork.state.map[gridY][gridX] !== 2;
+        for (let [px, py] of points) {
+            const gridX = Math.floor(px / variables.GRID_CELL_SIZE_w);
+            const gridY = Math.floor(py / variables.GRID_CELL_SIZE_h);
+
+            if (gridX < 0 || gridY < 0 ||
+                gridY >= freamwork.state.map.length ||
+                gridX >= freamwork.state.map[0].length)
+                return false;
+
+            if (freamwork.state.map[gridY][gridX] === 1 ||
+                freamwork.state.map[gridY][gridX] === 2)
+                return false;
+            console.log(55);
+        }
+
+        return true;
     }
+
 
 
     update(e = { key: "" }) {

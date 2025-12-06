@@ -74,7 +74,7 @@ class GameRoom {
       players: this.getPlayersList()
     });
 
-    if (!this.gameStarted){
+    if (!this.gameStarted) {
       if (this.players.size === 0 || this.players.size === 1) {
         if (!this.gameStarted) {
           if (this.countdown) {
@@ -293,7 +293,7 @@ function handleJoin(ws, data) {
   players.set(playerId, player);
 
   let room = findAvailableRoom();
-  
+
 
   if (!room) {
     const newRoomId = generateId();
@@ -315,7 +315,7 @@ function handleJoin(ws, data) {
 }
 
 function findAvailableRoom() {
-  
+
   for (const room of rooms.values()) {
     if (!room.gameStarted && room.players.size < 4) {
       return room;
