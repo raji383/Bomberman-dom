@@ -259,6 +259,18 @@ function handlePlayerMove(ws, data) {
     id: data.playerId
   });
 }
+function handlePlayerWin(ws, data) {
+  const player = Array.from(players.values()).find(p => p.ws === ws);
+  if (!player || !player.roomId) return;
+
+  const room = rooms.get(player.roomId);
+  if (!room) return;
+  room.broadcast({
+    type: data.type,
+    message: data.message,
+    id: data.playerId
+  });
+}
 function handleMessage(ws, data) {
   switch (data.type) {
     case 'join':
@@ -272,6 +284,10 @@ function handleMessage(ws, data) {
       break
     case 'boomb':
       handlePlayerMove(ws, data)
+      break
+    case 'winning':
+      handlePlayerWin(ws, data)
+      
       break
     case 'mapChange':
       break

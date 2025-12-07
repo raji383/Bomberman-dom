@@ -41,8 +41,17 @@ export class Boomb {
         freamwork.state.player.list.forEach(player => {
             if (this.inrangX(player) || this.inrangY(player)) {
                 player.live--;
+                player.x = player.insX;
+                player.y = player.insY;
                 if (player.live <= 0) {
                     freamwork.state.player.list = freamwork.state.player.list.filter((p) => { if (p.id == player.id) { return false } return true });
+                    if (freamwork.state.player.list.length == 1) {
+                        freamwork.state.ws.send(JSON.stringify({
+                            type: "winning",
+                            message: `${player.name} win this game`,
+                            playerId: freamwork.state.player.list[0].id
+                        }))
+                    }
                 }
             }
         });

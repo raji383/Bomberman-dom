@@ -1,5 +1,5 @@
 import { freamwork } from "../../framework/index.js";
-import { push } from "../../framework/route.js";
+import { push, router } from "../../framework/route.js";
 import { Boomb } from "../components/Boomb.js";
 
 
@@ -7,7 +7,7 @@ import { Boomb } from "../components/Boomb.js";
 export function connectToServer(nickname) {
   try {
     const ws = new WebSocket('ws://localhost:8080');
-     
+
 
     ws.onopen = () => {
       ws.send(JSON.stringify({
@@ -40,6 +40,7 @@ export function connectToServer(nickname) {
 }
 
 function handleServerMessage(data) {
+  console.log(data.type);
 
   switch (data.type) {
     case 'room_assigned':
@@ -95,6 +96,11 @@ function handleServerMessage(data) {
           return false
         })
       }, 3000);
+      break
+    case 'winning':
+
+      freamwork.state.gameOver = data.message;
+        router();
       break
     default:
       console.log(' Message inconnu:', data.type);

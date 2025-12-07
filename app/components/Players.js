@@ -66,14 +66,14 @@ class Player {
         this.yOffset = 0;
 
         // x and y
-        this.x = x == 100
+        this.insX = x == 100
             ? this.gameWidth - this.renderW - variables.GRID_CELL_SIZE_h
-            : this.gameWidth * (x / 100) + variables.GRID_CELL_SIZE_h;
-
-        this.y = y == 100
+            : this.gameWidth * (x / 100) + variables.GRID_CELL_SIZE_h;;
+        this.insY = y == 100
             ? this.gameH - this.renderH - variables.GRID_CELL_SIZE_h
-            : this.gameH * (y / 100) + variables.GRID_CELL_SIZE_h;
-
+            : this.gameH * (y / 100) + variables.GRID_CELL_SIZE_h;;
+        this.x = this.insX;
+        this.y = this.insY;
         this.gridX = Math.round(this.x / variables.GRID_CELL_SIZE_w);
         this.gridY = Math.round(this.y / variables.GRID_CELL_SIZE_h);
         this.loadSprite();
@@ -189,7 +189,7 @@ class Player {
             events: {
                 keydown: (e) => {
                     if (freamwork.state?.ws && this.id == freamwork.state.myId) {
-                        let type = e.key === " " ? "boomb" : "playermove";
+                        let type = (e.key === " " && this.live > 0) ? "boomb" : "playermove";
 
                         freamwork.state.ws.send(JSON.stringify({
                             type: type,

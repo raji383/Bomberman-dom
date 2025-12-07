@@ -18,6 +18,7 @@ freamwork.state = {
   gameLoopId: null,
   lastFrameTime: 0,
   boombs: [],
+  gameOver: "",
   explosion: []
 };
 freamwork.addRoute("/", NicknameScreen);
