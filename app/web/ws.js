@@ -7,15 +7,12 @@ import { Boomb } from "../components/Boomb.js";
 export function connectToServer(nickname) {
   try {
     const ws = new WebSocket('ws://localhost:8080');
-
-
-    ws.onopen = () => {
+     ws.onopen = () => {
       ws.send(JSON.stringify({
         type: 'join',
         nickname: nickname
       }));
     };
-
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
@@ -24,7 +21,6 @@ export function connectToServer(nickname) {
         console.error(' Erreur parsing message:', error);
       }
     };
-
     ws.onclose = () => {
       console.log('Déconnecté du serveur');
     };
@@ -56,7 +52,8 @@ function handleServerMessage(data) {
       freamwork.setState({
         gameStarted: true,
         players: data.players || {},
-        map: data.map
+        map: data.map,
+        number : data.number
       });
       freamwork.state.players = data.players
       push('game');
@@ -121,8 +118,9 @@ function startGameLoop() {
     requestAnimationFrame(gameLoop);
     for (let index = 0; index < freamwork.state.player?.list.length; index++) {
       const element = freamwork.state.player.list[index];
-      element.update()
-
+       if (element.alive){
+         element.update()
+       }
     }
     frameCount++;
     if (timestamp >= lastFpsUpdate + 1000) {

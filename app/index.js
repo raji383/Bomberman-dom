@@ -3,7 +3,6 @@ import { initRouter } from "../framework/route.js";
 import NicknameScreen from "./components/Nickname.js";
 import LobbyScreen from "./components/Lobby.js";
 import GameScreen from "./components/Game.js";
-
 freamwork.state = {
   player:null,
   chatInput: "",
@@ -19,7 +18,8 @@ freamwork.state = {
   lastFrameTime: 0,
   boombs: [],
   gameOver: "",
-  explosion: []
+  explosion: [],
+  number: null 
 };
 freamwork.addRoute("/", NicknameScreen);
 freamwork.addRoute("/lobby", LobbyScreen);

@@ -44,7 +44,7 @@ class Player {
         this.power = 1;
         this.speedpx = 1;
         this.speed = this.gameH * (this.speedpx / 100);
-
+        this.alive = this.live>0 ? true : false;
         // move
         this.inagif = 'down';
         this.frameIndex = 0;

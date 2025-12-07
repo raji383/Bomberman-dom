@@ -1,6 +1,5 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
-import { router } from "../../framework/route.js";
 import { variables } from "../../variables.js";
 
 
@@ -35,21 +34,34 @@ export class Boomb {
             player.gridY >= this.gridY - this.range
         );
     }
+    playerwinner(){
+         for (let i = 0; i < freamwork.state.player.list.length; i++) {
+            const element = freamwork.state.player.list[i];
+            if ( element.alive) {
+                console.log(element.name);
+                
+                return  element.name
+            }
+          }
+    }
 
     exblogen() {
         freamwork.state.player.list.forEach(player => {
-            if (this.inrangX(player) || this.inrangY(player)) {
+            if ((this.inrangX(player) || this.inrangY(player))&& player.alive) {
                 player.live--;
                 player.x = player.insX;
                 player.y = player.insY;
                 if (player.live <= 0) {
-                    freamwork.state.player.list = freamwork.state.player.list.filter((p) => { if (p.id == player.id) { return false } return true });
-                    if (freamwork.state.player.list.length == 1) {
+                    player.alive = false;
+                    freamwork.state.number--
+                    if (freamwork.state.number <= 1) {
+                        console.log(freamwork.state.number);
+                        
                         freamwork.state.ws.send(JSON.stringify({
-                            type: "winning",
-                            message: `${player.name} win this game`,
-                            playerId: freamwork.state.player.list[0].id
-                        }))
+                            type: 'winning',
+                            winner: this.playerwinner()
+                        })); 
+                    
                     }
                 }
             }

@@ -100,7 +100,9 @@ class GameRoom {
       type: 'game_start',
       message: 'The game has started!',
       players: playerList,
-      map: this.map.map
+      map: this.map.map,
+      number : playerList.length
+
 
     });
     this.gameStarted = true;
