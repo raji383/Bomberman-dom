@@ -61,9 +61,12 @@ export class Boomb {
     smoke() {
         //  X
         for (let i = -this.range; i <= this.range; i++) {
-            if (freamwork.state.map[this.gridY][this.gridX + i] === 0) {
+            console.log(freamwork.state.map[this.gridY][this.gridX + i]);
+
+            if (freamwork.state.map[this.gridY][this.gridX + i] === 0 || freamwork.state.map[this.gridY][this.gridX + i] === 3) {
                 createExplosion(this.gridX + i, this.gridY);
             } else if (freamwork.state.map[this.gridY][this.gridX + i] === 2) {
+                createExplosion(this.gridX + i, this.gridY);
                 freamwork.state.map[this.gridY][this.gridX + i] = 0
             }
         }
@@ -73,8 +76,8 @@ export class Boomb {
             if (freamwork.state.map[this.gridY + i][this.gridX] === 0) {
                 createExplosion(this.gridX, this.gridY + i);
             } else if (freamwork.state.map[this.gridY + i][this.gridX] === 2) {
-                freamwork.state.map[this.gridY + i][this.gridX] = 0
                 createExplosion(this.gridX, this.gridY + i);
+                freamwork.state.map[this.gridY + i][this.gridX] = 0
 
             }
         }
