@@ -1,6 +1,5 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
-import { router } from "../../framework/route.js";
 import { variables } from "../../variables.js";
 export class Players {
     constructor(playerList) {
@@ -176,7 +175,7 @@ class Player {
         }
 
         this.Spritesheet();
-        router();
+        freamwork.setState(prev => ({ ...prev }));
     }
 
 

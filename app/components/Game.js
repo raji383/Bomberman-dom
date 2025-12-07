@@ -1,7 +1,6 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
 import { push } from "../../framework/route.js";
-import { Boomb } from "./Boomb.js";
 import { Players } from "./Players.js";
 import { variables } from "../../variables.js";
 
@@ -11,10 +10,8 @@ export default function GameScreen() {
     console.log(player);
     
 
-    // Redirect if websocket is not connected
     if (!ws) push('/');
 
-    // Initialize Players instance if not present
     if (!freamwork.state.player) {
         freamwork.state.player = new Players(players);
     }
@@ -43,7 +40,7 @@ export default function GameScreen() {
       if (chatSection) {
         const chatMessages = chatSection.children[1];
 
-        if (chatMessages && chatMessages.classList.contains('chat-messages-loby')) {
+        if (chatMessages && chatMessages.classList.contains('chat-messages')) {
           setTimeout(() => {
             chatMessages.scrollTop = chatMessages.scrollHeight;
           }, 100);
@@ -64,9 +61,9 @@ export default function GameScreen() {
                     ...freamwork.state.player.list.map((p) => p.draw()),
                     ...boombs.map((b) => b.draw()),
                     ...explosion.map((ex) => ex.draw ? ex.draw() : ex),
-                    RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myId)
                 ]
-            })
+            }),RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myId)
+
         ]
     });
 }

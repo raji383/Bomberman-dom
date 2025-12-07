@@ -44,7 +44,8 @@ export class Boomb {
             return !(this.inrangX(player) || this.inrangY(player));
         });
 
-        router();
+             freamwork.setState(prev => ({ ...prev }));
+
     }
     smoke() {
         //  X
@@ -65,7 +66,8 @@ export class Boomb {
             }
         }
 
-        router();
+             freamwork.setState(prev => ({ ...prev }));
+
     }
 
 
@@ -152,7 +154,8 @@ class Explosion {
         const interval = setInterval(() => {
 
             this.updateFrame();
-            router(); // ← re-render
+                 freamwork.setState(prev => ({ ...prev }));
+ // ← re-render
 
             this.frameIndex++;
 
@@ -163,7 +166,8 @@ class Explosion {
                 freamwork.state.explosion =
                     freamwork.state.explosion.filter(v => v !== this.vnode);
 
-                router();
+                     freamwork.setState(prev => ({ ...prev }));
+
             }
 
         }, 50);

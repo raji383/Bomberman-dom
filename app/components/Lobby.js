@@ -29,7 +29,7 @@ const handleChatInput = (e) => {
       if (chatSection) {
         const chatMessages = chatSection.children[1];
 
-        if (chatMessages && chatMessages.classList.contains('chat-messages')) {
+        if (chatMessages && chatMessages.classList.contains('chat-messages-loby')) {
           setTimeout(() => {
             chatMessages.scrollTop = chatMessages.scrollHeight;
           }, 100);

@@ -129,43 +129,59 @@ Object.keys(newEvents || {}).forEach((eventType) => {
     }
   });
 
-  const oldChildren = oldVNode.children || [];
-  const newChildren = newVNode.children || [];
-  const oldKeyedMap = new Map();
-  oldChildren.forEach((child, index) => {
-    const key = (typeof child === 'object' && child?.attrs?.key) || `_${index}`;
-    oldKeyedMap.set(key, child);
-  });
+const oldChildren = oldVNode.children || [];
+const newChildren = newVNode.children || [];
+const oldKeyedMap = new Map();
 
-  for (let i = 0; i < newChildren.length; i++) {
-    const newChild = newChildren[i];
-    const key = (typeof newChild === 'object' && newChild?.attrs?.key) || `_${i}`;
-    let oldChild = oldKeyedMap.get(key);
-    let realDOMNode = null;
-    const nextSiblingReference = getNextExistingElement(newChildren, oldKeyedMap, i, el);
+oldChildren.forEach((child, index) => {
+  const key = (typeof child === 'object' && child?.attrs?.key) || `_${index}`;
+  oldKeyedMap.set(key, child);
+});
 
-    if (oldChild) {
-      updateElement(oldChild, newChild, el);
-      if (typeof newChild === 'object') {
-        realDOMNode = newChild.el;
-      } else {
-        realDOMNode = el.childNodes[i];
-      }
-      oldKeyedMap.delete(key);
-      if (realDOMNode && realDOMNode.nextSibling !== nextSiblingReference) {
-        el.insertBefore(realDOMNode, nextSiblingReference);
-      }
-    } else {
-      realDOMNode = createRealElement(newChild);
-      el.insertBefore(realDOMNode, nextSiblingReference);
+for (let i = 0; i < newChildren.length; i++) {
+  const newChild = newChildren[i];
+  const key = (typeof newChild === 'object' && newChild?.attrs?.key) || `_${i}`;
+  const oldChild = oldKeyedMap.get(key);
+
+  let realDOMNode;
+  let nextSiblingReference = null;
+
+  for (let j = i + 1; j < newChildren.length; j++) {
+    const nextNewChild = newChildren[j];
+    const nextKey = (typeof nextNewChild === 'object' && nextNewChild?.attrs?.key) || `_${j}`;
+    const possibleOldChild = oldKeyedMap.get(nextKey);
+    if (possibleOldChild && possibleOldChild.el && el.contains(possibleOldChild.el)) {
+      nextSiblingReference = possibleOldChild.el;
+      break;
     }
   }
 
-  oldKeyedMap.forEach((oldChild) => {
-    const childEl = oldChild.el;
-    if (childEl && el.contains(childEl)) {
-      el.removeChild(childEl);
+  if (oldChild) {
+    updateElement(oldChild, newChild, el);
+    realDOMNode = newChild.el;
+    oldKeyedMap.delete(key);
+
+    if (nextSiblingReference && realDOMNode.nextSibling !== nextSiblingReference) {
+      el.insertBefore(realDOMNode, nextSiblingReference);
     }
-  });
+
+  } else {
+    realDOMNode = createRealElement(newChild);
+    newChild.el = realDOMNode;
+    if (!nextSiblingReference || !el.contains(nextSiblingReference)) {
+      el.appendChild(realDOMNode);
+    } else {
+      el.insertBefore(realDOMNode, nextSiblingReference);
+    }
+  }
+}
+
+oldKeyedMap.forEach((oldChild) => {
+  if (oldChild.el && el.contains(oldChild.el)) {
+    el.removeChild(oldChild.el);
+  }
+});
+
+
 }
 
