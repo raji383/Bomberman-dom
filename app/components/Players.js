@@ -9,6 +9,7 @@ export class Players {
     }
 
     createPlayers() {
+        // console.log("playersList ::", this.players);
         return this.players?.map((element, i) => {
             const name = element.nickname;
 
@@ -20,8 +21,10 @@ export class Players {
             ];
 
             let [x, y] = positions[i] || [1, 1];
+            console.log("eleeeement :::",element)
+            // console.log("eleeeement sped :::",element.speed)
 
-            return new Player(i, x, y, name, element.id);
+            return new Player(i, x, y, name, element.id, element.lives, element.speed);
         });
     }
 }
@@ -30,7 +33,7 @@ export class Players {
 
 
 class Player {
-    constructor(i, x, y, name, id) {
+    constructor(i, x, y, name, id, lives, speed) {
         this.name = name;
         this.id = id;
 
@@ -40,10 +43,14 @@ class Player {
         // spr
         this.img = `/tools/player${i + 1}.png`;
 
+        //lives
+        this.lives = lives
+
         // powerup
         this.power = 1;
         this.speedpoxer = 1;
-        this.speed = this.gameH * (this.speedpoxer / 100);
+        // this.speed = this.gameH * (this.speedpoxer / 100);
+        this.speed = speed
 
         // move
         this.inagif = 'down';

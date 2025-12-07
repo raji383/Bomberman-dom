@@ -18,7 +18,7 @@ export default function GameScreen() {
         tag: "div",
         attrs: { class: "map" },
         children: [
-
+            UsersInfos(),
             RenderMap(),
             { tag: "div", children: freamwork.state.player.list.map((p) => { return p.draw() }) },
             freamwork.state.boombs.map((p) => { return p.draw() }),
@@ -28,8 +28,8 @@ export default function GameScreen() {
 
 }
 function RenderMap() {
-    const result = [];
 
+    const result = [];
     for (let y = 0; y < freamwork.state.map.length; y++) {
         for (let x = 0; x < freamwork.state.map[y].length; x++) {
             const element = freamwork.state.map[y][x];
@@ -37,9 +37,6 @@ function RenderMap() {
             result.push(tile);
         }
     }
-
-
-
     return result;
 }
 
@@ -65,4 +62,16 @@ function MapDraw(mapElement, x, y) {
             `
         }
     });
+}
+
+
+function UsersInfos(){
+    // console.log("------------",freamwork.state.player);
+    // console.log("STAAAAAATE speed:", freamwork.state.player.players[0]);
+    const playersArray = freamwork.state.player.players
+    // playersArray.array.forEach(element => {
+    //     const lives = element.lives
+
+    // });
+
 }

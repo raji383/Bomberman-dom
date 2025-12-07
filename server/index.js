@@ -96,6 +96,7 @@ class GameRoom {
   }
   startGame() {
     const playerList = Array.from(this.players.values());
+
     this.broadcast({
       type: 'game_start',
       message: 'The game has started!',
@@ -128,8 +129,6 @@ class GameRoom {
     }, 1000);
   }
 
-
-
   getPlayersList() {
     return Array.from(this.players.values()).map(p => ({
       id: p.id,
@@ -155,7 +154,10 @@ class GameRoom {
   }
   broadcast(message) {
     const messageStr = JSON.stringify(message);
+    // console.log("messaaaaage :", messageStr)
     this.players.forEach(player => {
+      console.log("Playeeeeer :", player);
+      console.log("Playeeeeer :", player);
       if (player.ws && player.ws.readyState === 1) {
         try {
           player.ws.send(messageStr);
@@ -287,7 +289,9 @@ function handleJoin(ws, data) {
     nickname: data.nickname,
     ws: ws,
     roomId: null,
-    joinedAt: Date.now()
+    joinedAt: Date.now(),
+    lives: data.lives || 3,
+    speed : window.innerHeight * 0.80 * (1 / 100),
   };
 
   players.set(playerId, player);
