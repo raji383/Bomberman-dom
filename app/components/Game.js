@@ -22,7 +22,7 @@ export default function GameScreen() {
             RenderMap(),
             { tag: "div", children: freamwork.state.player.list.map((p) => { return p.draw() }) },
             freamwork.state.boombs.map((p) => { return p.draw() }),
-            freamwork.state.explosion.map((ex) => { return ex })
+            freamwork.state.explosion.map((ex) => { return ex.draw() })
         ]
     })
 
