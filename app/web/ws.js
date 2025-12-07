@@ -102,8 +102,8 @@ function handleServerMessage(data) {
       break
     case 'winning':
 
-      freamwork.state.gameOver = data.message;
-        router();
+      freamwork.state.gameOver = data.message+ "  is the  winner";
+        freamwork.setState(prev => ({...prev}))
       break
     default:
       console.log(' Message inconnu:', data.type);

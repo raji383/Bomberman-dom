@@ -38,8 +38,7 @@ export class Boomb {
          for (let i = 0; i < freamwork.state.player.list.length; i++) {
             const element = freamwork.state.player.list[i];
             if ( element.alive) {
-                console.log(element.name);
-                
+                console.log(element.name,"--------------------------");
                 return  element.name
             }
           }
@@ -59,7 +58,7 @@ export class Boomb {
                         
                         freamwork.state.ws.send(JSON.stringify({
                             type: 'winning',
-                            winner: this.playerwinner()
+                            message: this.playerwinner()
                         })); 
                     
                     }
