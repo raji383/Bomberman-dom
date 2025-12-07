@@ -65,6 +65,8 @@ function handleServerMessage(data) {
       freamwork.setState({ countdown: data.countdown });
       break;
     case 'players_update':
+      console.log(1212);
+      
       freamwork.setState({ players: data.players || {} });
       break;
 
