@@ -69,8 +69,9 @@ function handleServerMessage(data) {
       break;
 
     case 'chat_message':
-      const messages = [...freamwork.state.messages, data.message];
-      freamwork.setState({ messages: messages });
+      freamwork.setState(prevState => ({
+  messages: [...(prevState.messages || []), data.message]
+}));
       break;
     case 'playermove':
       for (let index = 0; index < freamwork.state.player.list.length; index++) {

@@ -5,9 +5,8 @@ import { Players } from "./Players.js";
 import { variables } from "../../variables.js";
 
 export default function GameScreen() {
-    const { messages, chatInput = "", ws, players, myId, boombs = [], explosion = [], map ,player } = freamwork.state;
-
-    console.log(player);
+    const { messages, chatInput = "", ws, players, myId, boombs = [], explosion = [], map  } = freamwork.state;    
+    console.log(messages);
     
 
     if (!ws) push('/');
