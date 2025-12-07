@@ -96,6 +96,12 @@ function handleServerMessage(data) {
           return false
         })
       }, 3000);
+      setTimeout(() => {
+       freamwork.state.explosion = freamwork.state.explosion.filter(p =>{
+          if (bom.id==p.id)  return false
+        })  
+         freamwork.setState(prev => ({...prev}))
+      }, 4000);
       break
     case 'winning':
 

@@ -14,7 +14,6 @@ export default function NicknameScreen() {
       connectToServer(playerName.trim());
     }
   };
-
   return createElement({
     tag: "div",
     attrs: { class: "nickname-screen" },

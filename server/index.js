@@ -286,8 +286,7 @@ function handleMessage(ws, data) {
       handlePlayerMove(ws, data)
       break
     case 'winning':
-      handlePlayerWin(ws, data)
-      
+      handlePlayerWin(ws, data)  
       break
     case 'mapChange':
       break

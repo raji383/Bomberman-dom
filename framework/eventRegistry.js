@@ -3,6 +3,7 @@ export const eventRegistry = new Set();
 export function registerDomEvent(element, type, handler) {
   if (type=="keydown") {
     window.addEventListener(type,handler)
+    return 
   }
   element.addEventListener(type, handler);
 

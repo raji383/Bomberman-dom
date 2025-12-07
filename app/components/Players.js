@@ -7,7 +7,6 @@ export class Players {
         this.players = playerList;
         this.list = this.createPlayers();
     }
-
     createPlayers() {
         return this.players?.map((element, i) => {
             const name = element.nickname;
@@ -189,8 +188,7 @@ class Player {
             events: {
                 keydown: (e) => {
                     if (freamwork.state?.ws && this.id == freamwork.state.myId) {
-                        let type = (e.key === " " && this.live > 0) ? "boomb" : "playermove";
-
+                     let type = (e.key === " " && this.live > 0) ? "boomb" : "playermove";
                         freamwork.state.ws.send(JSON.stringify({
                             type: type,
                             message: {

@@ -13,7 +13,6 @@ export default function GameScreen() {
     if (!freamwork.state.player) {
         freamwork.state.player = new Players(freamwork.state.players)
     }
-
     return createElement({
         tag: "div",
         attrs: { class: "map" },
