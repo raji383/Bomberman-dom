@@ -38,9 +38,13 @@ export class Boomb {
     }
 
     exblogen() {
-        freamwork.state.player.list = freamwork.state.player.list.filter((player) => {
-
-            return !(this.inrangX(player) || this.inrangY(player));
+        freamwork.state.player.list.forEach(player => {
+            if (this.inrangX(player) || this.inrangY(player)) {
+                player.live--;
+                if (player.live <= 0) {
+                    freamwork.state.player.list = freamwork.state.player.list.filter((p) => { if (p.id == player.id) { return false } return true });
+                }
+            }
         });
 
         router();

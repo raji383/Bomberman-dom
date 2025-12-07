@@ -41,9 +41,10 @@ class Player {
         this.img = `/tools/player${i + 1}.png`;
 
         // powerup
+        this.live = 3;
         this.power = 1;
-        this.speedpoxer = 1;
-        this.speed = this.gameH * (this.speedpoxer / 100);
+        this.speedpx = 1;
+        this.speed = this.gameH * (this.speedpx / 100);
 
         // move
         this.inagif = 'down';
