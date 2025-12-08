@@ -7,7 +7,7 @@ import { Boomb } from "../components/Boomb.js";
 export function connectToServer(nickname) {
   try {
     const ws = new WebSocket('ws://localhost:8080');
-     ws.onopen = () => {
+    ws.onopen = () => {
       ws.send(JSON.stringify({
         type: 'join',
         nickname: nickname
@@ -53,7 +53,7 @@ function handleServerMessage(data) {
         gameStarted: true,
         players: data.players || {},
         map: data.map,
-        number : data.number
+        number: data.number
       });
       freamwork.state.players = data.players
       push('game');
@@ -82,6 +82,15 @@ function handleServerMessage(data) {
       break
     case 'boomb':
       var bom = new Boomb(data.message)
+      let ex = false
+      freamwork.state.boombs.forEach(b => {
+        if (b.id == bom.id) {
+          ex = true
+        }
+      });
+      if (ex) {
+        break
+      }
       freamwork.state.boombs.push(bom)
       setTimeout(() => {
         freamwork.state.boombs = freamwork.state.boombs.filter(p => {
@@ -94,16 +103,16 @@ function handleServerMessage(data) {
         })
       }, 3000);
       setTimeout(() => {
-       freamwork.state.explosion = freamwork.state.explosion.filter(p =>{
-          if (bom.id==p.id)  return false
-        })  
-         freamwork.setState(prev => ({...prev}))
+        freamwork.state.explosion = freamwork.state.explosion.filter(p => {
+          if (bom.id == p.id) return false
+        })
+        freamwork.setState(prev => ({ ...prev }))
       }, 4000);
       break
     case 'winning':
 
-      freamwork.state.gameOver = data.message+ "  is the  winner";
-        freamwork.setState(prev => ({...prev}))
+      freamwork.state.gameOver = data.message + "  is the  winner";
+      freamwork.setState(prev => ({ ...prev }))
       break
     default:
       console.log(' Message inconnu:', data.type);
@@ -118,9 +127,9 @@ function startGameLoop() {
     requestAnimationFrame(gameLoop);
     for (let index = 0; index < freamwork.state.player?.list.length; index++) {
       const element = freamwork.state.player.list[index];
-       if (element.alive){
-         element.update()
-       }
+      if (element.alive) {
+        element.update()
+      }
     }
     frameCount++;
     if (timestamp >= lastFpsUpdate + 1000) {

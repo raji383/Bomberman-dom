@@ -33,7 +33,7 @@ class Player {
         this.name = name;
         this.id = id;
 
-        this.gameH = window.innerHeight * 0.80;
+        this.gameH = variables.GRID_CELL_SIZE_h * 17;
         this.gameWidth = this.gameH;
 
         // spr
@@ -44,7 +44,8 @@ class Player {
         this.power = 1;
         this.speedpx = 1;
         this.speed = this.gameH * (this.speedpx / 100);
-        this.alive = this.live>0 ? true : false;
+        this.alive = this.live > 0 ? true : false;
+        this.bomb = true;
         // move
         this.inagif = 'down';
         this.frameIndex = 0;
@@ -114,6 +115,7 @@ class Player {
             this.x = (gridX + 1) * cell;
         } else if (this.event === "ArrowRight") {
             this.x = (gridX * cell) - this.renderW;
+
         } else if (this.event === "ArrowUp") {
             this.y = (gridY + 1) * cell;
         } else if (this.event === "ArrowDown") {
@@ -122,14 +124,14 @@ class Player {
     }
 
     canMove(newX, newY) {
-        const W = this.renderW - 5;
-        const H = this.renderH - 5;
+        const W = this.renderW * 0.9;
+        const H = this.renderH * 0.9;
 
         const points = [
             [newX, newY],               // Top-left
-            [newX + W - 1, newY],       // Top-right
-            [newX, newY + H - 1],       // Bottom-left
-            [newX + W - 1, newY + H - 1]// Bottom-right
+            [newX + W, newY],       // Top-right
+            [newX, newY + H],       // Bottom-left
+            [newX + W, newY + H]// Bottom-right
         ];
 
         for (let [px, py] of points) {
@@ -188,7 +190,7 @@ class Player {
             events: {
                 keydown: (e) => {
                     if (freamwork.state?.ws && this.id == freamwork.state.myId) {
-                     let type = (e.key === " " && this.live > 0) ? "boomb" : "playermove";
+                        let type = (e.key === " " && this.live > 0 && this.bomb) ? "boomb" : "playermove";
                         freamwork.state.ws.send(JSON.stringify({
                             type: type,
                             message: {

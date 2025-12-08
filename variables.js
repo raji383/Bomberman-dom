@@ -1,4 +1,4 @@
-const h = window.innerHeight * (80 / 100);
+const h = window.innerWidth * (80 / 100) > 850 ? 850 : window.innerWidth * (80 / 100);
 
 export let variables = {
     GRID_CELL_SIZE_w: h / 17,

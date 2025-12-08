@@ -19,7 +19,7 @@ export default function GameScreen() {
         children: [
 
             RenderMap(),
-            { tag: "div", children: freamwork.state.player.list.filter((p) => p.alive ).map((p) => { return p.draw() }) },
+            { tag: "div", children: freamwork.state.player.list.filter((p) => p?.alive ).map((p) => { return p.draw() }) },
             freamwork.state.boombs.map((p) => { return p.draw() }),
             freamwork.state.explosion.map((ex) => { return ex.draw() }),
             (freamwork.state.gameOver != "") && ({
