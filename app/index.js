@@ -3,6 +3,7 @@ import { initRouter } from "../framework/route.js";
 import NicknameScreen from "./components/Nickname.js";
 import LobbyScreen from "./components/Lobby.js";
 import GameScreen from "./components/Game.js";
+
 freamwork.state = {
   player:null,
   chatInput: "",

@@ -19,7 +19,6 @@ export class Players {
             ];
 
             let [x, y] = positions[i] || [1, 1];
-
             return new Player(i, x, y, name, element.id);
         });
     }
@@ -40,11 +39,11 @@ class Player {
         this.img = `/tools/player${i + 1}.png`;
 
         // powerup
-        this.live = 3;
+        this.lives = 3;
         this.power = 1;
         this.speedpx = 1;
         this.speed = this.gameH * (this.speedpx / 100);
-        this.alive = this.live > 0 ? true : false;
+        this.alive = this.lives > 0 ? true : false;
         this.bomb = true;
         // move
         this.inagif = 'down';
@@ -190,7 +189,7 @@ class Player {
             events: {
                 keydown: (e) => {
                     if (freamwork.state?.ws && this.id == freamwork.state.myId) {
-                        let type = (e.key === " " && this.live > 0 && this.bomb) ? "boomb" : "playermove";
+                        let type = (e.key === " " && this.lives > 0 && this.bomb) ? "boomb" : "playermove";
                         freamwork.state.ws.send(JSON.stringify({
                             type: type,
                             message: {
