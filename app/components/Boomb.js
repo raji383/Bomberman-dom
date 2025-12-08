@@ -97,18 +97,28 @@ export class Boomb {
 
 
     draw() {
+        // render as an <img> so the src is explicit and sizing is consistent
+        const size = Math.round(variables.GRID_CELL_SIZE_h);
+        // center the image inside the cell 
+        const left = Math.round(this.x);
+        const top = Math.round(this.y);
+
         return createElement({
-            tag: "div",
+            tag: "img",
             attrs: {
+                src: this.img,
                 class: "boom",
+                draggable: "false",
                 style: `
                     position: absolute;
-                    left: ${this.x}px;
-                    top: ${this.y}px;
-                    width: ${variables.GRID_CELL_SIZE_h}px;
-                    height: ${variables.GRID_CELL_SIZE_h}px;
-                    background-image: url('${this.img}');
-                    background-size: cover;
+                    left: ${left}px;
+                    top: ${top}px;
+                    width: ${size}px;
+                    height: ${size}px;
+                    object-fit: contain;
+                    image-rendering: pixelated;
+                    pointer-events: none;
+                    transform: translateZ(0);
                 `
             }
         });
