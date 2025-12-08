@@ -123,7 +123,7 @@ export default function LobbyScreen() {
       // Chat
       createElement({
         tag: "div",
-        attrs: { class: "chat-section" },
+        attrs: { class: "chat-section-loby" },
         children: [
           createElement({ tag: "h3", children: ["💬 Chat"] }),
           createElement({
@@ -147,7 +147,7 @@ export default function LobbyScreen() {
           }),
           createElement({
             tag: "form",
-            attrs: { class: "chat-form" },
+            attrs: { class: "chat-form-loby" },
             events: { submit: handleSendMessage },
             children: [
               createElement({

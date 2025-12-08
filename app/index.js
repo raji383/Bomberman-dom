@@ -19,7 +19,8 @@ freamwork.state = {
   boombs: [],
   gameOver: "",
   explosion: [],
-  number: null 
+  number: null, 
+  model_chat : true,
 };
 freamwork.addRoute("/", NicknameScreen);
 freamwork.addRoute("/lobby", LobbyScreen);
