@@ -156,8 +156,7 @@ class GameRoom {
     const messageStr = JSON.stringify(message);
     // console.log("messaaaaage :", messageStr)
     this.players.forEach(player => {
-      console.log("Playeeeeer :", player);
-      console.log("Playeeeeer :", player);
+      // console.log("Playeeeeer :", player);
       if (player.ws && player.ws.readyState === 1) {
         try {
           player.ws.send(messageStr);
@@ -284,14 +283,15 @@ function handleMessage(ws, data) {
 
 function handleJoin(ws, data) {
   const playerId = generateId();
+  // console.log("data.lives value is :", data.screenSize);
   const player = {
     id: playerId,
     nickname: data.nickname,
     ws: ws,
     roomId: null,
     joinedAt: Date.now(),
-    lives: data.lives || 3,
-    speed : window.innerHeight * 0.80 * (1 / 100),
+    lives: 3,
+    speed : data.screenSize * 0.80 * (1 / 100),
   };
 
   players.set(playerId, player);
@@ -319,7 +319,6 @@ function handleJoin(ws, data) {
 }
 
 function findAvailableRoom() {
-
   for (const room of rooms.values()) {
     if (!room.gameStarted && room.players.size < 4) {
       return room;

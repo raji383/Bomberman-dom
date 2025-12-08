@@ -11,7 +11,8 @@ export function connectToServer(nickname) {
     ws.onopen = () => {
       ws.send(JSON.stringify({
         type: 'join',
-        nickname: nickname
+        nickname: nickname,
+        screenSize: window.innerHeight
       }));
     };
 
@@ -39,7 +40,6 @@ export function connectToServer(nickname) {
 }
 
 function handleServerMessage(data) {
-  console.log("dataaaaa :", data);
   switch (data.type) {
     case 'room_assigned':
       freamwork.setState({
