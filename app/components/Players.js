@@ -114,12 +114,12 @@ class Player {
         if (this.event === "ArrowLeft") {
             this.x = (gridX + 1) * cell;
         } else if (this.event === "ArrowRight") {
-            this.x = (gridX * cell) - this.renderW;
+            this.x = (gridX * cell) - this.renderW * 0.8;
 
         } else if (this.event === "ArrowUp") {
             this.y = (gridY + 1) * cell;
         } else if (this.event === "ArrowDown") {
-            this.y = (gridY * cell) - this.renderH;
+            this.y = (gridY * cell) - this.renderH ;
         }
     }
 
