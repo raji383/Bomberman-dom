@@ -1,7 +1,6 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
 import { push, router } from "../../framework/route.js";
-import { Boomb } from "./Boomb.js";
 import { Players } from "./Players.js";
 import { variables } from "../../variables.js";
 var d = true
@@ -12,6 +11,12 @@ var d = true
 export default function GameScreen() {
     if (!freamwork.state.player) {
         freamwork.state.player = new Players(freamwork.state.players)
+        const {ws} = freamwork.state;
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+            push('/');
+            return;
+         
+        }
     }
     return createElement({
         tag: "div",
