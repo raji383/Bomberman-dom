@@ -65,13 +65,65 @@ function MapDraw(mapElement, x, y) {
 }
 
 
-function UsersInfos(){
-    // console.log("------------",freamwork.state.player);
-    // console.log("STAAAAAATE speed:", freamwork.state.player.players[0]);
+function UsersInfos() {
+    console.log('111111111111111')
     const playersArray = freamwork.state.player.players
-    // playersArray.array.forEach(element => {
-    //     const lives = element.lives
 
-    // });
+    const playerCardElements = playersArray.map((player, index) => {
+        const ICON_HEART = '❤️';
+        const ICON_SPEED = '⚡';
+        const ICON_POWER = '💥';
 
+        const createStatIcon = (icon, value) => createElement({
+            tag: "div",
+            attrs: { class: "p-stat-icon-value" },
+            children: [
+                createElement({
+                    tag: "span",
+                    attrs: { class: "icon-img" },
+                    textContent: icon
+                }),
+                createElement({
+                    tag: "span",
+                    attrs: { class: "icon-value" },
+                    textContent: value
+                })
+            ]
+        });
+
+        // --- CORRECTED: Build the individual Player Card (The main container) ---
+        return createElement({
+            tag: "div",
+            attrs: {},
+            children: [
+                // 1. Player Name/ID Header
+                createElement({
+                    tag: "div",
+                    attrs: { class: "p-card-header" },
+                    textContent: player.name
+                }),
+
+                // 2. The Row of Stats
+                createElement({
+                    tag: "div",
+                    attrs: { class: "p-stats-row" },
+                    children: [
+                        // Lives
+                        createStatIcon(ICON_HEART, player.lives),
+                        // Speed Level (or Speed Power)
+                        createStatIcon(ICON_SPEED, player.speedLevel),
+                        // Bomb Power/Range
+                        createStatIcon(ICON_POWER, player.power),
+                    ]
+                })
+            ]
+        });
+    });
+
+    // Return the main wrapper element
+    return createElement({
+        tag: "div",
+        attrs: { id: "player-stats-hud-wrapper", class: "player-stats-hud" },
+        children: playerCardElements
+    });
 }

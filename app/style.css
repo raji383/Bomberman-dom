@@ -1057,3 +1057,94 @@ body {
 
     background-position: -16px 0
 }
+
+
+
+
+/* -------------------------- */
+/* ------------------------------------
+   1. MAIN WRAPPER 
+   ------------------------------------ */
+.player-stats-hud {
+    /* Position the HUD at the top center of the viewport */
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%); 
+    
+    /* Flexbox for horizontal arrangement of cards */
+    display: flex;
+    gap: 20px; /* Spacing between cards */
+    
+    /* Ensure HUD is always on top of game elements */
+    z-index: 9999;
+    
+    /* Using a specific font for numbers/stats is recommended */
+    font-family: 'Arial', sans-serif;
+}
+
+/* ------------------------------------
+   2. INDIVIDUAL PLAYER CARD 
+   ------------------------------------ */
+.p-stat-card {
+    /* Dark background from your design */
+    background-color: #1A1A2E; 
+    
+    /* Rounded corners */
+    border-radius: 12px;
+    
+    /* Internal padding */
+    padding: 10px 15px;
+    
+    /* White text for contrast */
+    color: white;
+    
+    /* Subtle 3D shadow effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    
+    /* The colored border stripe (you can adjust the width) */
+    border-left: 5px solid; 
+    
+    /* Optional: make all cards the same width */
+    width: 150px; 
+}
+.icon-img img { /* Assuming you use <img> tags inside .icon-img */
+    width: 20px; 
+    height: 20px;
+    display: block; /* Important for images */
+}
+/* ------------------------------------
+   3. CARD HEADER (PLAYER NAME/ID)
+   ------------------------------------ */
+.p-card-header {
+    font-size: 1.3em;
+    font-weight: 700; /* Bold */
+    margin-bottom: 8px; /* Space above the stats row */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5); /* Subtle shadow for readability */
+}
+
+/* ------------------------------------
+   4. STATS ROW AND ICONS
+   ------------------------------------ */
+.p-stats-row {
+    /* Layout icons horizontally with space between them */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.p-stat-icon-value {
+    /* Align icon and number side-by-side */
+    display: flex;
+    align-items: center;
+    gap: 3px; /* Small gap between icon and number */
+}
+
+.icon-img {
+    font-size: 1.1em; /* Adjust icon size (especially for emoji icons) */
+}
+
+.icon-value {
+    font-weight: bold;
+    font-size: 1.2em; /* Emphasize the number */
+}
