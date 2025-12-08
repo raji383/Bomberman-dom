@@ -124,8 +124,8 @@ class Player {
     }
 
     canMove(newX, newY) {
-        const W = this.renderW * 0.9;
-        const H = this.renderH * 0.9;
+        const W = this.renderW * 0.8;
+        const H = this.renderH * 0.8;
 
         const points = [
             [newX, newY],               // Top-left
