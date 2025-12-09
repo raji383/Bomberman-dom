@@ -61,7 +61,6 @@ class GameRoom {
         }
       return;
     }
-
     if (count === 4) {
       this.stopJoinTimer();
       this.startStartTimer();
@@ -407,7 +406,7 @@ function handleJoin(ws, data) {
 function findAvailableRoom() {
 
   for (const room of rooms.values()) {
-    if (!room.gameStarted && room.players.size < 4) {
+    if (!room.gameStarted && room.players.size < 4 && room.startTimer === null) {
       return room;
     }
   }
