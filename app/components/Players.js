@@ -41,6 +41,7 @@ class Player {
         // powerup
         this.lives = 3;
         this.power = 1;
+        this.range = 1;
         this.speedpx = 1;
         this.speed = this.gameH * (this.speedpx / 100);
         this.alive = this.lives > 0 ? true : false;

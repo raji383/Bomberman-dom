@@ -112,7 +112,7 @@ function playersInfoVDOM() {
                                 attrs: { class: "statItem" },
                                 children: [
                                     { tag: "span", children: ["⚡"] },
-                                    { tag: "span", children: [`${player.speed}`] }
+                                    { tag: "span", children: [`${player.speedpx}`] }
                                 ]
                             },
                             // Bombs
@@ -121,7 +121,15 @@ function playersInfoVDOM() {
                                 attrs: { class: "statItem" },
                                 children: [
                                     { tag: "span", children: ["💣"] },
-                                    { tag: "span", children: [`${player.bombs}`] }
+                                    { tag: "span", children: [`${player.power}`] }
+                                ]
+                            },
+                            {
+                                tag: "div",
+                                attrs: { class: "statItem" },
+                                children: [
+                                    { tag: "span", children: ["🎯"] },
+                                    { tag: "span", children: [`${player.range}`] }
                                 ]
                             }
                         ]
