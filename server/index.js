@@ -82,11 +82,14 @@ class GameRoom {
       type: "players_update",
       players: this.getPlayersList(),
     });
+    this.broadcast({
+      type: "number",
+      number: playerId,
+    });
 
     if (this.gameStarted) return;
 
     if (count <= 1) {
-      console.log(12);
       
       this.stopJoinTimer();
       this.stopStartTimer();
@@ -116,7 +119,7 @@ class GameRoom {
 
   startJoinTimer() {
     this.stopJoinTimer();
-    this.joinTimeLeft = 20;
+    this.joinTimeLeft = 5;
 
     this.joinTimer = setInterval(() => {
       this.joinTimeLeft--;
@@ -142,7 +145,7 @@ class GameRoom {
 
   startStartTimer() {
     this.stopStartTimer();
-    this.startTimeLeft = 10;
+    this.startTimeLeft = 2;
 
     this.startTimer = setInterval(() => {
       this.startTimeLeft--;

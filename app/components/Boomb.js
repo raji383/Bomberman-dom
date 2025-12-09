@@ -52,14 +52,6 @@ export class Boomb {
                 if (player.lives <= 0) {
                     player.alive = false;
                     freamwork.state.number--
-                    if (freamwork.state.number <= 1) {
-                        
-                        freamwork.state.ws.send(JSON.stringify({
-                            type: 'winning',
-                            message: this.playerwinner()
-                        })); 
-                    
-                    }
                 }
             }
         });

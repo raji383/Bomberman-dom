@@ -49,25 +49,25 @@ function handleServerMessage(data) {
       push('lobby');
       break;
     case 'game_start':
-      // console.log('Game started : ', data.players);
+       console.log(data.number,"0000000000000");
       freamwork.setState({
         gameStarted: true,
         players: data.players || {},
         map: data.map,
-        number: data.number
+        number: Number(data.number)
       });
       freamwork.state.players = data.players
       push('game');
       startGameLoop();
       break;
     case 'join_timer':
-      freamwork.setState({  join_timer : data.value , countdown: null});
+      freamwork.setState({ join_timer: data.value, countdown: null });
       break;
-        case 'start_timer':
-      freamwork.setState({ countdown: data.value , join_timer : null});
+    case 'start_timer':
+      freamwork.setState({ countdown: data.value, join_timer: null });
       break;
     case 'players_update':
-      freamwork.setState({ players: data.players || {} });
+      freamwork.setState({ players: data.players });
       break;
 
     case 'chat_message':
@@ -75,6 +75,21 @@ function handleServerMessage(data) {
         ...prev,
         messages: [...prev.messages, data.message]
       }));
+
+      break;
+    case 'number':
+      for (let i = 0; i < freamwork.state.player.list.length; i++) {
+        const element = freamwork.state.player.list[i];
+        if (element.id == data.number) {
+          if (element.alive) {
+            element.alive = false;
+            freamwork.state.number--
+             freamwork.setState(prev => ({ ...prev }) )
+            
+          }
+        }
+      }
+
 
       break;
     case 'playermove':
@@ -137,6 +152,14 @@ function handleServerMessage(data) {
       console.log(' Message inconnu:', data.type);
   }
 }
+function playerwinner() {
+  for (let i = 0; i < freamwork.state.player.list.length; i++) {
+    const element = freamwork.state.player.list[i];
+    if (element.alive) {
+      return element.name
+    }
+  }
+}
 
 function startGameLoop() {
   let lastTime = performance.now();
@@ -145,6 +168,15 @@ function startGameLoop() {
 
   function gameLoop(timestamp) {
     requestAnimationFrame(gameLoop);
+     console.log(freamwork.state.number );
+
+    if (freamwork.state.number <= 1) {
+      freamwork.state.ws.send(JSON.stringify({
+        type: 'winning',
+        message: playerwinner()
+      }));
+
+    }
 
     const delta = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
