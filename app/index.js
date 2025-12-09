@@ -13,6 +13,7 @@ freamwork.state = {
   players: [],
   messages: [],
   countdown: null,
+  join_timer: null,
   gameStarted: false,
   keys: {},
   gameLoopId: null,
@@ -22,6 +23,7 @@ freamwork.state = {
   explosion: [],
   number: null, 
   model_chat : true,
+ 
 };
 freamwork.addRoute("/", NicknameScreen);
 freamwork.addRoute("/lobby", LobbyScreen);

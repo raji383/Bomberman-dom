@@ -25,73 +25,142 @@ class GameRoom {
     this.id = id;
     this.players = new Map();
     this.gameStarted = false;
-    this.countdown = null;
+
+    this.joinTimer = null;
+    this.startTimer = null;
+
+    this.joinTimeLeft = 20;
+    this.startTimeLeft = 10;
+
+    this.map = new GameMap();
     this.chatMessage = [];
-    this.Time = null;
-    this.map = new GameMap()
   }
+
   addPlayer(player) {
     this.players.set(player.id, player);
 
     this.sendSystemMessage(`${player.nickname} joined the game!`);
+
     this.broadcast({
-      type: 'players_update',
-      players: this.getPlayersList()
+      type: "players_update",
+      players: this.getPlayersList(),
     });
-    if (this.countdown) {
-      clearInterval(this.countdown);
-      this.countdown = null;
+
+    if (this.gameStarted) return;
+
+    const count = this.players.size;
+
+    if (count === 1) {
+      this.startJoinTimer();
+      return;
     }
 
-    if (this.players.size > 2 && !this.gameStarted) {
-      if (this.players.size === 4) {
-        this.sendSystemMessage("Room full! Starting in 10 seconds...");
-        if (this.Time >= 10) {
-
-          this.startCountdown(3);
-        } else {
-          this.startCountdown(this.Time);
+    if (count >= 2 && count < 4) {
+      if (  this.joinTimeLeft ==0) {
+        this.startStartTimer();
         }
-      } else {
-        this.sendSystemMessage("Starting in 20 seconds!");
-        this.startCountdown(this.Time || 3);
-      }
-    } else if (this.players.size == 2 && !this.gameStarted) {
-      this.sendSystemMessage("Starting in 20 seconds!");
-      this.startCountdown(3);
+      return;
+    }
+
+    if (count === 4) {
+      this.stopJoinTimer();
+      this.startStartTimer();
     }
   }
 
   removePlayer(playerId) {
     const player = this.players.get(playerId);
+
     if (player) {
       this.sendSystemMessage(`${player.nickname} left the game`);
     }
 
     this.players.delete(playerId);
+
+    const count = this.players.size;
+
     this.broadcast({
-      type: 'players_update',
-      players: this.getPlayersList()
+      type: "players_update",
+      players: this.getPlayersList(),
     });
 
-    if (!this.gameStarted) {
-      if (this.players.size === 0 || this.players.size === 1) {
-        if (!this.gameStarted) {
-          if (this.countdown) {
-            clearInterval(this.countdown);
-            this.countdown = null;
-            this.sendSystemMessage("Not enough players. Countdown stopped.");
-            this.Time = null;
-            this.broadcast({
-              type: 'countdown',
-              countdown: null
-            });
-          }
-        } else {
-          if (this.joinTimer) clearTimeout(this.joinTimer);
-          if (this.countdown) clearInterval(this.countdown);
+    if (this.gameStarted) return;
+
+    if (count <= 1) {
+      console.log(12);
+      
+      this.stopJoinTimer();
+      this.stopStartTimer();
+      if (count == 1 && !this.joinTimer) {
+      console.log(count,"-----------");
+      
+      this.startJoinTimer();
+    }
+
+       
+
+    return;
+    }
+
+    if (this.startTimer) {
+      this.stopStartTimer();
+      this.startJoinTimer();
+      return;
+    }
+
+    if (this.joinTimer) {
+      return;
+    }
+
+   
+  }
+
+  startJoinTimer() {
+    this.stopJoinTimer();
+    this.joinTimeLeft = 20;
+
+    this.joinTimer = setInterval(() => {
+      this.joinTimeLeft--;
+
+      this.broadcast({ type: "join_timer", value: this.joinTimeLeft });
+
+      if (this.joinTimeLeft <= 0) {
+           this.stopJoinTimer();
+
+        if (this.players.size >= 2) {
+          this.startStartTimer();
         }
       }
+    }, 1000);
+  }
+
+  stopJoinTimer() {
+    if (this.joinTimer) {
+      clearInterval(this.joinTimer);
+      this.joinTimer = null;
+    }
+  }
+
+  startStartTimer() {
+    this.stopStartTimer();
+    this.startTimeLeft = 10;
+
+    this.startTimer = setInterval(() => {
+      this.startTimeLeft--;
+
+      this.broadcast({ type: "start_timer", value: this.startTimeLeft });
+
+      if (this.startTimeLeft <= 0) {
+        this.stopStartTimer();
+        this.startGame();
+      }
+    }, 1000);
+  }
+
+  stopStartTimer() {
+    if (this.startTimer) {
+      clearInterval(this.startTimer);
+      this.startTimer = null;
     }
   }
   startGame() {
@@ -284,8 +353,7 @@ function handleMessage(ws, data) {
     case 'playermove':
       handlePlayerMove(ws, data)
       break
-    case 'playerstop':
-      
+    case 'playerstop':  
       handlePlayerMove(ws, data)
       break
     case 'boomb':

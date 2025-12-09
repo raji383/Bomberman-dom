@@ -3,7 +3,7 @@ import { freamwork } from "../../framework/index.js";
 import { push } from "../../framework/route.js";
 
 export default function LobbyScreen() {
-  const { players, countdown, roomId, messages, chatInput = "", ws } = freamwork.state;
+  const { players, countdown, roomId, messages, chatInput = "", ws ,join_timer} = freamwork.state;
   if (!ws) {
     push('/');
   }
@@ -56,26 +56,9 @@ export default function LobbyScreen() {
         children: [
           createElement({ tag: "p", children: [`🏠 Room: ${roomId || 'Loading...'}`] }),
           createElement({ tag: "p", children: [`👥 Players: ${playerCount}/4`] }),
-          countdown !== null && createElement({
-            tag: "p",
-            attrs: { class: "countdown" },
-            children: [`⏰ Starting in: ${countdown} seconds`]
-          }),
-          !countdown && playerCount < 2 && createElement({
-            tag: "p",
-            attrs: { class: "waiting" },
-            children: ["⏳ Waiting for players..."]
-          }),
-          !countdown && playerCount >= 2 && !isFull && createElement({
-            tag: "p",
-            attrs: { class: "waiting" },
-            children: ["🚀 Auto-start in 20 seconds..."]
-          }),
-          isFull && createElement({
-            tag: "p",
-            attrs: { class: "full" },
-            children: ["✅ Room full! Starting soon..."]
-          })
+          countdown !== null && createElement({ tag: "p", attrs: { class: "countdown" }, children: [`⏰ Starting in: ${countdown} seconds`] }),
+          join_timer!== null && createElement({ tag: "p", attrs: { class: "countdown" }, children: [`  join-time: ${join_timer} seconds`] }),
+          isFull && createElement({ tag: "p", attrs: { class: "full" }, children: ["✅ Room full! Starting soon..."] })
         ]
       }),
 

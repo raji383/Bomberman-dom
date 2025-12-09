@@ -60,8 +60,11 @@ function handleServerMessage(data) {
       push('game');
       startGameLoop();
       break;
-    case 'countdown':
-      freamwork.setState({ countdown: data.countdown });
+    case 'join_timer':
+      freamwork.setState({  join_timer : data.value , countdown: null});
+      break;
+        case 'start_timer':
+      freamwork.setState({ countdown: data.value , join_timer : null});
       break;
     case 'players_update':
       freamwork.setState({ players: data.players || {} });
