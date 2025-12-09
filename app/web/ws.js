@@ -72,17 +72,32 @@ function handleServerMessage(data) {
         ...prev,
         messages: [...prev.messages, data.message]
       }));
-      
+
       break;
     case 'playermove':
+
       for (let index = 0; index < freamwork.state.player.list.length; index++) {
         const element = freamwork.state.player.list[index];
         if (element.id == data.id) {
-          element.update(data.message, true)
+          element.event = data.message.key
         }
       }
+      freamwork.setState(prev => ({ ...prev }))
+
+      break
+    case 'playerstop':
+
+      for (let index = 0; index < freamwork.state.player.list.length; index++) {
+        const element = freamwork.state.player.list[index];
+        if (element.id == data.id) {
+          element.event = null
+        }
+      }
+      freamwork.setState(prev => ({ ...prev }))
       break
     case 'boomb':
+      console.log(data, 'dkal');
+
       var bom = new Boomb(data.message)
       let ex = false
       freamwork.state.boombs.forEach(b => {
@@ -111,7 +126,7 @@ function handleServerMessage(data) {
         freamwork.setState(prev => ({ ...prev }))
       }, 4000);
       break
-   case 'winning':
+    case 'winning':
       freamwork.state.gameOver = data.message + "  is the  winner";
       freamwork.setState(prev => ({ ...prev }))
       break
@@ -121,22 +136,42 @@ function handleServerMessage(data) {
 }
 
 function startGameLoop() {
+  let lastTime = performance.now();
+  let lastFpsUpdate = performance.now();
   let frameCount = 0;
-  let lastFpsUpdate = 0;
 
   function gameLoop(timestamp) {
     requestAnimationFrame(gameLoop);
-    for (let index = 0; index < freamwork.state.player?.list.length; index++) {
-      const element = freamwork.state.player.list[index];
-      if (element.alive) {
-        element.update()
+
+    const delta = (timestamp - lastTime) / 1000;
+    lastTime = timestamp;
+
+    const players = freamwork.state.player?.list || [];
+    for (let i = 0; i < players.length; i++) {
+      const p = players[i];
+      const key = p.event
+      const proposedX = key === "ArrowLeft" ? p.x - p.speed
+        : key === "ArrowRight" ? p.x + p.speed
+          : p.x;
+      const proposedY = key === "ArrowUp" ? p.y - p.speed
+        : key === "ArrowDown" ? p.y + p.speed
+          : p.y;
+      if (!p.canMove(proposedX, proposedY)) {
+        p.event = null
+        freamwork.setState(prev => ({ ...prev }))
+
       }
+      if (p.alive) p.update(delta);
     }
+
     frameCount++;
+
     if (timestamp >= lastFpsUpdate + 1000) {
+      freamwork.state.fps = frameCount;
       frameCount = 0;
       lastFpsUpdate = timestamp;
     }
   }
-  gameLoop();
+
+  requestAnimationFrame(gameLoop);
 }

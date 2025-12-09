@@ -40,10 +40,9 @@ class Player {
         // powerup
         this.lives = 3;
         this.power = 1;
-        this.speedpx = 1;
+        this.speed = 3;
         // speed is responsive based on grid cell size: a fraction of the cell height
-        this.speed = Math.max(1, Math.round(variables.GRID_CELL_SIZE_h * (this.speedpx / 10)));
-        this.alive = this.live > 0 ? true : false;
+        this.alive = this.lives > 0 ? true : false;
         this.bomb = true;
         // move
         this.inagif = 'down';
@@ -124,35 +123,38 @@ class Player {
     }
 
     canMove(newX, newY) {
-        // responsive inset so the player's visible sprite can overlap slightly without false collisions
-        const inset = Math.max(1, Math.round(variables.GRID_CELL_SIZE_h * 0.06));
-        const W = Math.max(1, this.renderW - inset * 2);
-        const H = Math.max(1, this.renderH - inset * 2);
+        const cell = variables.GRID_CELL_SIZE_h;
+
+        const W = this.renderW * 0.9;
+        const H = this.renderH * 0.9;
 
         const points = [
-            [newX + inset, newY + inset],                 // Top-left
-            [newX + inset + W - 1, newY + inset],         // Top-right
-            [newX + inset, newY + inset + H - 1],         // Bottom-left
-            [newX + inset + W - 1, newY + inset + H - 1]  // Bottom-right
+            [newX, newY],
+            [newX + W, newY],
+            [newX, newY + H],
+            [newX + W, newY + H]
         ];
 
-        const map = freamwork.state?.map;
-        if (!map || !map.length) return false;
-        const maxY = map.length;
-        const maxX = map[0].length;
+        const map = freamwork.state.map;
+        // if (!map) return false;
+
+        const rows = map.length;
+        const cols = map[0].length;
 
         for (let [px, py] of points) {
-            const gridX = Math.floor(px / variables.GRID_CELL_SIZE_w);
-            const gridY = Math.floor(py / variables.GRID_CELL_SIZE_h);
 
-            // out of bounds -> cannot move
-            if (gridX < 0 || gridY < 0 || gridY >= maxY || gridX >= maxX) {
+            const gx = Math.floor(px / cell);
+            const gy = Math.floor(py / cell);
+
+
+            // out of bounds
+            if (gx < 0 || gy < 0 || gx >= cols || gy >= rows) {
                 return false;
             }
 
-            const cell = map[gridY][gridX];
-            // treat 1 (wall) and 2 (box) as blocking tiles
-            if (cell === 1 || cell === 2) {
+            const tile = map[gy][gx];
+            if (tile === 1 || tile === 2) {
+
                 return false;
             }
         }
@@ -160,36 +162,38 @@ class Player {
         return true;
     }
 
+    update(delta = 0) {
 
+        const vel = this.speed * (variables.GRID_CELL_SIZE_h / 3);
 
-    update(e = { key: "" }) {
-        this.event = e.key
-        if (e.key === "ArrowLeft") {
-            this.x -= this.speed;
+        if (this.event === "ArrowLeft") {
+
+            this.x -= vel * delta;
             this.inagif = 'left';
 
-        } else if (e.key === "ArrowRight") {
-            this.x += this.speed;
+        } else if (this.event === "ArrowRight") {
+            this.x += vel * delta;
             this.inagif = 'right';
 
-        } else if (e.key === "ArrowUp") {
-            this.y -= this.speed;
+        } else if (this.event === "ArrowUp") {
+            this.y -= vel * delta;
             this.inagif = 'up';
 
-        } else if (e.key === "ArrowDown") {
-            this.y += this.speed;
+        } else if (this.event === "ArrowDown") {
+            this.y += vel * delta;
             this.inagif = 'down';
+        } else {
+            this.inagif = 'down';
+            return
         }
 
         this.Spritesheet();
-        // trigger a global re-render via framework state so all player components update responsively
+
         try {
             freamwork.setState(prev => ({ ...prev }));
-        } catch (err) {
-            // fallback to router if setState isn't available for some reason
-            if (typeof router === 'function') router();
-        }
+        } catch { router(); }
     }
+
 
 
     draw() {
@@ -201,13 +205,15 @@ class Player {
             events: {
                 keydown: (e) => {
                     if (freamwork.state?.ws && this.id == freamwork.state.myId) {
+
                         const key = e.key;
                         // BOOM (space) stays the same
-                        if (key === " " && this.live > 0 && this.bomb) {
+                        if (key === " " && this.lives > 0 && this.bomb) {
+
                             freamwork.state.ws.send(JSON.stringify({
                                 type: "boomb",
                                 message: {
-                                    key,
+                                    key: key,
                                     x: this.gridX,
                                     y: this.gridY,
                                     range: this.power
@@ -233,15 +239,28 @@ class Player {
                                 freamwork.state.ws.send(JSON.stringify({
                                     type: "playermove",
                                     message: {
-                                        key,
-                                        x: gx,
-                                        y: gy,
+                                        key: key,
                                         range: this.power
                                     },
                                     playerId: freamwork.state.myId
                                 }));
                             }
                         }
+                    }
+                },
+                keyup: (e) => {
+                    const key = e.key
+                    console.log(key);
+
+                    if (key === "ArrowLeft" || key === "ArrowRight" || key === "ArrowUp" || key === "ArrowDown") {
+                        freamwork.state.ws.send(JSON.stringify({
+                            type: "playerstop",
+                            message: {
+                                key: key,
+                                range: this.power
+                            },
+                            playerId: freamwork.state.myId
+                        }));
                     }
                 }
             },

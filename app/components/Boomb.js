@@ -38,7 +38,6 @@ export class Boomb {
          for (let i = 0; i < freamwork.state.player.list.length; i++) {
             const element = freamwork.state.player.list[i];
             if ( element.alive) {
-                console.log(element.name,"--------------------------");
                 return  element.name
             }
           }
@@ -54,7 +53,6 @@ export class Boomb {
                     player.alive = false;
                     freamwork.state.number--
                     if (freamwork.state.number <= 1) {
-                        console.log(freamwork.state.number);
                         
                         freamwork.state.ws.send(JSON.stringify({
                             type: 'winning',
@@ -71,7 +69,6 @@ export class Boomb {
     smoke() {
         //  X
         for (let i = -this.range; i <= this.range; i++) {
-            console.log(freamwork.state.map[this.gridY][this.gridX + i]);
 
             if (freamwork.state.map[this.gridY][this.gridX + i] === 0 || freamwork.state.map[this.gridY][this.gridX + i] === 3) {
                 createExplosion(this.gridX + i, this.gridY,this.id);

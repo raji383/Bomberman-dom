@@ -101,7 +101,7 @@ class GameRoom {
       message: 'The game has started!',
       players: playerList,
       map: this.map.map,
-      number : playerList.length
+      number: playerList.length
 
 
     });
@@ -284,12 +284,17 @@ function handleMessage(ws, data) {
     case 'playermove':
       handlePlayerMove(ws, data)
       break
+    case 'playerstop':
+      
+      handlePlayerMove(ws, data)
+      break
     case 'boomb':
       handlePlayerMove(ws, data)
       break
     case 'winning':
-      handlePlayerWin(ws, data)  
+      handlePlayerWin(ws, data)
       break
+
     case 'mapChange':
       break
     default:
