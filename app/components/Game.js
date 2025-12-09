@@ -52,7 +52,7 @@ export default function GameScreen() {
                 tag: "div",
                 attrs: { class: "game-area" },
                 children: [
-
+                    playersInfoVDOM(),
                     RenderMap(),
                     { tag: "div", children: freamwork.state.player.list.filter((p) => p?.alive).map((p) => { return p.draw() }) },
                     freamwork.state.boombs.map((p) => { return p.draw() }),
@@ -77,9 +77,9 @@ export default function GameScreen() {
                         freamwork.setState({ model_chat: !freamwork.state.model_chat });
                     }
                 },
-                children: [ model_chat ? "❌ Close" : "✅ Open" ]
+                children: [model_chat ? "❌ Close" : "✅ Open"]
             }),
-            ,(model_chat) && (RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myId))
+            , (model_chat) && (RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myId))
 
         ]
     })
@@ -143,9 +143,6 @@ function RenderMap() {
             result.push(tile);
         }
     }
-
-
-
     return result;
 }
 
@@ -155,6 +152,7 @@ function MapDraw(mapElement, x, y) {
     if (mapElement === 1) image = "./tools/wall.png";
     else if (mapElement === 0 || mapElement === 3) image = "./tools/grass.png";
     else if (mapElement === 2) image = "./tools/box.png";
+    console.log(freamwork.state.player);
 
     return createElement({
         tag: "div",
@@ -172,3 +170,62 @@ function MapDraw(mapElement, x, y) {
         }
     });
 }
+
+function playersInfoVDOM() {
+    return {
+        tag: "div",
+        attrs: { class: "playersInfo" },
+        children: freamwork.state.player.list.map(player => {
+            return {
+                tag: "div",
+                attrs: { class: "playerBox" },
+                children: [
+                    // Header (player name)
+                    {
+                        tag: "div",
+                        attrs: { class: "playerHeader" },
+                        children: [
+                            { tag: "p", children: [player.name] }
+                        ]
+                    },
+
+                    // Stats row
+                    {
+                        tag: "div",
+                        attrs: { class: "statsRow" },
+                        children: [
+                            // Lives
+                            {
+                                tag: "div",
+                                attrs: { class: "statItem" },
+                                children: [
+                                    { tag: "span", children: ["❤️"] },
+                                    { tag: "span", children: [`${player.lives}`] }
+                                ]
+                            },
+                            // Speed
+                            {
+                                tag: "div",
+                                attrs: { class: "statItem" },
+                                children: [
+                                    { tag: "span", children: ["⚡"] },
+                                    { tag: "span", children: [`${player.speed}`] }
+                                ]
+                            },
+                            // Bombs
+                            {
+                                tag: "div",
+                                attrs: { class: "statItem" },
+                                children: [
+                                    { tag: "span", children: ["💣"] },
+                                    { tag: "span", children: [`${player.bombs}`] }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        })
+    }
+}
+

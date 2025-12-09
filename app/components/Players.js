@@ -18,7 +18,6 @@ export class Players {
             ];
 
             let [x, y] = positions[i] || [1, 1];
-
             return new Player(i, x, y, name, element.id);
         });
     }
@@ -39,7 +38,7 @@ class Player {
         this.img = `/tools/player${i + 1}.png`;
 
         // powerup
-        this.live = 3;
+        this.lives = 3;
         this.power = 1;
         this.speedpx = 1;
         // speed is responsive based on grid cell size: a fraction of the cell height

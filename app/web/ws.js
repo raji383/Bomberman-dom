@@ -36,7 +36,7 @@ export function connectToServer(nickname) {
 }
 
 function handleServerMessage(data) {
-  console.log(data.type);
+  // console.log(data.type);
 
   switch (data.type) {
     case 'room_assigned':
@@ -49,6 +49,7 @@ function handleServerMessage(data) {
       push('lobby');
       break;
     case 'game_start':
+      // console.log('Game started : ', data.players);
       freamwork.setState({
         gameStarted: true,
         players: data.players || {},
@@ -76,9 +77,7 @@ function handleServerMessage(data) {
     case 'playermove':
       for (let index = 0; index < freamwork.state.player.list.length; index++) {
         const element = freamwork.state.player.list[index];
-
         if (element.id == data.id) {
-
           element.update(data.message, true)
         }
       }

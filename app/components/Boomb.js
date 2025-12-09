@@ -47,10 +47,10 @@ export class Boomb {
     exblogen() {
         freamwork.state.player.list.forEach(player => {
             if ((this.inrangX(player) || this.inrangY(player))&& player.alive) {
-                player.live--;
+                player.lives--;
                 player.x = player.insX;
                 player.y = player.insY;
-                if (player.live <= 0) {
+                if (player.lives <= 0) {
                     player.alive = false;
                     freamwork.state.number--
                     if (freamwork.state.number <= 1) {
