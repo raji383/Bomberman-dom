@@ -69,7 +69,6 @@ class GameRoom {
 
   removePlayer(playerId) {
     const player = this.players.get(playerId);
-
     if (player) {
       this.sendSystemMessage(`${player.nickname} left the game`);
     }
@@ -97,8 +96,10 @@ class GameRoom {
 
       this.stopJoinTimer();
       this.stopStartTimer();
-      if (count == 1 && !this.joinTimer) {
-        this.startJoinTimer();
+      if (count == 1 && !this.joinTimer) {    
+        this.joinTimeLeft = 0
+        this.broadcast({ type: "join_timer", value: this.joinTimeLeft });
+
       }
       return;
     }
