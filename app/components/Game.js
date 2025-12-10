@@ -7,17 +7,15 @@ import { variables } from "../../variables.js";
 export default function GameScreen() {
     const { messages, chatInput = "", ws, players, myId, boombs = [], explosion = [], map, model_chat } = freamwork.state;
     if (!ws) {
-  window.location.href = '/';
+        push('/')  
+
+
 }
-
-
-
 
     // Chat input handler
     const handleChatInput = (e) => {
         freamwork.setState({ chatInput: e.target.value });
     };
-
     // Chat message send handler
     const handleSendMessage = (e) => {
         e.preventDefault();
@@ -44,8 +42,8 @@ export default function GameScreen() {
                 }
             }
         }
-    };
-    if (!freamwork.state.player) {
+    };   
+    if (!freamwork.state.player || freamwork.state.player.list.length == 0) {     
         freamwork.state.player = new Players(freamwork.state.players)
     }
     return createElement({
@@ -138,8 +136,8 @@ function RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myI
     });
 }
 function RenderMap() {
+     if (!freamwork.state.map) return
     const result = [];
-
     for (let y = 0; y < freamwork.state.map.length; y++) {
         for (let x = 0; x < freamwork.state.map[y].length; x++) {
             const element = freamwork.state.map[y][x];

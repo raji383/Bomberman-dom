@@ -54,7 +54,6 @@ function handleServerMessage(data) {
         map: data.map,
         number: Number(data.number)
       });
-      freamwork.state.players = data.players
       push('game');
       startGameLoop();
       break;
@@ -140,7 +139,6 @@ function handleServerMessage(data) {
       break
     case 'boxdestroy':
       setTimeout(() => {
-
         freamwork.setState({ map: data.message });
       }, 0)
       break
@@ -198,7 +196,9 @@ function startGameLoop() {
  if (freamwork.state.number !=1){
    requestAnimationFrame(gameLoop);
  }
-    if (freamwork.state.number <= 1) {
+    if (freamwork.state.number <= 1 && freamwork.state.number!=null) {
+      
+      
       freamwork.state.ws.send(JSON.stringify({
         type: 'winning',
         message: playerwinner()

@@ -88,8 +88,6 @@ class GameRoom {
       number: playerId,
     });
   }
-
-
     if (this.gameStarted) return;
 
     if (count <= 1) {
@@ -106,7 +104,7 @@ class GameRoom {
   }
   startJoinTimer() {
     this.stopJoinTimer();
-    this.joinTimeLeft = 20;
+    this.joinTimeLeft = 4;
 
     this.joinTimer = setInterval(() => {
       this.joinTimeLeft--;
@@ -132,7 +130,7 @@ class GameRoom {
 
   startStartTimer() {
     this.stopStartTimer();
-    this.startTimeLeft = 10;
+    this.startTimeLeft = 1;
 
     this.startTimer = setInterval(() => {
       this.startTimeLeft--;

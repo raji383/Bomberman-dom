@@ -3,15 +3,29 @@ import { freamwork } from "../../framework/index.js";
 import { connectToServer } from "../web/ws.js";
 
 export default function NicknameScreen() {
-  const { playerName } = freamwork.state;
+  const { playerName , eroor } = freamwork.state;
 
   const handleInput = (e) => {
     freamwork.setState({ playerName: e.target.value });
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (playerName && playerName.trim()) {
+    
+    
+    if (playerName && playerName.trim() && playerName.trim().length <=10) {
       connectToServer(playerName.trim());
+    }else{
+freamwork.setState(prev => ({
+        ...prev,
+        eroor: "i want name last of  10"
+      }));
+      setTimeout(()=>{
+        freamwork.setState(prev => ({
+        ...prev,
+        eroor: null
+      }));
+
+      },2000)
     }
   };
   return createElement({
@@ -22,6 +36,12 @@ export default function NicknameScreen() {
         tag: "h1",
         children: ["💣 Bomberman Multiplayer"]
       }),
+       (eroor)&& (createElement({
+        tag: "p",
+        attrs: { class: "eroor" },
+        children: [ `${eroor}`]
+
+       })),
       createElement({
         tag: "p",
         attrs: { class: "subtitle" },

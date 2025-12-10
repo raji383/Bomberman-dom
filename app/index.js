@@ -23,6 +23,8 @@ freamwork.state = {
   explosion: [],
   number: null, 
   model_chat : true,
+  eroor : false,
+  map :null
  
 };
 freamwork.addRoute("/", NicknameScreen);
