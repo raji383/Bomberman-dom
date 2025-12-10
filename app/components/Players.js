@@ -40,10 +40,10 @@ class Player {
         // powerup
         this.lives = 3;
         this.power = 1;
-        this.speed = 3;
+        this.speed = 5;
+        this.bombs = 1;
         // speed is responsive based on grid cell size: a fraction of the cell height
         this.alive = this.lives > 0 ? true : false;
-        this.bomb = true;
         // move
         this.inagif = 'down';
         this.frameIndex = 0;
@@ -121,8 +121,8 @@ class Player {
     canMove(newX, newY) {
         const cell = variables.GRID_CELL_SIZE_h;
 
-        const W = this.renderW * 0.9;
-        const H = this.renderH * 0.9;
+        const W = this.renderW * 0.8;
+        const H = this.renderH * 0.8;
 
         const points = [
             [newX, newY],
@@ -150,7 +150,6 @@ class Player {
 
             const tile = map[gy][gx];
             if (tile === 1 || tile === 2) {
-
                 return false;
             }
         }
@@ -182,6 +181,45 @@ class Player {
             this.inagif = 'down';
             return
         }
+        if (freamwork.state.map[this.gridY][this.gridX] === 4) {
+            freamwork.state.ws.send(JSON.stringify({
+                type: 'powerUp',
+                message: {
+                    x: this.gridX,
+                    y: this.gridY,
+                    power: "energy"
+                },
+                playerId: this.id
+            }));
+
+        }
+        if (freamwork.state.map[this.gridY][this.gridX] === 5) {
+            freamwork.state.ws.send(JSON.stringify({
+                type: 'powerUp',
+                message: {
+                    x: this.gridX,
+                    y: this.gridY,
+                    power: "bombNbr",
+                },
+                playerId: this.id
+
+            }));
+
+
+        }
+        if (freamwork.state.map[this.gridY][this.gridX] === 6) {
+            freamwork.state.ws.send(JSON.stringify({
+                type: 'powerUp',
+                message: {
+                    x: this.gridX,
+                    y: this.gridY,
+                    power: "bombRange"
+                },
+                playerId: this.id
+            }));
+
+
+        }
 
         this.Spritesheet();
 
@@ -204,8 +242,11 @@ class Player {
 
                         const key = e.key;
                         // BOOM (space) stays the same
-                        if (key === " " && this.lives > 0 && this.bomb) {
-
+                        if (key === " " && this.lives > 0 && this.bombs > 0) {
+                            this.bombs--
+                            setTimeout(() => {
+                                this.bombs++
+                            }, 4000)
                             freamwork.state.ws.send(JSON.stringify({
                                 type: "boomb",
                                 message: {
@@ -214,7 +255,7 @@ class Player {
                                     y: this.gridY,
                                     range: this.power
                                 },
-                                playerId: freamwork.state.myId
+                                playerId: this.id + this.bombs
                             }));
                             return;
                         }
@@ -246,7 +287,6 @@ class Player {
                 },
                 keyup: (e) => {
                     const key = e.key
-                    console.log(key);
 
                     if (key === "ArrowLeft" || key === "ArrowRight" || key === "ArrowUp" || key === "ArrowDown") {
                         freamwork.state.ws.send(JSON.stringify({
