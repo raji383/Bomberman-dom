@@ -36,8 +36,6 @@ export function connectToServer(nickname) {
 }
 
 function handleServerMessage(data) {
-  // console.log(data.type);
-
   switch (data.type) {
     case 'room_assigned':
       freamwork.setState({

@@ -66,7 +66,6 @@ export class Boomb {
                 createExplosion(this.gridX + i, this.gridY, this.id);
             } else if (freamwork.state.map[this.gridY][this.gridX + i] === 2) {
                 createExplosion(this.gridX + i, this.gridY, this.id);
-                console.log(f);
                 
                 freamwork.state.ws.send(JSON.stringify({
                     type: 'boxdestroy',

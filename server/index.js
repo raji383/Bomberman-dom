@@ -56,9 +56,9 @@ class GameRoom {
     }
 
     if (count >= 2 && count < 4) {
-      if (  this.joinTimeLeft ==0) {
+      if (this.joinTimeLeft == 0) {
         this.startStartTimer();
-        }
+      }
       return;
     }
     if (count === 4) {
@@ -90,18 +90,18 @@ class GameRoom {
     if (this.gameStarted) return;
 
     if (count <= 1) {
-      
+
       this.stopJoinTimer();
       this.stopStartTimer();
       if (count == 1 && !this.joinTimer) {
-      console.log(count,"-----------");
-      
-      this.startJoinTimer();
-    }
+        console.log(count, "-----------");
 
-       
+        this.startJoinTimer();
+      }
 
-    return;
+
+
+      return;
     }
 
     if (this.startTimer) {
@@ -113,13 +113,11 @@ class GameRoom {
     if (this.joinTimer) {
       return;
     }
-
-   
   }
 
   startJoinTimer() {
     this.stopJoinTimer();
-    this.joinTimeLeft = 5;
+    this.joinTimeLeft = 50;
 
     this.joinTimer = setInterval(() => {
       this.joinTimeLeft--;
@@ -127,7 +125,7 @@ class GameRoom {
       this.broadcast({ type: "join_timer", value: this.joinTimeLeft });
 
       if (this.joinTimeLeft <= 0) {
-           this.stopJoinTimer();
+        this.stopJoinTimer();
 
         if (this.players.size >= 2) {
           this.startStartTimer();
@@ -145,7 +143,7 @@ class GameRoom {
 
   startStartTimer() {
     this.stopStartTimer();
-    this.startTimeLeft = 2;
+    this.startTimeLeft = 20;
 
     this.startTimer = setInterval(() => {
       this.startTimeLeft--;
@@ -352,7 +350,7 @@ function reDrawMap(ws, data) {
   if (!room) return;
   const randomNbm = Math.floor(Math.random() * 3) + 4;
   const map = room.map.map
-  map[data.message.y][data.message.x]= randomNbm;
+  map[data.message.y][data.message.x] = randomNbm;
   room.broadcast({
     type: data.type,
     message: map,
@@ -370,7 +368,7 @@ function handleMessage(ws, data) {
     case 'playermove':
       handlePlayerMove(ws, data)
       break
-    case 'playerstop':  
+    case 'playerstop':
       handlePlayerMove(ws, data)
       break
     case 'boomb':

@@ -52,7 +52,7 @@ export default function GameScreen() {
                 tag: "div",
                 attrs: { class: "game-area" },
                 children: [
-                   playersInfoVDOM(),
+                    playersInfoVDOM(),
                     RenderMap(),
                     { tag: "div", children: freamwork.state.player.list.filter((p) => p?.alive).map((p) => { return p.draw() }) },
                     freamwork.state.boombs.map((p) => { return p.draw() }),
@@ -212,7 +212,7 @@ function playersInfoVDOM() {
                                 attrs: { class: "statItem" },
                                 children: [
                                     { tag: "span", children: ["⚡"] },
-                                    { tag: "span", children: [`${player.speedpx}`] }
+                                    { tag: "span", children: [`${player.speed}`] }
                                 ]
                             },
                             // Bombs
