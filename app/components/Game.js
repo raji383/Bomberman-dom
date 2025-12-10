@@ -6,7 +6,11 @@ import { Players } from "./Players.js";
 import { variables } from "../../variables.js";
 export default function GameScreen() {
     const { messages, chatInput = "", ws, players, myId, boombs = [], explosion = [], map, model_chat } = freamwork.state;
-    if (!ws) location.reload();;
+    if (!ws) {
+  window.location.href = '/';
+}
+
+
 
 
     // Chat input handler
