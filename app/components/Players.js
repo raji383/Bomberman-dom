@@ -1,6 +1,5 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
-import { router } from "../../framework/route.js";
 import { variables } from "../../variables.js";
 export class Players {
     constructor(playerList) {
@@ -42,8 +41,8 @@ class Player {
         this.lives = 3;
         this.power = 1;
         this.range = 1;
-        this.speedpx = 1;
-        this.speed = this.gameH * (this.speedpx / 100);
+        this.speed = 6;
+        // speed is responsive based on grid cell size: a fraction of the cell height
         this.alive = this.lives > 0 ? true : false;
         this.bomb = true;
         // move
@@ -57,9 +56,10 @@ class Player {
         this.frameW_original = 0;
         this.frameH_original = 0;
 
+
         // w and h
-        this.renderW = variables.GRID_CELL_SIZE_h;
-        this.renderH = variables.GRID_CELL_SIZE_h;
+        this.renderW = variables.GRID_CELL_SIZE_h - 3;
+        this.renderH = variables.GRID_CELL_SIZE_h - 3;
 
         // offset
         this.xOffset = 0;
@@ -106,7 +106,7 @@ class Player {
         this.yOffset = -(dirRow * this.renderH);
     }
     toGrid(px) {
-        return Math.round((px / variables.GRID_CELL_SIZE_h));
+        return Math.round(px / variables.GRID_CELL_SIZE_h);
     }
     hndelcollision(gridY, gridX) {
         const cell = variables.GRID_CELL_SIZE_h;
@@ -124,30 +124,38 @@ class Player {
     }
 
     canMove(newX, newY) {
+        const cell = variables.GRID_CELL_SIZE_h;
+
         const W = this.renderW * 0.9;
         const H = this.renderH * 0.9;
 
         const points = [
-            [newX, newY],               // Top-left
-            [newX + W, newY],       // Top-right
-            [newX, newY + H],       // Bottom-left
-            [newX + W, newY + H]// Bottom-right
+            [newX, newY],
+            [newX + W, newY],
+            [newX, newY + H],
+            [newX + W, newY + H]
         ];
 
+        const map = freamwork.state.map;
+        // if (!map) return false;
+
+        const rows = map.length;
+        const cols = map[0].length;
+
         for (let [px, py] of points) {
-            const gridX = Math.floor(px / variables.GRID_CELL_SIZE_w);
-            const gridY = Math.floor(py / variables.GRID_CELL_SIZE_h);
 
-            if (gridX < 0 || gridY < 0 ||
-                gridY > freamwork.state.map.length - 1 ||
-                gridX > freamwork.state.map[0].length - 1) {
+            const gx = Math.floor(px / cell);
+            const gy = Math.floor(py / cell);
 
+
+            // out of bounds
+            if (gx < 0 || gy < 0 || gx >= cols || gy >= rows) {
                 return false;
             }
 
-            if (freamwork.state.map[gridY][gridX] === 1 ||
-                freamwork.state.map[gridY][gridX] === 2) {
-                this.hndelcollision(gridY, gridX)
+            const tile = map[gy][gx];
+            if (tile === 1 || tile === 2) {
+
                 return false;
             }
         }
@@ -155,30 +163,38 @@ class Player {
         return true;
     }
 
+    update(delta = 0) {
 
+        const vel = this.speed * (variables.GRID_CELL_SIZE_h / 3);
 
-    update(e = { key: "" }) {
-        this.event = e.key
-        if (e.key === "ArrowLeft" && this.canMove(this.x - this.speed, this.y)) {
-            this.x -= this.speed;
+        if (this.event === "ArrowLeft") {
+
+            this.x -= vel * delta;
             this.inagif = 'left';
 
-        } else if (e.key === "ArrowRight" && this.canMove(this.x + this.speed, this.y)) {
-            this.x += this.speed;
+        } else if (this.event === "ArrowRight") {
+            this.x += vel * delta;
             this.inagif = 'right';
 
-        } else if (e.key === "ArrowUp" && this.canMove(this.x, this.y - this.speed)) {
-            this.y -= this.speed;
+        } else if (this.event === "ArrowUp") {
+            this.y -= vel * delta;
             this.inagif = 'up';
 
-        } else if (e.key === "ArrowDown" && this.canMove(this.x, this.y + this.speed)) {
-            this.y += this.speed;
+        } else if (this.event === "ArrowDown") {
+            this.y += vel * delta;
             this.inagif = 'down';
+        } else {
+            this.inagif = 'down';
+            return
         }
 
         this.Spritesheet();
-        router();
+
+        try {
+            freamwork.setState(prev => ({ ...prev }));
+        } catch { router(); }
     }
+
 
 
     draw() {
@@ -190,13 +206,58 @@ class Player {
             events: {
                 keydown: (e) => {
                     if (freamwork.state?.ws && this.id == freamwork.state.myId) {
-                        let type = (e.key === " " && this.lives > 0 && this.bomb) ? "boomb" : "playermove";
+
+                        const key = e.key;
+                        // BOOM (space) stays the same
+                        if (key === " " && this.lives > 0 && this.bomb) {
+
+                            freamwork.state.ws.send(JSON.stringify({
+                                type: "boomb",
+                                message: {
+                                    key: key,
+                                    x: this.gridX,
+                                    y: this.gridY,
+                                    range: this.power
+                                },
+                                playerId: freamwork.state.myId
+                            }));
+                            return;
+                        }
+
+                        // movement keys: only send if the player can move to the intended position
+                        if (key === "ArrowLeft" || key === "ArrowRight" || key === "ArrowUp" || key === "ArrowDown") {
+                            const proposedX = key === "ArrowLeft" ? this.x - this.speed
+                                : key === "ArrowRight" ? this.x + this.speed
+                                    : this.x;
+                            const proposedY = key === "ArrowUp" ? this.y - this.speed
+                                : key === "ArrowDown" ? this.y + this.speed
+                                    : this.y;
+
+                            if (this.canMove(proposedX, proposedY)) {
+                                const gx = Math.round(proposedX / variables.GRID_CELL_SIZE_w);
+                                const gy = Math.round(proposedY / variables.GRID_CELL_SIZE_h);
+
+                                freamwork.state.ws.send(JSON.stringify({
+                                    type: "playermove",
+                                    message: {
+                                        key: key,
+                                        range: this.power
+                                    },
+                                    playerId: freamwork.state.myId
+                                }));
+                            }
+                        }
+                    }
+                },
+                keyup: (e) => {
+                    const key = e.key
+                    console.log(key);
+
+                    if (key === "ArrowLeft" || key === "ArrowRight" || key === "ArrowUp" || key === "ArrowDown") {
                         freamwork.state.ws.send(JSON.stringify({
-                            type: type,
+                            type: "playerstop",
                             message: {
-                                key: e.key,
-                                x: this.gridX,
-                                y: this.gridY,
+                                key: key,
                                 range: this.power
                             },
                             playerId: freamwork.state.myId

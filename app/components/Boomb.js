@@ -37,9 +37,8 @@ export class Boomb {
     playerwinner() {
         for (let i = 0; i < freamwork.state.player.list.length; i++) {
             const element = freamwork.state.player.list[i];
-            if (element.alive) {
-                // console.log(element.name, "--------------------------");
-                return element.name
+            if ( element.alive) {
+                return  element.name
             }
         }
     }
@@ -53,15 +52,6 @@ export class Boomb {
                 if (player.lives <= 0) {
                     player.alive = false;
                     freamwork.state.number--
-                    if (freamwork.state.number <= 1) {
-                        // console.log(freamwork.state.number);
-
-                        freamwork.state.ws.send(JSON.stringify({
-                            type: 'winning',
-                            message: this.playerwinner()
-                        }));
-
-                    }
                 }
             }
         });
@@ -71,7 +61,6 @@ export class Boomb {
     smoke() {
         //  X
         for (let i = -this.range; i <= this.range; i++) {
-            // console.log(freamwork.state.map[this.gridY][this.gridX + i]);
 
             if (freamwork.state.map[this.gridY][this.gridX + i] === 0 || freamwork.state.map[this.gridY][this.gridX + i] === 3) {
                 createExplosion(this.gridX + i, this.gridY, this.id);
@@ -113,18 +102,28 @@ export class Boomb {
 
 
     draw() {
+        // render as an <img> so the src is explicit and sizing is consistent
+        const size = Math.round(variables.GRID_CELL_SIZE_h);
+        // center the image inside the cell 
+        const left = Math.round(this.x);
+        const top = Math.round(this.y);
+
         return createElement({
-            tag: "div",
+            tag: "img",
             attrs: {
+                src: this.img,
                 class: "boom",
+                draggable: "false",
                 style: `
                     position: absolute;
-                    left: ${this.x}px;
-                    top: ${this.y}px;
-                    width: ${variables.GRID_CELL_SIZE_h}px;
-                    height: ${variables.GRID_CELL_SIZE_h}px;
-                    background-image: url('${this.img}');
-                    background-size: cover;
+                    left: ${left}px;
+                    top: ${top}px;
+                    width: ${size}px;
+                    height: ${size}px;
+                    object-fit: contain;
+                    image-rendering: pixelated;
+                    pointer-events: none;
+                    transform: translateZ(0);
                 `
             }
         });

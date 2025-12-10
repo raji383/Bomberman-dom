@@ -31,7 +31,6 @@ export function createRealElement(vNode) {
   const events = vNode.events || {};
   for (const eventType in events) {
     const handler = events[eventType]; 
-    
     registerDomEvent(element, eventType, handler);
   }
 
