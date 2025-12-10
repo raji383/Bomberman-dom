@@ -155,7 +155,6 @@ function MapDraw(mapElement, x, y) {
     else if (mapElement === 4) image = "./tools/energy.png";
     else if (mapElement === 5) image = "./tools/bombNbr.png";
     else if (mapElement === 6) image = "./tools/bombRange.png";
-    // console.log(freamwork.state.player);
 
     return createElement({
         tag: "div",
