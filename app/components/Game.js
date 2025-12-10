@@ -52,7 +52,7 @@ export default function GameScreen() {
                 tag: "div",
                 attrs: { class: "game-area" },
                 children: [
-                 //   playersInfoVDOM(),
+                   playersInfoVDOM(),
                     RenderMap(),
                     { tag: "div", children: freamwork.state.player.list.filter((p) => p?.alive).map((p) => { return p.draw() }) },
                     freamwork.state.boombs.map((p) => { return p.draw() }),
