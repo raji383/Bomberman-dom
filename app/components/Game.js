@@ -55,9 +55,9 @@ function MapDraw(mapElement, x, y) {
     if (mapElement === 1) image = "./tools/wall.png";
     else if (mapElement === 0 || mapElement === 3) image = "./tools/grass.png";
     else if (mapElement === 2) image = "./tools/box.png";
-    else if (mapElement === 4) image = "./tools/explosion.png";
-    else if (mapElement === 5) image = "./tools/explosion.png";
-    else if (mapElement === 6) image = "./tools/explosion.png";
+    else if (mapElement === 4) image = "./tools/energy.png";
+    else if (mapElement === 5) image = "./tools/bombNbr.png";
+    else if (mapElement === 6) image = "./tools/bombRange.png";
     // console.log(freamwork.state.player);
 
     return createElement({
