@@ -12,9 +12,9 @@ export class Players {
 
             let positions = [
                 [1, 1],
-                [100, 1],
-                [1, 100],
-                [100, 100]
+                [15, 1],
+                [1, 15],
+                [15, 15]
             ];
 
             let [x, y] = positions[i] || [1, 1];
@@ -66,12 +66,8 @@ class Player {
         this.yOffset = 0;
 
         // x and y
-        this.insX = x == 100
-            ? this.gameWidth - this.renderW - variables.GRID_CELL_SIZE_h
-            : this.gameWidth * (x / 100) + variables.GRID_CELL_SIZE_h;;
-        this.insY = y == 100
-            ? this.gameH - this.renderH - variables.GRID_CELL_SIZE_h
-            : this.gameH * (y / 100) + variables.GRID_CELL_SIZE_h;;
+        this.insX = variables.GRID_CELL_SIZE_h * x;
+        this.insY = variables.GRID_CELL_SIZE_h * y;
         this.x = this.insX;
         this.y = this.insY;
         this.gridX = Math.round(this.x / variables.GRID_CELL_SIZE_w);
