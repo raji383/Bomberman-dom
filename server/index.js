@@ -94,32 +94,14 @@ class GameRoom {
       this.stopJoinTimer();
       this.stopStartTimer();
       if (count == 1 && !this.joinTimer) {
-        console.log(count, "-----------");
-
         this.startJoinTimer();
       }
-
-
-
       return;
     }
-
-    if (this.startTimer) {
-      this.stopStartTimer();
-      this.startJoinTimer();
-      return;
-    }
-
-    if (this.joinTimer) {
-      return;
-    }
-
-
   }
-
   startJoinTimer() {
     this.stopJoinTimer();
-    this.joinTimeLeft = 10;
+    this.joinTimeLeft = 20;
 
     this.joinTimer = setInterval(() => {
       this.joinTimeLeft--;
@@ -145,7 +127,7 @@ class GameRoom {
 
   startStartTimer() {
     this.stopStartTimer();
-    this.startTimeLeft = 2;
+    this.startTimeLeft = 10;
 
     this.startTimer = setInterval(() => {
       this.startTimeLeft--;
