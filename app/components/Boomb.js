@@ -17,6 +17,7 @@ export class Boomb {
         this.y = this.gridY * variables.GRID_CELL_SIZE_h;
 
         this.id = id;
+        this.playerid = boom.id;
         this.img = '/tools/bomb.png';
     }
     inrangX(player) {
@@ -61,43 +62,44 @@ export class Boomb {
     smoke() {
         const map = freamwork.state.map;
 
+        let cor = []
         const cast = (dx, dy) => {
             for (let i = 0; i <= this.range; i++) {
                 const gx = this.gridX + dx * i;
                 const gy = this.gridY + dy * i;
 
                 const cell = map[gy]?.[gx];
-                if (cell === undefined) break; 
+                if (cell === undefined) return;
 
                 // empty 
                 if (cell === 0 || cell === 3) {
                     createExplosion(gx, gy, this.id);
-
                 } else if (cell === 2) {
                     // box destroy
+                    cor.push({ x: gx, y: gy })
                     createExplosion(gx, gy, this.id);
-
-                    freamwork.state.ws.send(JSON.stringify({
-                        type: 'boxdestroy',
-                        message: { x: gx, y: gy }
-                    }));
-                    console.log(11);
-                    
-                    break;
-
+                    return
                 } else if (cell === 1) {
                     // wall
-                    break;
+                    return;
                 }
             }
+
         };
 
-        cast(1, 0);   
-        cast(-1, 0);  
-        cast(0, 1);   
-        cast(0, -1);  
+        cast(1, 0);
+        cast(-1, 0);
+        cast(0, 1);
+        cast(0, -1);
+        console.log(cor);
+        if (this.playerid == freamwork.state.myId) {
 
-        freamwork.setState(prev => ({ ...prev }));
+            freamwork.state.ws.send(JSON.stringify({
+                type: 'boxdestroy',
+                message: cor
+            }));
+        }
+
     }
 
 

@@ -121,7 +121,7 @@ function handleServerMessage(data) {
         freamwork.state.boombs = freamwork.state.boombs.filter(p => {
           if (p.id != bom.id) {
             return true
-          }
+          }          
           p.exblogen()
           p.smoke()
           return false
@@ -139,8 +139,10 @@ function handleServerMessage(data) {
       freamwork.setState(prev => ({ ...prev }))
       break
     case 'boxdestroy':
+      setTimeout(() => {
 
-      freamwork.setState({ map: data.message });
+        freamwork.setState({ map: data.message });
+      }, 0)
       break
     case 'powerUp':
       for (let index = 0; index < freamwork.state.player.list.length; index++) {

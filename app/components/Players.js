@@ -253,7 +253,8 @@ class Player {
                                     key: key,
                                     x: this.gridX,
                                     y: this.gridY,
-                                    range: this.power
+                                    range: this.power,
+                                    id: this.id
                                 },
                                 playerId: this.id + this.bombs
                             }));

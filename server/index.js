@@ -303,8 +303,8 @@ wss.on('connection', (ws) => {
     }
   });
 
-  ws.on('close', () => {
-    console.log('Client disconnected');
+  ws.on('close', (err) => {
+    console.log('Client disconnected',err);
     const player = Array.from(players.values()).find(p => p.ws === ws);
     if (player && player.roomId) {
       const room = rooms.get(player.roomId);
@@ -352,7 +352,11 @@ function reDrawMap(ws, data) {
   if (!room) return;
   const randomNbm = Math.floor(Math.random() * 3) + 4;
   const map = room.map.map
-  map[data.message.y][data.message.x] = randomNbm;
+  for (let p of data.message) {
+
+    map[p.y][p.x] = randomNbm;
+
+  }
   room.broadcast({
     type: data.type,
     message: map,
