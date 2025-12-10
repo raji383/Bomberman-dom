@@ -36,6 +36,7 @@ export function connectToServer(nickname) {
 }
 
 function handleServerMessage(data) {
+
   switch (data.type) {
     case 'room_assigned':
       freamwork.setState({
@@ -47,7 +48,6 @@ function handleServerMessage(data) {
       push('lobby');
       break;
     case 'game_start':
-       console.log(data.number,"0000000000000");
       freamwork.setState({
         gameStarted: true,
         players: data.players || {},
@@ -82,8 +82,8 @@ function handleServerMessage(data) {
           if (element.alive) {
             element.alive = false;
             freamwork.state.number--
-             freamwork.setState(prev => ({ ...prev }) )
-            
+            freamwork.setState(prev => ({ ...prev }))
+
           }
         }
       }
@@ -112,18 +112,8 @@ function handleServerMessage(data) {
       freamwork.setState(prev => ({ ...prev }))
       break
     case 'boomb':
-      console.log(data, 'dkal');
 
-      var bom = new Boomb(data.message)
-      let ex = false
-      freamwork.state.boombs.forEach(b => {
-        if (b.id == bom.id) {
-          ex = true
-        }
-      });
-      if (ex) {
-        break
-      }
+      var bom = new Boomb(data.message, data.id)
       freamwork.state.boombs.push(bom)
       setTimeout(() => {
         freamwork.state.boombs = freamwork.state.boombs.filter(p => {
@@ -147,10 +137,41 @@ function handleServerMessage(data) {
       freamwork.setState(prev => ({ ...prev }))
       break
     case 'boxdestroy':
-      console.log("new map isssss :", data.message);
-      
+
       freamwork.setState({ map: data.message });
-      break;
+      break
+    case 'powerUp':
+      for (let index = 0; index < freamwork.state.player.list.length; index++) {
+        const element = freamwork.state.player.list[index];
+        if (element.id == data.id) {
+          switch (data.power) {
+            case 'energy':
+              if (element.speed < 9) {
+
+                element.speed++
+              }
+              break
+            case 'bombNbr':
+              if (element.speed < 5) {
+
+                element.bombs++
+              }
+              break
+            case 'bombRange':
+              if (element.speed < 8) {
+
+                element.power++;
+              }
+              break
+            default:
+              console.log(' Message inconnu:', data.type);
+          }
+        }
+      }
+      freamwork.setState({ map: data.message });
+
+      freamwork.setState(prev => ({ ...prev }))
+      break
     default:
       console.log(' Message inconnu:', data.type);
   }
@@ -171,7 +192,7 @@ function startGameLoop() {
 
   function gameLoop(timestamp) {
     requestAnimationFrame(gameLoop);
-     console.log(freamwork.state.number );
+    console.log(freamwork.state.number);
 
     if (freamwork.state.number <= 1) {
       freamwork.state.ws.send(JSON.stringify({

@@ -5,7 +5,7 @@ import { variables } from "../../variables.js";
 
 
 export class Boomb {
-    constructor(boom) {
+    constructor(boom, id) {
         this.boom = boom;
         this.range = boom.range;
 
@@ -16,7 +16,7 @@ export class Boomb {
         this.x = this.gridX * variables.GRID_CELL_SIZE_h;
         this.y = this.gridY * variables.GRID_CELL_SIZE_h;
 
-        this.id = boom.id;
+        this.id = id;
         this.img = '/tools/bomb.png';
     }
     inrangX(player) {
@@ -37,8 +37,8 @@ export class Boomb {
     playerwinner() {
         for (let i = 0; i < freamwork.state.player.list.length; i++) {
             const element = freamwork.state.player.list[i];
-            if ( element.alive) {
-                return  element.name
+            if (element.alive) {
+                return element.name
             }
         }
     }
@@ -60,13 +60,13 @@ export class Boomb {
     }
     smoke() {
         //  X
-        for (let i = -this.range; i <= this.range; i++) {
+        for (let i = 0; i <= this.range; i++) {
 
             if (freamwork.state.map[this.gridY][this.gridX + i] === 0 || freamwork.state.map[this.gridY][this.gridX + i] === 3) {
                 createExplosion(this.gridX + i, this.gridY, this.id);
             } else if (freamwork.state.map[this.gridY][this.gridX + i] === 2) {
                 createExplosion(this.gridX + i, this.gridY, this.id);
-                
+
                 freamwork.state.ws.send(JSON.stringify({
                     type: 'boxdestroy',
                     message: {
@@ -74,12 +74,35 @@ export class Boomb {
                         y: this.gridY
                     }
                 }));
+                break
                 // freamwork.state.map[this.gridY][this.gridX + i] = 0
+            } else if (freamwork.state.map[this.gridY + i][this.gridX] === 1) {
+                break
+            }
+        }
+        for (let i = -this.range; i <= 0; i++) {
+
+            if (freamwork.state.map[this.gridY][this.gridX + i] === 0 || freamwork.state.map[this.gridY][this.gridX + i] === 3) {
+                createExplosion(this.gridX + i, this.gridY, this.id);
+            } else if (freamwork.state.map[this.gridY][this.gridX + i] === 2) {
+                createExplosion(this.gridX + i, this.gridY, this.id);
+
+                freamwork.state.ws.send(JSON.stringify({
+                    type: 'boxdestroy',
+                    message: {
+                        x: this.gridX + i,
+                        y: this.gridY
+                    }
+                }));
+                break
+                // freamwork.state.map[this.gridY][this.gridX + i] = 0
+            } else if (freamwork.state.map[this.gridY + i][this.gridX] === 1) {
+                break
             }
         }
 
         //  Y
-        for (let i = -this.range; i <= this.range; i++) {
+        for (let i = 0; i <= this.range; i++) {
             if (freamwork.state.map[this.gridY + i][this.gridX] === 0) {
                 createExplosion(this.gridX, this.gridY + i, this.id);
             } else if (freamwork.state.map[this.gridY + i][this.gridX] === 2) {
@@ -92,7 +115,28 @@ export class Boomb {
                         y: this.gridY + i
                     }
                 }));
+                break
 
+            } else if (freamwork.state.map[this.gridY + i][this.gridX] === 1) {
+                break
+            }
+        }
+        for (let i = -this.range; i <= 0; i++) {
+            if (freamwork.state.map[this.gridY + i][this.gridX] === 0) {
+                createExplosion(this.gridX, this.gridY + i, this.id);
+            } else if (freamwork.state.map[this.gridY + i][this.gridX] === 2) {
+                createExplosion(this.gridX, this.gridY + i, this.id);
+                // freamwork.state.map[this.gridY + i][this.gridX] = 0
+                freamwork.state.ws.send(JSON.stringify({
+                    type: 'boxdestroy',
+                    message: {
+                        x: this.gridX,
+                        y: this.gridY + i
+                    }
+                }));
+                break
+            } else if (freamwork.state.map[this.gridY + i][this.gridX] === 1) {
+                break
             }
         }
 

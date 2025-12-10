@@ -113,11 +113,13 @@ class GameRoom {
     if (this.joinTimer) {
       return;
     }
+
+
   }
 
   startJoinTimer() {
     this.stopJoinTimer();
-    this.joinTimeLeft = 50;
+    this.joinTimeLeft = 10;
 
     this.joinTimer = setInterval(() => {
       this.joinTimeLeft--;
@@ -143,7 +145,7 @@ class GameRoom {
 
   startStartTimer() {
     this.stopStartTimer();
-    this.startTimeLeft = 20;
+    this.startTimeLeft = 2;
 
     this.startTimer = setInterval(() => {
       this.startTimeLeft--;
@@ -357,6 +359,21 @@ function reDrawMap(ws, data) {
     id: data.playerId
   });
 }
+function PowerUp(ws, data) {
+  const player = Array.from(players.values()).find(p => p.ws === ws);
+  if (!player || !player.roomId) return;
+
+  const room = rooms.get(player.roomId);
+  if (!room) return;
+  const map = room.map.map
+  map[data.message.y][data.message.x] = 0;
+  room.broadcast({
+    type: data.type,
+    message: map,
+    power: data.message.power,
+    id: data.playerId
+  });
+}
 function handleMessage(ws, data) {
   switch (data.type) {
     case 'join':
@@ -377,11 +394,11 @@ function handleMessage(ws, data) {
     case 'winning':
       handlePlayerWin(ws, data)
       break
-
-    case 'mapChange':
-      break
     case 'boxdestroy':
       reDrawMap(ws, data)
+      break
+    case 'powerUp':
+      PowerUp(ws, data)
       break
     default:
       console.log('Unknown message type:', data.type);
