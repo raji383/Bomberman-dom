@@ -174,7 +174,6 @@ class GameRoom {
       map: this.map.map,
       number: playerList.length
 
-
     });
     this.gameStarted = true;
   }
@@ -344,6 +343,22 @@ function handlePlayerWin(ws, data) {
     id: data.playerId
   });
 }
+
+function reDrawMap(ws, data) {
+  const player = Array.from(players.values()).find(p => p.ws === ws);
+  if (!player || !player.roomId) return;
+
+  const room = rooms.get(player.roomId);
+  if (!room) return;
+  const randomNbm = Math.floor(Math.random() * 3) + 4;
+  const map = room.map.map
+  map[data.message.y][data.message.x]= randomNbm;
+  room.broadcast({
+    type: data.type,
+    message: map,
+    id: data.playerId
+  });
+}
 function handleMessage(ws, data) {
   switch (data.type) {
     case 'join':
@@ -367,6 +382,9 @@ function handleMessage(ws, data) {
 
     case 'mapChange':
       break
+    case 'boxdestroy':
+      reDrawMap(ws, data)
+      break
     default:
       console.log('Unknown message type:', data.type);
   }
@@ -385,7 +403,6 @@ function handleJoin(ws, data) {
   players.set(playerId, player);
 
   let room = findAvailableRoom();
-
 
   if (!room) {
     const newRoomId = generateId();
@@ -407,7 +424,6 @@ function handleJoin(ws, data) {
 }
 
 function findAvailableRoom() {
-
   for (const room of rooms.values()) {
     if (!room.gameStarted && room.players.size < 4 && room.startTimer === null) {
       return room;

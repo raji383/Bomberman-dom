@@ -34,18 +34,18 @@ export class Boomb {
             player.gridY >= this.gridY - this.range
         );
     }
-    playerwinner(){
-         for (let i = 0; i < freamwork.state.player.list.length; i++) {
+    playerwinner() {
+        for (let i = 0; i < freamwork.state.player.list.length; i++) {
             const element = freamwork.state.player.list[i];
             if ( element.alive) {
                 return  element.name
             }
-          }
+        }
     }
 
     exblogen() {
         freamwork.state.player.list.forEach(player => {
-            if ((this.inrangX(player) || this.inrangY(player))&& player.alive) {
+            if ((this.inrangX(player) || this.inrangY(player)) && player.alive) {
                 player.lives--;
                 player.x = player.insX;
                 player.y = player.insY;
@@ -56,32 +56,48 @@ export class Boomb {
             }
         });
 
-       freamwork.setState(prev => ({...prev}))
+        freamwork.setState(prev => ({ ...prev }))
     }
     smoke() {
         //  X
         for (let i = -this.range; i <= this.range; i++) {
 
             if (freamwork.state.map[this.gridY][this.gridX + i] === 0 || freamwork.state.map[this.gridY][this.gridX + i] === 3) {
-                createExplosion(this.gridX + i, this.gridY,this.id);
+                createExplosion(this.gridX + i, this.gridY, this.id);
             } else if (freamwork.state.map[this.gridY][this.gridX + i] === 2) {
-                createExplosion(this.gridX + i, this.gridY,this.id);
-                freamwork.state.map[this.gridY][this.gridX + i] = 0
+                createExplosion(this.gridX + i, this.gridY, this.id);
+                console.log(f);
+                
+                freamwork.state.ws.send(JSON.stringify({
+                    type: 'boxdestroy',
+                    message: {
+                        x: this.gridX + i,
+                        y: this.gridY
+                    }
+                }));
+                // freamwork.state.map[this.gridY][this.gridX + i] = 0
             }
         }
 
         //  Y
         for (let i = -this.range; i <= this.range; i++) {
             if (freamwork.state.map[this.gridY + i][this.gridX] === 0) {
-                createExplosion(this.gridX, this.gridY + i,this.id);
+                createExplosion(this.gridX, this.gridY + i, this.id);
             } else if (freamwork.state.map[this.gridY + i][this.gridX] === 2) {
-                createExplosion(this.gridX, this.gridY + i,this.id);
-                freamwork.state.map[this.gridY + i][this.gridX] = 0
+                createExplosion(this.gridX, this.gridY + i, this.id);
+                // freamwork.state.map[this.gridY + i][this.gridX] = 0
+                freamwork.state.ws.send(JSON.stringify({
+                    type: 'boxdestroy',
+                    message: {
+                        x: this.gridX,
+                        y: this.gridY + i
+                    }
+                }));
 
             }
         }
 
-       freamwork.setState(prev => ({...prev}))
+        freamwork.setState(prev => ({ ...prev }))
     }
 
 
@@ -116,10 +132,10 @@ export class Boomb {
 
 
 class Explosion {
-    constructor(gridX, gridY,id) {
+    constructor(gridX, gridY, id) {
         this.x = gridX * variables.GRID_CELL_SIZE_w;
         this.y = gridY * variables.GRID_CELL_SIZE_h;
-        this.id = id 
+        this.id = id
 
         this.size = variables.GRID_CELL_SIZE_w - 5;
         this.scale = 0.1;
@@ -158,16 +174,16 @@ class Explosion {
         const grow = () => {
             this.scale += 0.1;
             this.vnode = this.createVNode();
-           freamwork.setState(prev => ({...prev}))
+            freamwork.setState(prev => ({ ...prev }))
 
             if (this.scale < 2) {
-                
+
                 requestAnimationFrame(grow);
             } else {
                 freamwork.state.explosion =
                     freamwork.state.explosion.filter(e => e !== this);
 
-               freamwork.setState(prev => ({...prev}))
+                freamwork.setState(prev => ({ ...prev }))
             }
         };
 
@@ -180,9 +196,9 @@ class Explosion {
 }
 
 
-function createExplosion(gx, gy , id ) {
-    let exp = new Explosion(gx, gy, id );
+function createExplosion(gx, gy, id) {
+    let exp = new Explosion(gx, gy, id);
     freamwork.state.explosion.push(exp);
-   freamwork.setState(prev => ({...prev}))
+    freamwork.setState(prev => ({ ...prev }))
 }
 

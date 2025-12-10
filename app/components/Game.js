@@ -52,7 +52,7 @@ export default function GameScreen() {
                 tag: "div",
                 attrs: { class: "game-area" },
                 children: [
-                   playersInfoVDOM(),
+                   //playersInfoVDOM(),
                     RenderMap(),
                     { tag: "div", children: freamwork.state.player.list.filter((p) => p?.alive).map((p) => { return p.draw() }) },
                     freamwork.state.boombs.map((p) => { return p.draw() }),
@@ -152,6 +152,10 @@ function MapDraw(mapElement, x, y) {
     if (mapElement === 1) image = "./tools/wall.png";
     else if (mapElement === 0 || mapElement === 3) image = "./tools/grass.png";
     else if (mapElement === 2) image = "./tools/box.png";
+    else if (mapElement === 4) image = "./tools/energy.png";
+    else if (mapElement === 5) image = "./tools/bombNbr.png";
+    else if (mapElement === 6) image = "./tools/bombRange.png";
+    // console.log(freamwork.state.player);
 
     return createElement({
         tag: "div",
@@ -208,7 +212,7 @@ function playersInfoVDOM() {
                                 attrs: { class: "statItem" },
                                 children: [
                                     { tag: "span", children: ["⚡"] },
-                                    { tag: "span", children: [`${player.speed}`] }
+                                    { tag: "span", children: [`${player.speedpx}`] }
                                 ]
                             },
                             // Bombs
@@ -217,7 +221,15 @@ function playersInfoVDOM() {
                                 attrs: { class: "statItem" },
                                 children: [
                                     { tag: "span", children: ["💣"] },
-                                    { tag: "span", children: [`${player.bombs}`] }
+                                    { tag: "span", children: [`${player.power}`] }
+                                ]
+                            },
+                            {
+                                tag: "div",
+                                attrs: { class: "statItem" },
+                                children: [
+                                    { tag: "span", children: ["🎯"] },
+                                    { tag: "span", children: [`${player.range}`] }
                                 ]
                             }
                         ]

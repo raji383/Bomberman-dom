@@ -148,6 +148,11 @@ function handleServerMessage(data) {
       freamwork.state.gameOver = data.message + "  is the  winner";
       freamwork.setState(prev => ({ ...prev }))
       break
+    case 'boxdestroy':
+      console.log("new map isssss :", data.message);
+      
+      freamwork.setState({ map: data.message });
+      break;
     default:
       console.log(' Message inconnu:', data.type);
   }
