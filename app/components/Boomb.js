@@ -59,95 +59,51 @@ export class Boomb {
         freamwork.setState(prev => ({ ...prev }))
     }
     smoke() {
-        //  X
-        for (let i = 0; i <= this.range; i++) {
+        const map = freamwork.state.map;
 
-            if (freamwork.state.map[this.gridY][this.gridX + i] === 0 || freamwork.state.map[this.gridY][this.gridX + i] === 3) {
-                createExplosion(this.gridX + i, this.gridY, this.id);
-            } else if (freamwork.state.map[this.gridY][this.gridX + i] === 2) {
-                createExplosion(this.gridX + i, this.gridY, this.id);
+        const cast = (dx, dy) => {
+            for (let i = 0; i <= this.range; i++) {
+                const gx = this.gridX + dx * i;
+                const gy = this.gridY + dy * i;
 
-                freamwork.state.ws.send(JSON.stringify({
-                    type: 'boxdestroy',
-                    message: {
-                        x: this.gridX + i,
-                        y: this.gridY
-                    }
-                }));
-                break
-                // freamwork.state.map[this.gridY][this.gridX + i] = 0
-            } else if (freamwork.state.map[this.gridY + i][this.gridX] === 1) {
-                break
+                const cell = map[gy]?.[gx];
+                if (cell === undefined) break; 
+
+                // empty 
+                if (cell === 0 || cell === 3) {
+                    createExplosion(gx, gy, this.id);
+
+                } else if (cell === 2) {
+                    // box destroy
+                    createExplosion(gx, gy, this.id);
+
+                    freamwork.state.ws.send(JSON.stringify({
+                        type: 'boxdestroy',
+                        message: { x: gx, y: gy }
+                    }));
+                    console.log(11);
+                    
+                    break;
+
+                } else if (cell === 1) {
+                    // wall
+                    break;
+                }
             }
-        }
-        for (let i = -this.range; i <= 0; i++) {
+        };
 
-            if (freamwork.state.map[this.gridY][this.gridX + i] === 0 || freamwork.state.map[this.gridY][this.gridX + i] === 3) {
-                createExplosion(this.gridX + i, this.gridY, this.id);
-            } else if (freamwork.state.map[this.gridY][this.gridX + i] === 2) {
-                createExplosion(this.gridX + i, this.gridY, this.id);
+        cast(1, 0);   
+        cast(-1, 0);  
+        cast(0, 1);   
+        cast(0, -1);  
 
-                freamwork.state.ws.send(JSON.stringify({
-                    type: 'boxdestroy',
-                    message: {
-                        x: this.gridX + i,
-                        y: this.gridY
-                    }
-                }));
-                break
-                // freamwork.state.map[this.gridY][this.gridX + i] = 0
-            } else if (freamwork.state.map[this.gridY + i][this.gridX] === 1) {
-                break
-            }
-        }
-
-        //  Y
-        for (let i = 0; i <= this.range; i++) {
-            if (freamwork.state.map[this.gridY + i][this.gridX] === 0) {
-                createExplosion(this.gridX, this.gridY + i, this.id);
-            } else if (freamwork.state.map[this.gridY + i][this.gridX] === 2) {
-                createExplosion(this.gridX, this.gridY + i, this.id);
-                // freamwork.state.map[this.gridY + i][this.gridX] = 0
-                freamwork.state.ws.send(JSON.stringify({
-                    type: 'boxdestroy',
-                    message: {
-                        x: this.gridX,
-                        y: this.gridY + i
-                    }
-                }));
-                break
-
-            } else if (freamwork.state.map[this.gridY + i][this.gridX] === 1) {
-                break
-            }
-        }
-        for (let i = -this.range; i <= 0; i++) {
-            if (freamwork.state.map[this.gridY + i][this.gridX] === 0) {
-                createExplosion(this.gridX, this.gridY + i, this.id);
-            } else if (freamwork.state.map[this.gridY + i][this.gridX] === 2) {
-                createExplosion(this.gridX, this.gridY + i, this.id);
-                // freamwork.state.map[this.gridY + i][this.gridX] = 0
-                freamwork.state.ws.send(JSON.stringify({
-                    type: 'boxdestroy',
-                    message: {
-                        x: this.gridX,
-                        y: this.gridY + i
-                    }
-                }));
-                break
-            } else if (freamwork.state.map[this.gridY + i][this.gridX] === 1) {
-                break
-            }
-        }
-
-        freamwork.setState(prev => ({ ...prev }))
+        freamwork.setState(prev => ({ ...prev }));
     }
 
 
+
     draw() {
-        // render as an <img> so the src is explicit and sizing is consistent
         const size = Math.round(variables.GRID_CELL_SIZE_h);
-        // center the image inside the cell 
         const left = Math.round(this.x);
         const top = Math.round(this.y);
 

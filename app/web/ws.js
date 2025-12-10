@@ -114,6 +114,8 @@ function handleServerMessage(data) {
     case 'boomb':
 
       var bom = new Boomb(data.message, data.id)
+      console.log(bom.id);
+
       freamwork.state.boombs.push(bom)
       setTimeout(() => {
         freamwork.state.boombs = freamwork.state.boombs.filter(p => {
@@ -152,13 +154,13 @@ function handleServerMessage(data) {
               }
               break
             case 'bombNbr':
-              if (element.speed < 5) {
+              if (element.bombs < 5) {
 
                 element.bombs++
               }
               break
             case 'bombRange':
-              if (element.speed < 8) {
+              if (element.power < 8) {
 
                 element.power++;
               }
@@ -192,7 +194,6 @@ function startGameLoop() {
 
   function gameLoop(timestamp) {
     requestAnimationFrame(gameLoop);
-    console.log(freamwork.state.number);
 
     if (freamwork.state.number <= 1) {
       freamwork.state.ws.send(JSON.stringify({
@@ -216,8 +217,13 @@ function startGameLoop() {
         : key === "ArrowDown" ? p.y + p.speed
           : p.y;
       if (!p.canMove(proposedX, proposedY)) {
-        p.event = null
-        freamwork.setState(prev => ({ ...prev }))
+        freamwork.state.ws.send(JSON.stringify({
+          type: "playerstop",
+          message: {
+            key: key,
+          },
+          playerId: freamwork.state.myId
+        }));
 
       }
       if (p.alive) p.update(delta);

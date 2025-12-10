@@ -39,7 +39,7 @@ class Player {
 
         // powerup
         this.lives = 3;
-        this.power = 1;
+        this.power = 2;
         this.speed = 5;
         this.bombs = 1;
         // speed is responsive based on grid cell size: a fraction of the cell height
@@ -270,9 +270,6 @@ class Player {
                                     : this.y;
 
                             if (this.canMove(proposedX, proposedY)) {
-                                const gx = Math.round(proposedX / variables.GRID_CELL_SIZE_w);
-                                const gy = Math.round(proposedY / variables.GRID_CELL_SIZE_h);
-
                                 freamwork.state.ws.send(JSON.stringify({
                                     type: "playermove",
                                     message: {
