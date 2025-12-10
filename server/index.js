@@ -77,15 +77,19 @@ class GameRoom {
     this.players.delete(playerId);
 
     const count = this.players.size;
-
+  if (!this.gameStarted) {
     this.broadcast({
       type: "players_update",
       players: this.getPlayersList(),
     });
+
+  }else{
     this.broadcast({
       type: "number",
       number: playerId,
     });
+  }
+
 
     if (this.gameStarted) return;
 

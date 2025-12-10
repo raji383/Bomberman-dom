@@ -195,8 +195,9 @@ function startGameLoop() {
   let frameCount = 0;
 
   function gameLoop(timestamp) {
-    requestAnimationFrame(gameLoop);
-
+ if (freamwork.state.number !=1){
+   requestAnimationFrame(gameLoop);
+ }
     if (freamwork.state.number <= 1) {
       freamwork.state.ws.send(JSON.stringify({
         type: 'winning',
@@ -239,6 +240,8 @@ function startGameLoop() {
       lastFpsUpdate = timestamp;
     }
   }
+ if (freamwork.state.number !=1){
 
-  requestAnimationFrame(gameLoop);
+   requestAnimationFrame(gameLoop);
+ }
 }
