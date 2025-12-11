@@ -112,10 +112,6 @@ export default function LobbyScreen() {
           createElement({
             tag: "div",
             attrs: { class: "chat-messages" },
-            events: {
-              created: (element) => { scrollToBottom(element); },
-              updated: (element) => { scrollToBottom(element); }
-            },
             children: messages.length === 0
               ? createElement({ tag: "p", children: ["No messages..."] })
               : messages.map((msg, index) =>
