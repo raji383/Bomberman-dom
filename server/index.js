@@ -55,6 +55,8 @@ class GameRoom {
     const count = this.players.size;
 
     if (count === 1) {
+      this.chatMessage = []
+    
       this.startJoinTimer();
       return;
     }
@@ -256,6 +258,8 @@ const server = createServer(async (req, res) => {
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
+  console.log("upgrade is good");
+  
 
   ws.on('message', (message) => {
     try {

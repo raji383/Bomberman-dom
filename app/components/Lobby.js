@@ -122,7 +122,7 @@ export default function LobbyScreen() {
                 createElement({
                   tag: "div",
                   attrs: {
-                    class: `message ${msg.isSystem ? 'system' : ''} ${msg.player === freamwork.state.players[freamwork.state.myId]?.nickname ? 'own' : ''}`
+                    class: `message ${msg.isSystem ? 'system' : ''}`
                   },
                   children: [createElement({ tag: "strong", children: [`${msg.player}: ${msg.text}`] })]
                 })
