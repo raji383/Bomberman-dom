@@ -104,7 +104,7 @@ class GameRoom {
   }
   startJoinTimer() {
     this.stopJoinTimer();
-    this.joinTimeLeft = 4;
+    this.joinTimeLeft = 20;
 
     this.joinTimer = setInterval(() => {
       this.joinTimeLeft--;
@@ -130,13 +130,10 @@ class GameRoom {
 
   startStartTimer() {
     this.stopStartTimer();
-    this.startTimeLeft = 1;
-
+    this.startTimeLeft = 10;
     this.startTimer = setInterval(() => {
       this.startTimeLeft--;
-
       this.broadcast({ type: "start_timer", value: this.startTimeLeft });
-
       if (this.startTimeLeft <= 0) {
         this.stopStartTimer();
         this.startGame();

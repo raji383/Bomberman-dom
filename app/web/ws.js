@@ -54,6 +54,8 @@ function handleServerMessage(data) {
         map: data.map,
         number: Number(data.number)
       });
+      freamwork.state.join_timer = null
+       freamwork.state.countdown  = null
       push('game');
       startGameLoop();
       break;
@@ -91,14 +93,12 @@ function handleServerMessage(data) {
       break;
     case 'playermove':
       const fps = 10 / 60
-
       const players = freamwork.state.player?.list || [];
       for (let i = 0; i < players.length; i++) {
         const p = players[i];
         if (p.id == data.id) {
           p.event = data.message.key
         }
-
         if (p.alive) p.update(0.16);
       }
 
@@ -140,6 +140,11 @@ function handleServerMessage(data) {
       break
     case 'winning':
       freamwork.state.gameOver = data.message + "  is the  winner";
+      if (data.id == freamwork.state.myId) {
+        freamwork.state.winner = true
+      } else {
+        freamwork.state.winner = false
+      }
       freamwork.setState(prev => ({ ...prev }))
       break
     case 'boxdestroy':
@@ -165,7 +170,7 @@ function handleServerMessage(data) {
               break
             case 'bombRange':
               if (element.power < 6) {
-              element.power++;
+                element.power++;
               }
               break
             default:
@@ -212,6 +217,14 @@ function playerwinner() {
     }
   }
 }
+function playerwinnerId() {
+  for (let i = 0; i < freamwork.state.player.list.length; i++) {
+    const element = freamwork.state.player.list[i];
+    if (element.alive) {
+      return element.id
+    }
+  }
+}
 
 function startGameLoop() {
   let lastTime = performance.now();
@@ -222,12 +235,17 @@ function startGameLoop() {
     if (freamwork.state.number != 1) {
       requestAnimationFrame(gameLoop);
     }
+    
     if (freamwork.state.number <= 1 && freamwork.state.number != null) {
+      console.log(freamwork.state.number);
+      console.log(2121211212);
+      
 
 
       freamwork.state.ws.send(JSON.stringify({
         type: 'winning',
-        message: playerwinner()
+        message: playerwinner(),
+        playerId: playerwinnerId()
       }));
 
     }

@@ -24,7 +24,9 @@ freamwork.state = {
   number: null, 
   model_chat : true,
   eroor : false,
-  map :null
+  map :null , 
+  winner : false
+
  
 };
 freamwork.addRoute("/", NicknameScreen);

@@ -1,17 +1,13 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
-import { push, router } from "../../framework/route.js";
-import { Boomb } from "./Boomb.js";
+import { push } from "../../framework/route.js";
 import { Players } from "./Players.js";
 import { variables } from "../../variables.js";
 export default function GameScreen() {
-    const { messages, chatInput = "", ws, players, myId, boombs = [], explosion = [], map, model_chat } = freamwork.state;
+    const { messages, chatInput = "", ws, myId,model_chat, winner } = freamwork.state;
     if (!ws) {
-        push('/')  
-
-
-}
-
+        push('/')
+    }
     // Chat input handler
     const handleChatInput = (e) => {
         freamwork.setState({ chatInput: e.target.value });
@@ -42,8 +38,8 @@ export default function GameScreen() {
                 }
             }
         }
-    };   
-    if (!freamwork.state.player || freamwork.state.player.list.length == 0) {     
+    };
+    if (!freamwork.state.player || freamwork.state.player.list.length == 0) {
         freamwork.state.player = new Players(freamwork.state.players)
     }
     return createElement({
@@ -64,10 +60,32 @@ export default function GameScreen() {
                         attrs: {
                             class: "gameOver"
                         },
-                        children: [{
-                            tag: "h1",
-                            children: [`${freamwork.state.gameOver}`]
-                        }]
+
+                        children: [
+                            {
+                                tag: "h1",
+                                children: [`${winner ? "you win ." : "hhhh you lose"}`]
+
+                            },
+
+                            {
+                                tag: "h1",
+                                children: [`${freamwork.state.gameOver}`]
+                            },
+                            {
+                                tag: "button",
+                                attrs: {
+                                    class: "restartBtn",
+
+                                },
+                                events: {
+                                   click: () => {
+                                      location.reload()
+                                    }
+                                },
+                                children: ["Rejouer"]
+                            }
+                        ]
                     })
                 ]
             }),
@@ -136,7 +154,7 @@ function RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myI
     });
 }
 function RenderMap() {
-     if (!freamwork.state.map) return
+    if (!freamwork.state.map) return
     const result = [];
     for (let y = 0; y < freamwork.state.map.length; y++) {
         for (let x = 0; x < freamwork.state.map[y].length; x++) {
