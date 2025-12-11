@@ -153,8 +153,7 @@ function handleServerMessage(data) {
         if (element.id == data.id) {
           switch (data.power) {
             case 'energy':
-              if (element.speed < 9) {
-
+              if (element.speed < 5) {
                 element.speed++
               }
               break
@@ -165,9 +164,8 @@ function handleServerMessage(data) {
               }
               break
             case 'bombRange':
-              if (element.power < 8) {
-
-                element.power++;
+              if (element.power < 6) {
+              element.power++;
               }
               break
             default:

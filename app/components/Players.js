@@ -231,7 +231,7 @@ class Player {
         const gridX = Math.floor(centerX / cellSize);
         const gridY = Math.floor(centerY / cellSize);
 
-        if (freamwork.state.map[gridY] && freamwork.state.map[gridY][gridX]) {
+        if (freamwork.state.map[gridY] && freamwork.state.map[gridY][gridX] && this.id== freamwork.state.myId) {
             const currentTile = freamwork.state.map[gridY][gridX];
             if (currentTile === 4) { // Energy
                 freamwork.state.ws.send(JSON.stringify({
