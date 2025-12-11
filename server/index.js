@@ -7,7 +7,11 @@ import { WebSocketServer } from 'ws';
 import { GameMap } from './map.js';
 
 const __filename = fileURLToPath(import.meta.url);
+
 const __dirname = dirname(__filename);
+console.log(__dirname );
+
+
 const ROOT = join(__dirname, '..');
 const PORT = 8080;
 
@@ -160,30 +164,6 @@ class GameRoom {
     this.gameStarted = true;
   }
 
-  startCountdown(seconds) {
-    this.Time = seconds;
-    this.broadcast({
-      type: 'countdown',
-      countdown: this.Time
-    });
-
-    this.countdown = setInterval(() => {
-      this.Time--;
-      this.broadcast({
-        type: 'countdown',
-        countdown: this.Time
-      });
-
-      if (this.Time <= 0) {
-        clearInterval(this.countdown);
-        this.countdown = null;
-        this.startGame();
-      }
-    }, 1000);
-  }
-
-
-
   getPlayersList() {
     return Array.from(this.players.values()).map(p => ({
       id: p.id,
@@ -247,6 +227,7 @@ const server = createServer(async (req, res) => {
     }
 
     try {
+      
       const fileContent = await readFile(fullPath);
       const ext = extname(fullPath) || '.html';
       const mimeType = MIME_TYPES[ext] || 'application/octet-stream';
