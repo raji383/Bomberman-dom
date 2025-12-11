@@ -76,25 +76,25 @@ class GameRoom {
     this.players.delete(playerId);
 
     const count = this.players.size;
-  if (!this.gameStarted) {
-    this.broadcast({
-      type: "players_update",
-      players: this.getPlayersList(),
-    });
+    if (!this.gameStarted) {
+      this.broadcast({
+        type: "players_update",
+        players: this.getPlayersList(),
+      });
 
-  }else{
-    this.broadcast({
-      type: "number",
-      number: playerId,
-    });
-  }
+    } else {
+      this.broadcast({
+        type: "number",
+        number: playerId,
+      });
+    }
     if (this.gameStarted) return;
 
     if (count <= 1) {
 
       this.stopJoinTimer();
       this.stopStartTimer();
-      if (count == 1 && !this.joinTimer) {    
+      if (count == 1 && !this.joinTimer) {
         this.joinTimeLeft = 0
         this.broadcast({ type: "join_timer", value: this.joinTimeLeft });
 
@@ -289,7 +289,7 @@ wss.on('connection', (ws) => {
   });
 
   ws.on('close', (err) => {
-    console.log('Client disconnected',err);
+    console.log('Client disconnected', err);
     const player = Array.from(players.values()).find(p => p.ws === ws);
     if (player && player.roomId) {
       const room = rooms.get(player.roomId);
@@ -363,6 +363,20 @@ function PowerUp(ws, data) {
     id: data.playerId
   });
 }
+
+function sliding(ws, data) {
+  const player = Array.from(players.values()).find(p => p.ws === ws);
+  if (!player || !player.roomId) return;
+
+  const room = rooms.get(player.roomId);
+  if (!room) return;
+  room.broadcast({
+    type: data.type,
+    message: data.message,
+    id: data.playerId
+  });
+}
+
 function handleMessage(ws, data) {
   switch (data.type) {
     case 'join':
@@ -388,6 +402,10 @@ function handleMessage(ws, data) {
       break
     case 'powerUp':
       PowerUp(ws, data)
+      break
+    case 'sliding':
+      sliding(ws, data)
+
       break
     default:
       console.log('Unknown message type:', data.type);

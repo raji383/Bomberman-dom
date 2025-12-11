@@ -90,13 +90,18 @@ function handleServerMessage(data) {
 
       break;
     case 'playermove':
+      const fps = 10 / 60
 
-      for (let index = 0; index < freamwork.state.player.list.length; index++) {
-        const element = freamwork.state.player.list[index];
-        if (element.id == data.id) {
-          element.event = data.message.key
+      const players = freamwork.state.player?.list || [];
+      for (let i = 0; i < players.length; i++) {
+        const p = players[i];
+        if (p.id == data.id) {
+          p.event = data.message.key
         }
+
+        if (p.alive) p.update(0.16);
       }
+
       freamwork.setState(prev => ({ ...prev }))
 
       break
@@ -120,7 +125,7 @@ function handleServerMessage(data) {
         freamwork.state.boombs = freamwork.state.boombs.filter(p => {
           if (p.id != bom.id) {
             return true
-          }          
+          }
           p.exblogen()
           p.smoke()
           return false
@@ -174,6 +179,29 @@ function handleServerMessage(data) {
 
       freamwork.setState(prev => ({ ...prev }))
       break
+    case 'sliding':
+      const player = freamwork.state.player?.list || [];
+      for (let i = 0; i < player.length; i++) {
+        const p = player[i];
+
+        if (p.id == data.playerId && p.id !== freamwork.state.myId) {
+
+          if (data.message.key == "-") {
+            if (data.message.type == "x") {
+              p.x -= 0.5;
+            } else if (data.message.type == "y") {
+              p.y -= 0.5;
+            }
+          } else if (data.message.key == "+") {
+            if (data.message.type == "x") {
+              p.x += 0.5;
+            } else if (data.message.type == "y") {
+              p.y += 0.5;
+            }
+          }
+        }
+      }
+      break;
     default:
       console.log(' Message inconnu:', data.type);
   }
@@ -193,12 +221,12 @@ function startGameLoop() {
   let frameCount = 0;
 
   function gameLoop(timestamp) {
- if (freamwork.state.number !=1){
-   requestAnimationFrame(gameLoop);
- }
-    if (freamwork.state.number <= 1 && freamwork.state.number!=null) {
-      
-      
+    if (freamwork.state.number != 1) {
+      requestAnimationFrame(gameLoop);
+    }
+    if (freamwork.state.number <= 1 && freamwork.state.number != null) {
+
+
       freamwork.state.ws.send(JSON.stringify({
         type: 'winning',
         message: playerwinner()
@@ -209,28 +237,6 @@ function startGameLoop() {
     const delta = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
 
-    const players = freamwork.state.player?.list || [];
-    for (let i = 0; i < players.length; i++) {
-      const p = players[i];
-      const key = p.event
-      const proposedX = key === "ArrowLeft" ? p.x - p.speed
-        : key === "ArrowRight" ? p.x + p.speed
-          : p.x;
-      const proposedY = key === "ArrowUp" ? p.y - p.speed
-        : key === "ArrowDown" ? p.y + p.speed
-          : p.y;
-      if (!p.canMove(proposedX, proposedY)) {
-        freamwork.state.ws.send(JSON.stringify({
-          type: "playerstop",
-          message: {
-            key: key,
-          },
-          playerId: freamwork.state.myId
-        }));
-
-      }
-      if (p.alive) p.update(delta);
-    }
 
     frameCount++;
 
@@ -240,8 +246,8 @@ function startGameLoop() {
       lastFpsUpdate = timestamp;
     }
   }
- if (freamwork.state.number !=1){
+  if (freamwork.state.number != 1) {
 
-   requestAnimationFrame(gameLoop);
- }
+    requestAnimationFrame(gameLoop);
+  }
 }

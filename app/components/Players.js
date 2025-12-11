@@ -40,7 +40,7 @@ class Player {
         // powerup
         this.lives = 3;
         this.power = 2;
-        this.speed = 5;
+        this.speed = 1;
         this.bombs = 1;
         // speed is responsive based on grid cell size: a fraction of the cell height
         this.alive = this.lives > 0 ? true : false;
@@ -57,8 +57,8 @@ class Player {
 
 
         // w and h
-        this.renderW = variables.GRID_CELL_SIZE_h - 3;
-        this.renderH = variables.GRID_CELL_SIZE_h - 3;
+        this.renderW = variables.GRID_CELL_SIZE_h;
+        this.renderH = variables.GRID_CELL_SIZE_h;
 
         // offset
         this.xOffset = 0;
@@ -118,107 +118,132 @@ class Player {
         }
     }
 
-    canMove(newX, newY) {
+  canMove(newX, newY) {
         const cell = variables.GRID_CELL_SIZE_h;
 
-        const W = this.renderW * 0.8;
-        const H = this.renderH * 0.8;
+        const W = this.renderW -1;
+        const H = this.renderH -1;
 
         const points = [
-            [newX, newY],
-            [newX + W, newY],
-            [newX, newY + H],
-            [newX + W, newY + H]
+            [newX , newY ],             // Top-Left
+            [newX + W , newY ],         // Top-Right
+            [newX , newY + H ],         // Bottom-Left
+            [newX + W , newY + H ]      // Bottom-Right
         ];
 
         const map = freamwork.state.map;
-        // if (!map) return false;
-
         const rows = map.length;
         const cols = map[0].length;
 
         for (let [px, py] of points) {
-
             const gx = Math.floor(px / cell);
             const gy = Math.floor(py / cell);
 
-
-            // out of bounds
-            if (gx < 0 || gy < 0 || gx >= cols || gy >= rows) {
-                return false;
-            }
+            if (gx < 0 || gy < 0 || gx >= cols || gy >= rows) return false;
 
             const tile = map[gy][gx];
-            if (tile === 1 || tile === 2) {
-                return false;
-            }
+            if (tile === 1 || tile === 2) return false;
         }
 
         return true;
     }
 
     update(delta = 0) {
+        const cellSize = variables.GRID_CELL_SIZE_h;
+        const vel = this.speed * (cellSize / 3) * delta;
 
-        const vel = this.speed * (variables.GRID_CELL_SIZE_h / 3);
+        let dx = 0;
+        let dy = 0;
 
         if (this.event === "ArrowLeft") {
-
-            this.x -= vel * delta;
+            dx = -vel;
             this.inagif = 'left';
-
         } else if (this.event === "ArrowRight") {
-            this.x += vel * delta;
+            dx = vel;
             this.inagif = 'right';
-
         } else if (this.event === "ArrowUp") {
-            this.y -= vel * delta;
+            dy = -vel;
             this.inagif = 'up';
-
         } else if (this.event === "ArrowDown") {
-            this.y += vel * delta;
+            dy = vel;
             this.inagif = 'down';
         } else {
-            this.inagif = 'down';
-            return
+            return;
         }
-        if (freamwork.state.map[this.gridY][this.gridX] === 4) {
-            freamwork.state.ws.send(JSON.stringify({
-                type: 'powerUp',
-                message: {
-                    x: this.gridX,
-                    y: this.gridY,
-                    power: "energy"
-                },
-                playerId: this.id
-            }));
 
+        const nextX = this.x + dx;
+        const nextY = this.y + dy;
+
+        if (this.canMove(nextX, nextY)) {
+            this.x = nextX;
+            this.y = nextY;
+        }  else {
+            
+            const slideSpeed = vel; 
+            const threshold = 16;   
+
+            const playerCenterX = this.x + (this.renderW / 2);
+            const playerCenterY = this.y + (this.renderH / 2);
+
+            if (dx !== 0) { 
+                const gridY = Math.floor(playerCenterY / cellSize);
+                const idealY = (gridY * cellSize) + (cellSize - this.renderH) / 2;
+                
+                const diff = idealY - this.y;
+
+                if (Math.abs(diff) < threshold && Math.abs(diff) > 1) {
+                    const sign = Math.sign(diff); 
+                    
+                    if (this.canMove(this.x, this.y + (sign * slideSpeed))) {
+                        this.y += sign * slideSpeed;
+                    }
+                }
+            } else if (dy !== 0) { 
+                
+                const gridX = Math.floor(playerCenterX / cellSize);
+                const idealX = (gridX * cellSize) + (cellSize - this.renderW) / 2;
+                
+                const diff = idealX - this.x;
+
+                if (Math.abs(diff) < threshold && Math.abs(diff) > 1) {
+                    const sign = Math.sign(diff); 
+                    
+                    if (this.canMove(this.x + (sign * slideSpeed), this.y)) {
+                        this.x += sign * slideSpeed;
+                    }
+                }
+            }
         }
-        if (freamwork.state.map[this.gridY][this.gridX] === 5) {
-            freamwork.state.ws.send(JSON.stringify({
-                type: 'powerUp',
-                message: {
-                    x: this.gridX,
-                    y: this.gridY,
-                    power: "bombNbr",
-                },
-                playerId: this.id
 
-            }));
+        
+        const centerX = this.x + (this.renderW / 2);
+        const centerY = this.y + (this.renderH / 2);
+        const gridX = Math.floor(centerX / cellSize);
+        const gridY = Math.floor(centerY / cellSize);
 
+       
+        if (freamwork.state.map[gridY] && freamwork.state.map[gridY][gridX]) {
+            const currentTile = freamwork.state.map[gridY][gridX];
 
-        }
-        if (freamwork.state.map[this.gridY][this.gridX] === 6) {
-            freamwork.state.ws.send(JSON.stringify({
-                type: 'powerUp',
-                message: {
-                    x: this.gridX,
-                    y: this.gridY,
-                    power: "bombRange"
-                },
-                playerId: this.id
-            }));
-
-
+            if (currentTile === 4) { // Energy
+                freamwork.state.ws.send(JSON.stringify({
+                    type: 'powerUp',
+                    message: { x: gridX, y: gridY, power: "energy" },
+                    playerId: this.id
+                }));
+            } else if (currentTile === 5) { // BombNbr
+                freamwork.state.ws.send(JSON.stringify({
+                    type: 'powerUp',
+                    message: { x: gridX, y: gridY, power: "bombNbr" },
+                    playerId: this.id
+                }));
+            } else if (currentTile === 6) { // BombRange
+                freamwork.state.ws.send(JSON.stringify({
+                    type: 'powerUp',
+                    message: { x: gridX, y: gridY, power: "bombRange" },
+                    playerId: this.id
+                }));
+            }
         }
 
         this.Spritesheet();
@@ -270,16 +295,16 @@ class Player {
                                 : key === "ArrowDown" ? this.y + this.speed
                                     : this.y;
 
-                            if (this.canMove(proposedX, proposedY)) {
-                                freamwork.state.ws.send(JSON.stringify({
-                                    type: "playermove",
-                                    message: {
-                                        key: key,
-                                        range: this.power
-                                    },
-                                    playerId: freamwork.state.myId
-                                }));
-                            }
+                            freamwork.state.ws.send(JSON.stringify({
+                                type: "playermove",
+                                message: {
+                                    key: key,
+                                    range: this.power
+                                },
+                                playerId: freamwork.state.myId
+                            }));
+
+
                         }
                     }
                 },
