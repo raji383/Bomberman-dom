@@ -118,17 +118,19 @@ class Player {
         }
     }
 
-  canMove(newX, newY) {
+    canMove(newX, newY) {
         const cell = variables.GRID_CELL_SIZE_h;
 
-        const W = this.renderW -1;
-        const H = this.renderH -1;
+        const pad = 6;
+
+        const W = this.renderW - (pad * 2);
+        const H = this.renderH - (pad * 2);
 
         const points = [
-            [newX , newY ],             // Top-Left
-            [newX + W , newY ],         // Top-Right
-            [newX , newY + H ],         // Bottom-Left
-            [newX + W , newY + H ]      // Bottom-Right
+            [newX + pad, newY + pad],             // Top-Left
+            [newX + pad + W, newY + pad],         // Top-Right
+            [newX + pad, newY + pad + H],         // Bottom-Left
+            [newX + pad + W, newY + pad + H]      // Bottom-Right
         ];
 
         const map = freamwork.state.map;
@@ -177,54 +179,60 @@ class Player {
         if (this.canMove(nextX, nextY)) {
             this.x = nextX;
             this.y = nextY;
-        }  else {
-            
-            const slideSpeed = vel; 
-            const threshold = 16;   
+        }else {
+            const slideSpeed = (this.speed * (cellSize / 3) * delta) * 1.5;
+
+            const threshold = cellSize / 2;
 
             const playerCenterX = this.x + (this.renderW / 2);
             const playerCenterY = this.y + (this.renderH / 2);
 
-            if (dx !== 0) { 
+            if (dx !== 0) {
                 const gridY = Math.floor(playerCenterY / cellSize);
                 const idealY = (gridY * cellSize) + (cellSize - this.renderH) / 2;
-                
+
                 const diff = idealY - this.y;
 
-                if (Math.abs(diff) < threshold && Math.abs(diff) > 1) {
-                    const sign = Math.sign(diff); 
-                    
-                    if (this.canMove(this.x, this.y + (sign * slideSpeed))) {
-                        this.y += sign * slideSpeed;
+                if (Math.abs(diff) < threshold) {
+                    const sign = Math.sign(diff);
+
+                    let moveAmount = sign * slideSpeed;
+                    if (Math.abs(moveAmount) > Math.abs(diff)) {
+                        moveAmount = diff; // Snap to center if close enough
+                    }
+
+                    if (moveAmount !== 0 && this.canMove(this.x, this.y + moveAmount)) {
+                        this.y += moveAmount;
                     }
                 }
-            } else if (dy !== 0) { 
-                
+            } else if (dy !== 0) {
                 const gridX = Math.floor(playerCenterX / cellSize);
                 const idealX = (gridX * cellSize) + (cellSize - this.renderW) / 2;
-                
+
                 const diff = idealX - this.x;
 
-                if (Math.abs(diff) < threshold && Math.abs(diff) > 1) {
-                    const sign = Math.sign(diff); 
-                    
-                    if (this.canMove(this.x + (sign * slideSpeed), this.y)) {
-                        this.x += sign * slideSpeed;
+                if (Math.abs(diff) < threshold) {
+                    const sign = Math.sign(diff);
+
+                    let moveAmount = sign * slideSpeed;
+                    if (Math.abs(moveAmount) > Math.abs(diff)) {
+                        moveAmount = diff;
+                    }
+
+                    if (moveAmount !== 0 && this.canMove(this.x + moveAmount, this.y)) {
+                        this.x += moveAmount;
                     }
                 }
             }
         }
 
-        
         const centerX = this.x + (this.renderW / 2);
         const centerY = this.y + (this.renderH / 2);
         const gridX = Math.floor(centerX / cellSize);
         const gridY = Math.floor(centerY / cellSize);
 
-       
         if (freamwork.state.map[gridY] && freamwork.state.map[gridY][gridX]) {
             const currentTile = freamwork.state.map[gridY][gridX];
-
             if (currentTile === 4) { // Energy
                 freamwork.state.ws.send(JSON.stringify({
                     type: 'powerUp',
@@ -252,7 +260,6 @@ class Player {
             freamwork.setState(prev => ({ ...prev }));
         } catch { router(); }
     }
-
 
 
     draw() {
