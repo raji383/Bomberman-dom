@@ -16,7 +16,7 @@ export default function GameScreen() {
     const handleSendMessage = (e) => {
         e.preventDefault();
 
-        if (chatInput.trim() && freamwork.state.ws) {
+        if (chatInput.trim().length<=100 && freamwork.state.ws) {
             freamwork.state.ws.send(JSON.stringify({
                 type: 'chat_message',
                 message: chatInput.trim(),
@@ -121,7 +121,7 @@ function RenderChat(messages, chatInput, handleChatInput, handleSendMessage, myI
                         createElement({
                             tag: "div",
                             attrs: {
-                                class: `message ${msg.isSystem ? 'system' : ''} ${msg.player === freamwork.state.player.list[myId]?.name ? 'own' : ''}`
+                                class: `message ${msg.isSystem ? 'system' : ''}`
                             },
                             children: [createElement({ tag: "strong", children: [`${msg.player}: ${msg.text}`] })]
                         })
