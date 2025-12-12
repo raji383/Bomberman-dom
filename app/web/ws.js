@@ -1,4 +1,3 @@
-import { log10 } from "core-js/core/number";
 import { freamwork } from "../../framework/index.js";
 import { push, router } from "../../framework/route.js";
 import { Boomb } from "../components/Boomb.js";
@@ -213,8 +212,6 @@ function playerwinner() {
   for (let i = 0; i < freamwork.state.player.list.length; i++) {
     const element = freamwork.state.player.list[i];
     if (element.alive) {
-      console.log(element.alive);
-      
       return element.name
     }
   }
@@ -238,11 +235,6 @@ function startGameLoop() {
     }
 
     if (freamwork.state.number <= 1 && freamwork.state.number != null) {
-      console.log(freamwork.state.number);
-      console.log(2121211212);
-
-
-
       freamwork.state.ws.send(JSON.stringify({
         type: 'winning',
         message: playerwinner(),

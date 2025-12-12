@@ -51,8 +51,10 @@ export class Boomb {
                 player.x = player.insX;
                 player.y = player.insY;
                 if (player.lives <= 0) {
-                    player.alive = false;
-                    freamwork.state.number--
+                    if (freamwork.state.number>1){
+                        player.alive = false;
+                        freamwork.state.number--
+                    }
                 }
             }
         });

@@ -470,7 +470,7 @@ setInterval(() => {
       rooms.delete(roomId);
     }
   }
-}, 30000);
+}, 500);
 
 server.listen(PORT, () => {
   console.log(`Server started: http://localhost:${PORT}/`);
