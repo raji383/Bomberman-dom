@@ -85,7 +85,7 @@ class Player {
         };
     }
 
-    Spritesheet() {
+    Spritesheet(delta) {
         if (!this.element || !this.spriteLoaded) return;
 
         const dirMap = { down: 0, left: 1, right: 2, up: 3 };
@@ -256,7 +256,6 @@ class Player {
             }
         }
 
-        this.Spritesheet();
 
         try {
             freamwork.setState(prev => ({ ...prev }));

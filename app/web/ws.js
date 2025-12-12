@@ -228,7 +228,6 @@ function playerwinnerId() {
 
 function startGameLoop() {
   let lastTime = performance.now();
-  let lastFpsUpdate = performance.now();
   let frameCount = 0;
 
   function gameLoop(timestamp) {
@@ -237,11 +236,6 @@ function startGameLoop() {
     }
 
     if (freamwork.state.number <= 1 && freamwork.state.number != null) {
-      console.log(freamwork.state.number);
-      console.log(2121211212);
-
-
-
       freamwork.state.ws.send(JSON.stringify({
         type: 'winning',
         message: playerwinner(),
@@ -252,15 +246,18 @@ function startGameLoop() {
 
     const delta = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
+    const player = freamwork.state.player?.list || [];
+    for (let i = 0; i < player.length; i++) {
+      const p = player[i];
+      if (p.event) {
+        
+        p.Spritesheet(delta);
+      }
 
-
+    }
     frameCount++;
 
-    if (timestamp >= lastFpsUpdate + 1000) {
-      freamwork.state.fps = frameCount;
-      frameCount = 0;
-      lastFpsUpdate = timestamp;
-    }
+
   }
   if (freamwork.state.number != 1) {
 
