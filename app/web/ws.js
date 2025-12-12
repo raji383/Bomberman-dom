@@ -6,8 +6,8 @@ import { Boomb } from "../components/Boomb.js";
 
 export function connectToServer(nickname) {
   try {
-    const ws = new WebSocket('ws://localhost:8080');
-    ws.onopen = () => {
+    const ws = new WebSocket(`ws://${location.hostname}:8080`);
+ws.onopen = () => {
       ws.send(JSON.stringify({
         type: 'join',
         nickname: nickname
@@ -55,7 +55,7 @@ function handleServerMessage(data) {
         number: Number(data.number)
       });
       freamwork.state.join_timer = null
-       freamwork.state.countdown  = null
+      freamwork.state.countdown = null
       push('game');
       startGameLoop();
       break;
@@ -235,11 +235,11 @@ function startGameLoop() {
     if (freamwork.state.number != 1) {
       requestAnimationFrame(gameLoop);
     }
-    
+
     if (freamwork.state.number <= 1 && freamwork.state.number != null) {
       console.log(freamwork.state.number);
       console.log(2121211212);
-      
+
 
 
       freamwork.state.ws.send(JSON.stringify({
