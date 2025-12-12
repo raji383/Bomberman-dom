@@ -9,7 +9,7 @@ import { GameMap } from './map.js';
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = dirname(__filename);
-console.log(__dirname );
+console.log(__dirname);
 
 
 const ROOT = join(__dirname, '..');
@@ -56,7 +56,7 @@ class GameRoom {
 
     if (count === 1) {
       this.chatMessage = []
-    
+
       this.startJoinTimer();
       return;
     }
@@ -229,7 +229,7 @@ const server = createServer(async (req, res) => {
     }
 
     try {
-      
+
       const fileContent = await readFile(fullPath);
       const ext = extname(fullPath) || '.html';
       const mimeType = MIME_TYPES[ext] || 'application/octet-stream';
@@ -259,12 +259,15 @@ const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
   console.log("upgrade is good");
-  
+
 
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
-      handleMessage(ws, data);
+      setTimeout(() => {
+
+        handleMessage(ws, data);
+      }, 0)
     } catch (error) {
       console.error('Message parsing error:', error);
     }
@@ -470,7 +473,7 @@ setInterval(() => {
       rooms.delete(roomId);
     }
   }
-}, 30000);
+}, 500);
 
 server.listen(PORT, () => {
   console.log(`Server started: http://localhost:${PORT}/`);

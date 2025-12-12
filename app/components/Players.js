@@ -153,6 +153,8 @@ class Player {
     update(delta = 0) {
         const cellSize = variables.GRID_CELL_SIZE_h;
         const vel = this.speed * (cellSize / 3) * delta;
+        console.log(vel);
+        
 
         let dx = 0;
         let dy = 0;

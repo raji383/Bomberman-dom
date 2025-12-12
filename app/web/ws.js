@@ -6,7 +6,7 @@ import { Boomb } from "../components/Boomb.js";
 
 export function connectToServer(nickname) {
   try {
-    const ws = new WebSocket('ws://localhost:8080');
+    const ws = new WebSocket(`ws://${location.hostname}:8080`);
     ws.onopen = () => {
       ws.send(JSON.stringify({
         type: 'join',
@@ -98,8 +98,8 @@ function handleServerMessage(data) {
         const p = players[i];
         if (p.id == data.id) {
           p.event = data.message.key
+          if (p.alive) p.update(0.16);
         }
-        if (p.alive) p.update(0.16);
       }
 
       freamwork.setState(prev => ({ ...prev }))
@@ -133,7 +133,7 @@ function handleServerMessage(data) {
       }, 3000);
       setTimeout(() => {
         freamwork.state.explosion = freamwork.state.explosion.filter(p => {
-          if (bom.id == p.id) return false
+          if (p.boomexp) return false
         })
         freamwork.setState(prev => ({ ...prev }))
       }, 4000);

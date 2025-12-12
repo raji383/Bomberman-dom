@@ -15,7 +15,7 @@ export class Boomb {
         // convert grid → px
         this.x = this.gridX * variables.GRID_CELL_SIZE_h;
         this.y = this.gridY * variables.GRID_CELL_SIZE_h;
-
+        this.boomexp = false;
         this.id = id;
         this.playerid = boom.id;
         this.img = '/tools/bomb.png';
@@ -99,6 +99,7 @@ export class Boomb {
                 message: cor
             }));
         }
+        this.boomexp = true
 
     }
 
