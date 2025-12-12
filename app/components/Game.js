@@ -15,7 +15,6 @@ export default function GameScreen() {
     // Chat message send handler
     const handleSendMessage = (e) => {
         e.preventDefault();
-
         if (chatInput.trim().length<=100 && freamwork.state.ws) {
             freamwork.state.ws.send(JSON.stringify({
                 type: 'chat_message',

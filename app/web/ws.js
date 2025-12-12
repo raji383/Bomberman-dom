@@ -1,3 +1,4 @@
+import { log10 } from "core-js/core/number";
 import { freamwork } from "../../framework/index.js";
 import { push, router } from "../../framework/route.js";
 import { Boomb } from "../components/Boomb.js";
@@ -98,10 +99,9 @@ function handleServerMessage(data) {
         const p = players[i];
         if (p.id == data.id) {
           p.event = data.message.key
+          if (p.alive) p.update(0.16);
         }
-        if (p.alive) p.update(0.16);
       }
-
       freamwork.setState(prev => ({ ...prev }))
 
       break
@@ -213,6 +213,8 @@ function playerwinner() {
   for (let i = 0; i < freamwork.state.player.list.length; i++) {
     const element = freamwork.state.player.list[i];
     if (element.alive) {
+      console.log(element.alive);
+      
       return element.name
     }
   }
@@ -225,7 +227,6 @@ function playerwinnerId() {
     }
   }
 }
-
 function startGameLoop() {
   let lastTime = performance.now();
   let lastFpsUpdate = performance.now();
