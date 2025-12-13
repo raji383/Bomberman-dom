@@ -1,18 +1,6 @@
 import { createRealElement } from "./core.js";
 
 const eventQueue = [];
-function getNextExistingElement(newChildren, oldKeyedMap, i, el) {
-  for (let j = i + 1; j < newChildren.length; j++) {
-    const nextNewChild = newChildren[j];
-    const nextKey = (typeof nextNewChild === 'object' && nextNewChild?.attrs?.key) || `_${j}`;
-    if (oldKeyedMap.has(nextKey)) {
-      const existingOldChild = oldKeyedMap.get(nextKey);
-      return existingOldChild.el;
-    }
-  }
-  return null;
-}
-
 export function render(newTree, container, oldTree = null) {
   if (!oldTree) {
       const newnode = createRealElement(newTree)
@@ -185,13 +173,10 @@ for (let i = 0; i < newChildren.length; i++) {
 }
 
 }
-
 oldKeyedMap.forEach((oldChild) => {
   if (oldChild.el && el.contains(oldChild.el)) {
     el.removeChild(oldChild.el);
   }
 });
-
-
 }
 
