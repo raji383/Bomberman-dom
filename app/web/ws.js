@@ -107,12 +107,12 @@ function handleServerMessage(data) {
       break
     case 'playerstop':
 
-      for (let index = 0; index < freamwork.state.player.list.length; index++) {
-        const element = freamwork.state.player.list[index];
-        if (element.id == data.id) {
-          element.event = null
-        }
-      }
+      // for (let index = 0; index < freamwork.state.player.list.length; index++) {
+      //   const element = freamwork.state.player.list[index];
+      //   if (element.id == data.id) {
+      //     element.event = null
+      //   }
+      // }
       freamwork.setState(prev => ({ ...prev }))
       break
     case 'boomb':
@@ -124,7 +124,7 @@ function handleServerMessage(data) {
           if (p.id != bom.id) {
             return true
           }
-          p.exblogen()
+          //p.exblogen()
           p.smoke()
           return false
         })

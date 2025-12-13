@@ -39,7 +39,7 @@ class Player {
 
         // powerup
         this.lives = 3;
-        this.power = 2;
+        this.power = 1;
         this.speed = 1;
         this.bombs = 1;
         // speed is responsive based on grid cell size: a fraction of the cell height
@@ -152,9 +152,8 @@ class Player {
 
     update(delta = 0) {
         const cellSize = variables.GRID_CELL_SIZE_h;
-        const vel = this.speed * (cellSize / 3) * delta;
-        console.log(vel);
-        
+        const vel = this.speed  * (cellSize/10);
+
 
         let dx = 0;
         let dy = 0;
@@ -181,7 +180,7 @@ class Player {
         if (this.canMove(nextX, nextY)) {
             this.x = nextX;
             this.y = nextY;
-        }else {
+        } else {
             const slideSpeed = (this.speed * (cellSize / 3) * delta) * 1.5;
 
             const threshold = cellSize / 2;
@@ -233,7 +232,7 @@ class Player {
         const gridX = Math.floor(centerX / cellSize);
         const gridY = Math.floor(centerY / cellSize);
 
-        if (freamwork.state.map[gridY] && freamwork.state.map[gridY][gridX] && this.id== freamwork.state.myId) {
+        if (freamwork.state.map[gridY] && freamwork.state.map[gridY][gridX] && this.id == freamwork.state.myId) {
             const currentTile = freamwork.state.map[gridY][gridX];
             if (currentTile === 4) { // Energy
                 freamwork.state.ws.send(JSON.stringify({

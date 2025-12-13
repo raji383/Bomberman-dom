@@ -162,7 +162,7 @@ for (let i = 0; i < newChildren.length; i++) {
     oldKeyedMap.delete(key);
 
     if (nextSiblingReference && realDOMNode.nextSibling !== nextSiblingReference) {
-      el.insertBefore(realDOMNode, nextSiblingReference);
+      el?.insertBefore(realDOMNode, nextSiblingReference);
     }
 
   } else {

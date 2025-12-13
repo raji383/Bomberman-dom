@@ -44,14 +44,16 @@ export class Boomb {
         }
     }
 
-    exblogen() {
+    exblogen(gx, gy) {
         freamwork.state.player.list.forEach(player => {
-            if ((this.inrangX(player) || this.inrangY(player)) && player.alive) {
+            if (gx == player.gridX && gy == player.gridY && player.alive) {
+                console.log(player);
+                
                 player.lives--;
                 player.x = player.insX;
                 player.y = player.insY;
                 if (player.lives <= 0) {
-                     if (freamwork.state.number>1){
+                    if (freamwork.state.number > 1) {
                         player.alive = false;
                         freamwork.state.number--
                     }
@@ -76,6 +78,7 @@ export class Boomb {
                 // empty 
                 if (cell === 0 || cell === 3) {
                     createExplosion(gx, gy, this.id);
+                    this.exblogen(gx, gy)
                 } else if (cell === 2) {
                     // box destroy
                     cor.push({ x: gx, y: gy })
@@ -185,8 +188,8 @@ class Explosion {
             if (this.scale >= 2 || this.boomexp) {
 
                 freamwork.state.explosion =
-                freamwork.state.explosion.filter(e => e !== this);
-                
+                    freamwork.state.explosion.filter(e => e !== this);
+
                 freamwork.setState(prev => ({ ...prev }))
             } else {
                 requestAnimationFrame(grow);

@@ -33,7 +33,7 @@ class GameRoom {
     this.joinTimer = null;
     this.startTimer = null;
 
-    this.joinTimeLeft = 20;
+    this.joinTimeLeft = 3;
     this.startTimeLeft = 10;
 
     this.map = new GameMap();
@@ -110,7 +110,7 @@ class GameRoom {
   }
   startJoinTimer() {
     this.stopJoinTimer();
-    this.joinTimeLeft = 20;
+    this.joinTimeLeft = 3;
 
     this.joinTimer = setInterval(() => {
       this.joinTimeLeft--;
