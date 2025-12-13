@@ -118,8 +118,6 @@ function handleServerMessage(data) {
     case 'boomb':
 
       var bom = new Boomb(data.message, data.id)
-      console.log(bom.id);
-
       freamwork.state.boombs.push(bom)
       setTimeout(() => {
         freamwork.state.boombs = freamwork.state.boombs.filter(p => {
@@ -131,12 +129,7 @@ function handleServerMessage(data) {
           return false
         })
       }, 3000);
-      setTimeout(() => {
-        freamwork.state.explosion = freamwork.state.explosion.filter(p => {
-          if (p.boomexp) return false
-        })
-        freamwork.setState(prev => ({ ...prev }))
-      }, 4000);
+
       break
     case 'winning':
       freamwork.state.gameOver = data.message + "  is the  winner";
@@ -250,11 +243,13 @@ function startGameLoop() {
     for (let i = 0; i < player.length; i++) {
       const p = player[i];
       if (p.event) {
-        
+
         p.Spritesheet(delta);
       }
 
     }
+   
+    freamwork.setState(prev => ({ ...prev }))
     frameCount++;
 
 

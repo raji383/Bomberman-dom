@@ -93,7 +93,6 @@ export class Boomb {
         cast(-1, 0);
         cast(0, 1);
         cast(0, -1);
-        console.log(cor);
         if (this.playerid == freamwork.state.myId) {
 
             freamwork.state.ws.send(JSON.stringify({
@@ -101,7 +100,7 @@ export class Boomb {
                 message: cor
             }));
         }
-        this.boomexp = true
+
 
     }
 
@@ -143,7 +142,7 @@ class Explosion {
 
         this.size = variables.GRID_CELL_SIZE_w - 5;
         this.scale = 0.1;
-
+        this.boomexp = false;
         this.vnode = this.createVNode();
 
         this.animate();
@@ -175,19 +174,22 @@ class Explosion {
 
 
     animate() {
+        setTimeout(() => {
+            this.boomexp = true
+        }, 500);
         const grow = () => {
             this.scale += 0.1;
             this.vnode = this.createVNode();
             freamwork.setState(prev => ({ ...prev }))
 
-            if (this.scale < 2) {
+            if (this.scale >= 2 || this.boomexp) {
 
-                requestAnimationFrame(grow);
-            } else {
                 freamwork.state.explosion =
-                    freamwork.state.explosion.filter(e => e !== this);
-
+                freamwork.state.explosion.filter(e => e !== this);
+                
                 freamwork.setState(prev => ({ ...prev }))
+            } else {
+                requestAnimationFrame(grow);
             }
         };
 
@@ -195,6 +197,8 @@ class Explosion {
     }
 
     draw() {
+
+
         return this.vnode;
     }
 }
