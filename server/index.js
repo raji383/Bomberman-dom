@@ -442,8 +442,8 @@ function checkPlayerHit(room, fireCells) {
     const isHit = fireCells.some(cell => cell.x === pGx && cell.y === pGy);
 
     if (isHit) {
-      p.x = p.insyalX
-      p.y = p.insyalY
+      p.x = p.initialX
+      p.y = p.initialY
       room.broadcast({
         type: "player_died",
         id: p.id,

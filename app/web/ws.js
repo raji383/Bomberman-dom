@@ -73,7 +73,6 @@ function handleServerMessage(data) {
     case 'players_update':
       freamwork.setState({ players: data.players });
       break;
-
     case 'chat_message':
       freamwork.setState(prev => ({
         ...prev,
@@ -93,8 +92,6 @@ function handleServerMessage(data) {
           }
         }
       }
-
-
       break;
     case 'playerMove':
       const players = freamwork.state.player?.list || [];
@@ -170,6 +167,8 @@ function handleServerMessage(data) {
       freamwork.setState(prev => ({ ...prev }));
       break;
     case 'winning':
+      console.log(data);
+      
       freamwork.state.gameOver = data.message + "  is the  winner";
       if (data.id == freamwork.state.myId) {
         freamwork.state.winner = true

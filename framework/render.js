@@ -157,23 +157,33 @@ for (let i = 0; i < newChildren.length; i++) {
   }
 
   if (oldChild) {
-    updateElement(oldChild, newChild, el);
-    realDOMNode = newChild.el;
-    oldKeyedMap.delete(key);
+  updateElement(oldChild, newChild, el);
+  realDOMNode = newChild.el;
+  oldKeyedMap.delete(key);
 
-    if (nextSiblingReference && realDOMNode.nextSibling !== nextSiblingReference) {
-      el?.insertBefore(realDOMNode, nextSiblingReference);
-    }
-
-  } else {
-    realDOMNode = createRealElement(newChild);
-    newChild.el = realDOMNode;
-    if (!nextSiblingReference || !el.contains(nextSiblingReference)) {
-      el.appendChild(realDOMNode);
-    } else {
-      el.insertBefore(realDOMNode, nextSiblingReference);
-    }
+  if (
+    nextSiblingReference &&
+    nextSiblingReference.parentNode === el &&
+    realDOMNode &&
+    realDOMNode.parentNode === el &&
+    realDOMNode.nextSibling !== nextSiblingReference
+  ) {
+    el.insertBefore(realDOMNode, nextSiblingReference);
   }
+
+} else {
+  realDOMNode = createRealElement(newChild);
+  newChild.el = realDOMNode;
+  if (
+    nextSiblingReference &&
+    nextSiblingReference.parentNode === el
+  ) {
+    el.insertBefore(realDOMNode, nextSiblingReference);
+  } else {
+    el.appendChild(realDOMNode);
+  }
+}
+
 }
 
 oldKeyedMap.forEach((oldChild) => {
