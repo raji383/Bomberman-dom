@@ -106,7 +106,6 @@ function handleServerMessage(data) {
 
           p.x = data.x
           p.y = data.y
-          p.event = data.direction
           p.speed = data.speed
           p.power = data.range
           p.bombs = data.bomb

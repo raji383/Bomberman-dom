@@ -1,6 +1,7 @@
 import { createElement } from "../../framework/createjsx.js";
 import { freamwork } from "../../framework/index.js";
 import { variables } from "../../variables.js";
+
 export class Players {
     constructor(playerList) {
         this.players = playerList;
@@ -9,13 +10,11 @@ export class Players {
     createPlayers() {
         return this.players?.map((element, i) => {
             const name = element.nickname;
+            // نمرر الـ i للتأكد من الصورة، والبيانات الأخرى
             return new Player(i, element.x, element.y, name, element.id);
         });
     }
 }
-
-
-
 
 class Player {
     constructor(i, x, y, name, id) {
@@ -24,63 +23,82 @@ class Player {
 
         this.gameH = variables.GRID_CELL_SIZE_h * 17;
         this.gameWidth = this.gameH;
-
-        // spr
         this.img = `/tools/player${i + 1}.png`;
-
-        // powerup
         this.lives = 3;
         this.power = 1;
-        this.speed = 5;
+        this.speed = 1;
         this.bombs = 1;
-        // speed is responsive based on grid cell size: a fraction of the cell height
         this.alive = this.lives > 0 ? true : false;
-        // move
+
+        this.pressedKeys = [];
         this.inagif = 'down';
         this.frameIndex = 0;
         this.frameCount = 0;
-        this.event="ArrowDown";
 
-        // frame
-        this.spriteLoaded = false;
-        this.frameW_original = 0;
-        this.frameH_original = 0;
-
-
-        // w and h
+        // Sprite vars
         this.renderW = variables.GRID_CELL_SIZE_h;
         this.renderH = variables.GRID_CELL_SIZE_h;
-
-        // offset
         this.xOffset = 0;
         this.yOffset = 0;
-
-        // x and y
 
         this.x = x;
         this.y = y;
         this.gridX = Math.round(this.x / variables.GRID_CELL_SIZE_w);
         this.gridY = Math.round(this.y / variables.GRID_CELL_SIZE_h);
+
+        this.initInputListeners();
+    }
+
+    initInputListeners() {
+        setTimeout(() => {
+            if (freamwork.state?.myId && this.id === freamwork.state.myId) {
+
+                window.addEventListener('keydown', (e) => {
+                    if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        if (!this.pressedKeys.includes(e.key)) {
+                            this.pressedKeys.push(e.key);
+                        }
+                    }
+
+                    if (e.key === " ") {
+                        freamwork.state.ws.send(JSON.stringify({
+                            type: "boomb",
+                            playerId: this.id
+                        }));
+                    }
+                });
+
+                window.addEventListener('keyup', (e) => {
+                    if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                        const index = this.pressedKeys.indexOf(e.key);
+                        if (index > -1) {
+                            this.pressedKeys.splice(index, 1);
+                        }
+                    }
+                });
+            }
+        }, 100);
     }
 
     Spritesheet(delta) {
-        
-        if (this.event === "ArrowLeft") {
-            this.inagif = 'left';
-        } else if (this.event === "ArrowRight") {
-            this.inagif = 'right';
-        } else if (this.event === "ArrowUp") {
-            this.inagif = 'up';
-        } else if (this.event === "ArrowDown") {
-            this.inagif = 'down';
-        } 
+        const lastKey = this.pressedKeys[this.pressedKeys.length - 1];
+
+        if (lastKey === "ArrowLeft") this.inagif = 'left';
+        else if (lastKey === "ArrowRight") this.inagif = 'right';
+        else if (lastKey === "ArrowUp") this.inagif = 'up';
+        else if (lastKey === "ArrowDown") this.inagif = 'down';
+
         const dirMap = { down: 0, left: 1, right: 2, up: 3 };
         const dirRow = dirMap[this.inagif] ?? 0;
 
-        this.frameCount++;
-        if (this.frameCount > 6) {
-            this.frameIndex = (this.frameIndex + 1) % 3;
-            this.frameCount = 0;
+        if (this.pressedKeys.length > 0) {
+            this.frameCount++;
+            if (this.frameCount > 6) {
+                this.frameIndex = (this.frameIndex + 1) % 3;
+                this.frameCount = 0;
+            }
+        } else {
+            this.frameIndex = 1;
         }
 
         this.xOffset = -(this.frameIndex * this.renderW);
@@ -88,51 +106,31 @@ class Player {
     }
 
     update(delta) {
-        this.deltaTime = delta
-        this.Spritesheet(this.deltaTime)
-        freamwork.setState(prev => ({ ...prev }))
+        this.deltaTime = delta;
+        if (freamwork.state?.ws && this.id == freamwork.state.myId) {
+            const lastKey = this.pressedKeys[this.pressedKeys.length - 1];
+
+            if (lastKey) {
+                freamwork.state.ws.send(JSON.stringify({
+                    type: "playerMove",
+                    direction: lastKey,
+                    delta: this.deltaTime,
+                    playerId: this.id
+                }));
+            }
+        }
+
+        this.Spritesheet(this.deltaTime);
+        freamwork.setState(prev => ({ ...prev }));
     }
 
-
     draw() {
+
         this.gridX = Math.round(this.x / variables.GRID_CELL_SIZE_w);
         this.gridY = Math.round(this.y / variables.GRID_CELL_SIZE_h);
 
-        const el = createElement({
+        return createElement({
             tag: "div",
-            events: {
-                keydown: (e) => {
-                    if (freamwork.state?.ws && this.id == freamwork.state.myId) {
-
-                        const key = e.key;
-                        // BOOM (space) stays the same
-                        if (key === " " ) {
-                            
-                            
-                            freamwork.state.ws.send(JSON.stringify({
-                                type: "boomb",
-                                playerId: this.id 
-                            }));
-                            return;
-                        }
-
-                        // movement keys: only send if the player can move to the intended position
-                        if (key === "ArrowLeft" || key === "ArrowRight" || key === "ArrowUp" || key === "ArrowDown") {
-
-                            freamwork.state.ws.send(JSON.stringify({
-                                type: "playerMove",
-                                direction: key,
-                                delta: this.deltaTime,
-                                playerId: this.id
-                            }));
-
-
-
-                        }
-                    }
-                },
-
-            },
             attrs: {
                 class: "p",
                 style: `
@@ -147,11 +145,9 @@ class Player {
                     background-size: ${this.renderW * 4}px ${this.renderH * 4}px;
                     image-rendering: pixelated;
                     z-index: 10;
+                    transition: none;
                 `
             }
         });
-
-        this.element = el;
-        return el;
     }
 }

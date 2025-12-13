@@ -1,4 +1,3 @@
-// backend/player.js
 export class Player {
     constructor(x, y, id, name, roomId, ws, room) {
         this.cell = 35;
@@ -12,7 +11,7 @@ export class Player {
         this.ws = ws;
         this.room = room;
 
-        this.speed = 5;
+        this.speed = 1;
         this.maxBombs = 1;
         this.activeBombs = 0;
         this.bombRange = 1;
@@ -20,7 +19,7 @@ export class Player {
     }
 
     update(direction, delta) {
-        const vel = this.speed * this.cell * delta ;
+        const vel = this.speed * this.cell * delta;
 
         let nextX = this.x;
         let nextY = this.y;
@@ -63,21 +62,19 @@ export class Player {
                 return false;
             }
 
-            if (tile === 4) { // Energy
-                this.speed ++
+            if (tile === 4 && this.speed <= 5) { // Energy
+                this.speed++
                 map[gy][gx] = 0
-            } else if (tile === 5) { // BombNbr
+            } else if (tile === 5 && this.maxBombs <= 5) { // BombNbr
                 this.maxBombs++
                 map[gy][gx] = 0
 
-            } else if (tile === 6) { // BombRange
+            } else if (tile === 6 && this.bombRange <= 5) { // BombRange
                 this.bombRange++
                 map[gy][gx] = 0
 
-            }
-            if (tile) {
+            } 
 
-            }
         }
 
         return true;
