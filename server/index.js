@@ -5,11 +5,11 @@ import { join, extname, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { WebSocketServer } from 'ws';
 import { GameMap } from './map.js';
+import { Player } from './player.js';
 
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = dirname(__filename);
-console.log(__dirname);
 
 
 const ROOT = join(__dirname, '..');
@@ -293,14 +293,25 @@ function handlePlayerMove(ws, data) {
   const player = Array.from(players.values()).find(p => p.ws === ws);
   if (!player || !player.roomId) return;
 
+  player.update(data.direction, data.delta);
+
   const room = rooms.get(player.roomId);
   if (!room) return;
+
   room.broadcast({
-    type: data.type,
-    message: data.message,
-    id: data.playerId
+    type: "playerMove",
+    id: player.id,
+    x: player.x,
+    y: player.y,
+    direction: data.direction,
+    playerId: data.playerId,
+    map: room.map.map,
+    range: player.bombRange,
+    speed: player.speed,
+    bomb: player.maxBombs
   });
 }
+
 function handlePlayerWin(ws, data) {
   const player = Array.from(players.values()).find(p => p.ws === ws);
   if (!player || !player.roomId) return;
@@ -314,25 +325,6 @@ function handlePlayerWin(ws, data) {
   });
 }
 
-function reDrawMap(ws, data) {
-  const player = Array.from(players.values()).find(p => p.ws === ws);
-  if (!player || !player.roomId) return;
-
-  const room = rooms.get(player.roomId);
-  if (!room) return;
-  const randomNbm = Math.floor(Math.random() * 3) + 4;
-  const map = room.map.map
-  for (let p of data.message) {
-
-    map[p.y][p.x] = randomNbm;
-
-  }
-  room.broadcast({
-    type: data.type,
-    message: map,
-    id: data.playerId
-  });
-}
 function PowerUp(ws, data) {
   const player = Array.from(players.values()).find(p => p.ws === ws);
   if (!player || !player.roomId) return;
@@ -361,7 +353,106 @@ function sliding(ws, data) {
     id: data.playerId
   });
 }
+function handleBommb(ws, data) {
+  const player = Array.from(players.values()).find(p => p.ws === ws);
+  if (!player || !player.roomId) return;
 
+  const room = rooms.get(player.roomId);
+  if (!room) return;
+
+  const bombPos = player.tryPlaceBomb();
+
+  if (!bombPos) return;
+
+  room.broadcast({
+    type: "boomb",
+    id: player.id,
+    message: {
+      x: bombPos.x,
+      y: bombPos.y,
+      range: player.bombRange
+    }
+  });
+
+  setTimeout(() => {
+    handleExplosion(room, player, bombPos.x, bombPos.y);
+  }, 3000);
+}
+
+function handleExplosion(room, player, bx, by) {
+  player.activeBombs--;
+
+  const range = player.bombRange;
+  const map = room.map.map;
+  const affectedCells = [];
+  const destroyedBlocks = [];
+
+  const directions = [
+    { x: 0, y: 0 },
+    { x: 0, y: -1 },
+    { x: 0, y: 1 },
+    { x: -1, y: 0 },
+    { x: 1, y: 0 }
+  ];
+
+  affectedCells.push({ x: bx, y: by });
+  for (let i = 1; i < directions.length; i++) {
+    const dir = directions[i];
+
+    for (let r = 1; r <= range; r++) {
+      const tx = bx + (dir.x * r);
+      const ty = by + (dir.y * r);
+
+      if (ty < 0 || ty >= map.length || tx < 0 || tx >= map[0].length) break;
+
+      const tile = map[ty][tx];
+
+      if (tile === 1) {
+        break;
+      } else if (tile === 2) {
+        const randomNbm = Math.floor(Math.random() * 3) + 4;
+        map[ty][tx] = randomNbm;
+        console.log(randomNbm);
+
+        destroyedBlocks.push({ x: tx, y: ty });
+        affectedCells.push({ x: tx, y: ty });
+        break;
+      } else {
+
+        affectedCells.push({ x: tx, y: ty });
+      }
+    }
+  }
+
+  room.broadcast({
+    type: "explosion",
+    fire: affectedCells,
+    destroyed: destroyedBlocks,
+    map: map
+  });
+
+  checkPlayerHit(room, affectedCells);
+}
+
+function checkPlayerHit(room, fireCells) {
+  room.players.forEach(p => {
+    const pGx = Math.floor((p.x + p.size / 2) / p.cell);
+    const pGy = Math.floor((p.y + p.size / 2) / p.cell);
+
+    const isHit = fireCells.some(cell => cell.x === pGx && cell.y === pGy);
+
+    if (isHit) {
+      p.x = p.insyalX
+      p.y = p.insyalY
+      room.broadcast({
+        type: "player_died",
+        id: p.id,
+        x: p.x,
+        y: p.y
+      });
+    }
+  });
+}
 function handleMessage(ws, data) {
   switch (data.type) {
     case 'join':
@@ -370,14 +461,11 @@ function handleMessage(ws, data) {
     case 'chat_message':
       handleChatMessage(ws, data);
       break;
-    case 'playermove':
-      handlePlayerMove(ws, data)
-      break
-    case 'playerstop':
+    case 'playerMove':
       handlePlayerMove(ws, data)
       break
     case 'boomb':
-      handlePlayerMove(ws, data)
+      handleBommb(ws, data)
       break
     case 'winning':
       handlePlayerWin(ws, data)
@@ -398,16 +486,12 @@ function handleMessage(ws, data) {
 }
 
 function handleJoin(ws, data) {
-  const playerId = generateId();
-  const player = {
-    id: playerId,
-    nickname: data.nickname,
-    ws: ws,
-    roomId: null,
-    joinedAt: Date.now()
-  };
 
-  players.set(playerId, player);
+  const playerId = generateId();
+  const id = playerId
+  const nickname = data.nickname
+  const roomId = null
+  const joinedAt = Date.now()
 
   let room = findAvailableRoom();
 
@@ -417,8 +501,22 @@ function handleJoin(ws, data) {
     rooms.set(newRoomId, room);
   }
 
-  player.roomId = room.id;
+  let positions = [
+    [1, 1],
+    [15, 1],
+    [1, 15],
+    [15, 15]
+  ];
+
+  const playerList = room.getPlayersList()
+  let [x, y] = positions[playerList.length] || [1, 1];
+  const player = new Player(x, y, id, nickname, roomId, ws, room, data.cell)
+
+  players.set(playerId, player);
+
   room.addPlayer(player);
+  player.roomId = room.id;
+
 
   ws.send(JSON.stringify({
     type: 'room_assigned',

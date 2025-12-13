@@ -1,6 +1,7 @@
 import { freamwork } from "../../framework/index.js";
 import { push, router } from "../../framework/route.js";
-import { Boomb } from "../components/Boomb.js";
+import { variables } from "../../variables.js";
+import { Boomb, createExplosion } from "../components/Boomb.js";
 
 
 
@@ -10,7 +11,9 @@ export function connectToServer(nickname) {
     ws.onopen = () => {
       ws.send(JSON.stringify({
         type: 'join',
-        nickname: nickname
+        nickname: nickname,
+        cell: variables.GRID_CELL_SIZE_h
+
       }));
     };
     ws.onmessage = (event) => {
@@ -52,12 +55,14 @@ function handleServerMessage(data) {
         gameStarted: true,
         players: data.players || {},
         map: data.map,
-        number: Number(data.number)
+        number: Number(data.number),
+
       });
       freamwork.state.join_timer = null
       freamwork.state.countdown = null
       push('game');
       startGameLoop();
+
       break;
     case 'join_timer':
       freamwork.setState({ join_timer: data.value, countdown: null });
@@ -91,18 +96,24 @@ function handleServerMessage(data) {
 
 
       break;
-    case 'playermove':
-      const fps = 10 / 60
+    case 'playerMove':
       const players = freamwork.state.player?.list || [];
       for (let i = 0; i < players.length; i++) {
-        const p = players[i];
-        if (p.id == data.id) {
-          p.event = data.message.key
-          if (p.alive) p.update(0.16);
-        }
-      }
 
-      freamwork.setState(prev => ({ ...prev }))
+        const p = players[i];
+
+        if (p.id == data.playerId) {
+
+          p.x = data.x
+          p.y = data.y
+          p.event = data.direction
+          p.speed = data.speed
+          p.power = data.range
+          p.bombs = data.bomb
+        }
+
+      }
+      freamwork.state.map = data.map
 
       break
     case 'playerstop':
@@ -119,18 +130,47 @@ function handleServerMessage(data) {
 
       var bom = new Boomb(data.message, data.id)
       freamwork.state.boombs.push(bom)
-      setTimeout(() => {
-        freamwork.state.boombs = freamwork.state.boombs.filter(p => {
-          if (p.id != bom.id) {
-            return true
-          }
-          //p.exblogen()
-          p.smoke()
-          return false
-        })
-      }, 3000);
 
       break
+    // داخل switch (data.type) في handleServerMessage
+
+    case 'explosion':
+      const center = data.fire[0];
+      if (center) {
+        freamwork.state.boombs = freamwork.state.boombs.filter(b => {
+          return !(b.gridX === center.x && b.gridY === center.y);
+        });
+      }
+      freamwork.state.map = data.map;
+
+
+      if (data.fire) {
+        data.fire.forEach(cell => {
+          createExplosion(cell.x, cell.y);
+        });
+      }
+      break;
+
+    case 'player_died':
+      const playersList = freamwork.state.player?.list || [];
+      playersList.forEach(p => {
+        if (p.id === data.id) {
+          p.lives--
+          if (p.lives <= 0) {
+            p.alive = false
+            if (freamwork.state.number) {
+              freamwork.state.number--;
+            }
+
+          } else {
+            p.x = data.x
+            p.y = data.y
+
+          }
+        }
+      });
+      freamwork.setState(prev => ({ ...prev }));
+      break;
     case 'winning':
       freamwork.state.gameOver = data.message + "  is the  winner";
       if (data.id == freamwork.state.myId) {
@@ -140,64 +180,7 @@ function handleServerMessage(data) {
       }
       freamwork.setState(prev => ({ ...prev }))
       break
-    case 'boxdestroy':
-      setTimeout(() => {
-        freamwork.setState({ map: data.message });
-      }, 0)
-      break
-    case 'powerUp':
-      for (let index = 0; index < freamwork.state.player.list.length; index++) {
-        const element = freamwork.state.player.list[index];
-        if (element.id == data.id) {
-          switch (data.power) {
-            case 'energy':
-              if (element.speed < 5) {
-                element.speed++
-              }
-              break
-            case 'bombNbr':
-              if (element.bombs < 5) {
 
-                element.bombs++
-              }
-              break
-            case 'bombRange':
-              if (element.power < 6) {
-                element.power++;
-              }
-              break
-            default:
-              console.log(' Message inconnu:', data.type);
-          }
-        }
-      }
-      freamwork.setState({ map: data.message });
-
-      freamwork.setState(prev => ({ ...prev }))
-      break
-    case 'sliding':
-      const player = freamwork.state.player?.list || [];
-      for (let i = 0; i < player.length; i++) {
-        const p = player[i];
-
-        if (p.id == data.playerId && p.id !== freamwork.state.myId) {
-
-          if (data.message.key == "-") {
-            if (data.message.type == "x") {
-              p.x -= 0.5;
-            } else if (data.message.type == "y") {
-              p.y -= 0.5;
-            }
-          } else if (data.message.key == "+") {
-            if (data.message.type == "x") {
-              p.x += 0.5;
-            } else if (data.message.type == "y") {
-              p.y += 0.5;
-            }
-          }
-        }
-      }
-      break;
     default:
       console.log(' Message inconnu:', data.type);
   }
@@ -242,13 +225,10 @@ function startGameLoop() {
     const player = freamwork.state.player?.list || [];
     for (let i = 0; i < player.length; i++) {
       const p = player[i];
-      if (p.event) {
-
-        p.Spritesheet(delta);
-      }
+      p.update(delta)
 
     }
-   
+
     freamwork.setState(prev => ({ ...prev }))
     frameCount++;
 
