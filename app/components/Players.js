@@ -10,7 +10,6 @@ export class Players {
     createPlayers() {
         return this.players?.map((element, i) => {
             const name = element.nickname;
-            // نمرر الـ i للتأكد من الصورة، والبيانات الأخرى
             return new Player(i, element.x, element.y, name, element.id);
         });
     }
@@ -21,8 +20,6 @@ class Player {
         this.name = name;
         this.id = id;
 
-        this.gameH = variables.GRID_CELL_SIZE_h * 17;
-        this.gameWidth = this.gameH;
         this.img = `/tools/player${i + 1}.png`;
         this.lives = 3;
         this.power = 1;
@@ -32,6 +29,7 @@ class Player {
 
         this.pressedKeys = [];
         this.inagif = 'down';
+        this.lastKey;
         this.frameIndex = 0;
         this.frameCount = 0;
 
@@ -81,17 +79,16 @@ class Player {
     }
 
     Spritesheet(delta) {
-        const lastKey = this.pressedKeys[this.pressedKeys.length - 1];
 
-        if (lastKey === "ArrowLeft") this.inagif = 'left';
-        else if (lastKey === "ArrowRight") this.inagif = 'right';
-        else if (lastKey === "ArrowUp") this.inagif = 'up';
-        else if (lastKey === "ArrowDown") this.inagif = 'down';
+        if (this.lastKey === "ArrowLeft") this.inagif = 'left';
+        else if (this.lastKey === "ArrowRight") this.inagif = 'right';
+        else if (this.lastKey === "ArrowUp") this.inagif = 'up';
+        else if (this.lastKey === "ArrowDown") this.inagif = 'down';
 
         const dirMap = { down: 0, left: 1, right: 2, up: 3 };
         const dirRow = dirMap[this.inagif] ?? 0;
 
-        if (this.pressedKeys.length > 0) {
+        if (this.lastKey) {
             this.frameCount++;
             if (this.frameCount > 6) {
                 this.frameIndex = (this.frameIndex + 1) % 3;

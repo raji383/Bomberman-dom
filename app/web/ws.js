@@ -109,6 +109,7 @@ function handleServerMessage(data) {
           p.speed = data.speed
           p.power = data.range
           p.bombs = data.bomb
+          p.lastKey = data.direction
         }
 
       }
@@ -131,8 +132,6 @@ function handleServerMessage(data) {
       freamwork.state.boombs.push(bom)
 
       break
-    // داخل switch (data.type) في handleServerMessage
-
     case 'explosion':
       const center = data.fire[0];
       if (center) {
