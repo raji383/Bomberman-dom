@@ -1,46 +1,30 @@
-/* ==========================================
-   💣 BOMBERMAN MULTIPLAYER - MAGIC CSS
-   ==========================================
-   Covers: Nickname, Lobby, Game screens
-   Features: Centered map, magic effects, glow
-   ========================================== */
 
-/* ==========================================
-   🎨 CSS VARIABLES & ROOT
-   ========================================== */
 :root {
-  /* Primary Colors - Magical Purple/Blue */
   --primary: #a855f7;
   --primary-hover: #c084fc;
   --primary-dark: #9333ea;
 
-  /* Secondary Colors - Cyan Glow */
   --secondary: #06b6d4;
   --secondary-hover: #22d3ee;
   --secondary-dark: #0891b2;
 
-  /* Accent Colors - Golden Magic */
   --accent: #fbbf24;
   --accent-hover: #fcd34d;
 
-  /* Background Colors - Deep Space */
   --bg-dark: #0a0a1a;
   --bg-medium: #0f0f23;
   --bg-light: #1a1a3e;
   --bg-card: rgba(20, 20, 50, 0.85);
 
-  /* Text Colors */
   --text-primary: #f0f0ff;
   --text-secondary: #a0a0c0;
   --text-muted: #606080;
 
-  /* Status Colors */
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
   --info: #3b82f6;
 
-  /* Magic Shadows & Glows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.6);
@@ -64,9 +48,9 @@
   --font-heading: "Poppins", "Segoe UI", sans-serif;
 }
 
-/* ==========================================
-   🔄 GLOBAL RESET & BASE
-   ========================================== */
+
+
+
 *,
 *::before,
 *::after {
@@ -615,7 +599,6 @@ input[type="text"]:hover:not(:focus) {
   background: linear-gradient(135deg, var(--bg-card) 0%, rgba(251, 191, 36, 0.1) 100%);
   box-shadow: var(--shadow-md), var(--glow-accent);
 }
-
 .player-avatar {
   width: 56px;
   height: 56px;
