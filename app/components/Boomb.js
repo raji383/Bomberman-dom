@@ -46,14 +46,16 @@ class Explosion {
     constructor(gridX, gridY) {
         this.x = gridX * variables.GRID_CELL_SIZE_h;
         this.y = gridY * variables.GRID_CELL_SIZE_h;
-
         this.size = variables.GRID_CELL_SIZE_h;
 
-        this.scale = 0.5;
+        this.startTime = Date.now();
+        this.duration = 300;
+
+        this.currentScale = 0.5;
+        this.opacity = 1;
+        
         this.finished = false;
         this.vnode = this.createVNode();
-
-        this.animate();
     }
 
     createVNode() {
@@ -67,48 +69,52 @@ class Explosion {
                     top: ${this.y}px;
                     width: ${this.size}px;
                     height: ${this.size}px;
+                    
                     background-color: rgba(255, 69, 0, 0.8);
                     border-radius: 20%;
                     z-index: 15;
                     box-shadow: 0 0 15px rgba(255, 140, 0, 1);
-                    transform: scale(${this.scale});
-                    transition: transform 0.05s linear;
+                    
+                    transform: scale(${this.currentScale});
+                    opacity: ${this.opacity};
+                    
+                    will-change: transform, opacity;
                 `
             }
         });
     }
 
     animate() {
-        setTimeout(() => {
-            this.finished = true;
-        }, 200)
-        const grow = () => {
-            this.scale += 0.1;
-            this.vnode = this.createVNode();
-            freamwork.setState(prev => ({ ...prev })); // Trigger Re-render
+        if (this.finished) return;
 
-            if (this.scale >= 1.2) {
-                this.finished = true;
+        const now = Date.now();
+        const elapsed = now - this.startTime;
+        
+        const progress = elapsed / this.duration;
+
+        if (progress >= 1) {
+            this.finished = true;
+            if (freamwork.state.explosion) {
                 freamwork.state.explosion = freamwork.state.explosion.filter(e => e !== this);
-                freamwork.setState(prev => ({ ...prev }));
-            } else {
-                requestAnimationFrame(grow);
             }
-        };
-        requestAnimationFrame(grow);
+        } else {
+            
+            this.currentScale = 0.5 + progress; 
+            
+            if (progress > 0.5) {
+                this.opacity = 1 - ((progress - 0.7) / 0.3);
+            }
+
+            this.vnode = this.createVNode();
+        }
     }
 
     draw() {
-        if (this.finished) {
-            return
-        }
         return this.vnode;
     }
 }
-
 export function createExplosion(gx, gy) {
     let exp = new Explosion(gx, gy);
     if (!freamwork.state.explosion) freamwork.state.explosion = [];
     freamwork.state.explosion.push(exp);
-    freamwork.setState(prev => ({ ...prev }));
 }

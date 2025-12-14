@@ -15,7 +15,7 @@ export class Player {
         this.ws = ws;
         this.room = room;
 
-        this.speed = 1;
+        this.speed = 2;
         this.maxBombs = 1;
         this.activeBombs = 0;
         this.bombRange = 1;
@@ -92,7 +92,7 @@ export class Player {
     checkCollision(newX, newY) {
         const map = this.room.map.map;
         const cellSize = this.cell;
-        const padding = 6; 
+        const padding = 1; 
 
         const points = [
             { x: newX + padding, y: newY + padding }, // Top-Left
@@ -119,6 +119,9 @@ export class Player {
 
                 if (tile === 4 && this.speed < 6) { 
                     this.speed += 1; 
+                    setTimeout(()=>{
+                        this.speed--
+                    },10000)
                     powerType = "energy";
                     consumed = true;
                 } else if (tile === 5 && this.maxBombs < 6) {

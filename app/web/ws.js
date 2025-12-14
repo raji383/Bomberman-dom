@@ -150,10 +150,10 @@ function handleServerMessage(data) {
       const playersList = freamwork.state.player?.list || [];
       playersList.forEach(p => {
         if (p.id === data.id && p.alive) {
-              p.lives--
-             if (p.lives <= 0) {
-            if (freamwork.state.number>1){
-                p.alive = false
+          p.lives--
+          if (p.lives <= 0) {
+            if (freamwork.state.number > 1) {
+              p.alive = false
               if (freamwork.state.number) {
                 freamwork.state.number--;
               }
@@ -171,7 +171,7 @@ function handleServerMessage(data) {
       break;
     case 'winning':
       console.log(data);
-      
+
       freamwork.state.gameOver = data.message + "  is the  winner";
       if (data.id == freamwork.state.myId) {
         freamwork.state.winner = true
@@ -228,6 +228,12 @@ function startGameLoop() {
       p.update(delta)
 
     }
+    if (freamwork.state.explosion) {
+      freamwork.state.explosion.forEach((exp) => {
+        exp.animate();
+      });
+    }
+
 
     freamwork.setState(prev => ({ ...prev }))
     frameCount++;
