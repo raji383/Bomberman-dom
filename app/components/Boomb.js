@@ -57,7 +57,7 @@ class Explosion {
         this.finished = false;
         this.vnode = this.createVNode();
     }
-
+ 
     createVNode() {
         return createElement({
             tag: "div",
@@ -82,6 +82,10 @@ class Explosion {
                 `
             }
         });
+        // will-change: transform, opacity; // Hint to the browser that these properties (transform & opacity) will change soon
+                                   // This allows the browser to optimize rendering in advance
+                                   // Improves performance and makes animations smoother
+
     }
     animate() {
         if (this.finished) return;
@@ -95,14 +99,11 @@ class Explosion {
             if (freamwork.state.explosion) {
                 freamwork.state.explosion = freamwork.state.explosion.filter(e => e !== this);
             }
-        } else {
-            
-            this.currentScale = 0.5 + progress; 
-            
+        } else {      
+            this.currentScale = 0.5 + progress;        
             if (progress > 0.5) {
                 this.opacity = 1 - ((progress - 0.7) / 0.3);
             }
-
             this.vnode = this.createVNode();
         }
     }

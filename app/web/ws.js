@@ -198,7 +198,6 @@ function playerwinnerId() {
     }
   }
 }
-
 function startGameLoop() {
   let lastTime = performance.now();
   function gameLoop(timestamp) {

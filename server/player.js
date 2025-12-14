@@ -128,15 +128,11 @@ export class Player {
                     this.maxBombs++;
                     powerType = "bombNbr";
                     consumed = true;
-                    setTimeout(()=>{
-                      this.maxBombs--
-                    },12000)
                 } else if (tile === 6 && this.bombRange < 6) {
                     this.bombRange++;
                     powerType = "bombRange";
                     consumed = true;
                 }
-
                 if (consumed) {
                     map[gy][gx] = 0;
 
