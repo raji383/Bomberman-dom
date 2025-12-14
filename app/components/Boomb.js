@@ -79,6 +79,9 @@ class Explosion {
     }
 
     animate() {
+        setTimeout(() => {
+            this.finished = true;
+        }, 200)
         const grow = () => {
             this.scale += 0.1;
             this.vnode = this.createVNode();
@@ -96,6 +99,9 @@ class Explosion {
     }
 
     draw() {
+        if (this.finished) {
+            return
+        }
         return this.vnode;
     }
 }

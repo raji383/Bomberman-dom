@@ -58,6 +58,7 @@ class Player {
                         }
                     }
 
+
                     if (e.key === " ") {
                         freamwork.state.ws.send(JSON.stringify({
                             type: "boomb",

@@ -4,7 +4,7 @@ import { push } from "../../framework/route.js";
 import { Players } from "./Players.js";
 import { variables } from "../../variables.js";
 export default function GameScreen() {
-    const { messages, chatInput = "", ws, myId,model_chat, winner } = freamwork.state;
+    const { messages, chatInput = "", ws, myId, model_chat, winner } = freamwork.state;
     if (!ws) {
         push('/')
     }
@@ -16,7 +16,7 @@ export default function GameScreen() {
     const handleSendMessage = (e) => {
         e.preventDefault();
 
-        if (chatInput.trim().length<=100 && freamwork.state.ws) {
+        if (chatInput.trim().length <= 100 && freamwork.state.ws) {
             freamwork.state.ws.send(JSON.stringify({
                 type: 'chat_message',
                 message: chatInput.trim(),
@@ -42,9 +42,39 @@ export default function GameScreen() {
     if (!freamwork.state.player || freamwork.state.player.list.length == 0) {
         freamwork.state.player = new Players(freamwork.state.players)
     }
+   /* freamwork.state.player.list.forEach(element => {
+        if (freamwork.state?.myId && element.id == freamwork.state.myId) {
+            freamwork.setState({ me: element })
+        }
+    });*/
     return createElement({
         tag: "div",
         attrs: { class: "game-container" },
+       /* events: {
+            keydown: (e) => {
+                if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    if (!freamwork.state.me.pressedKeys.includes(e.key)) {
+                        freamwork.state.me.pressedKeys.push(e.key);
+                    }
+                }
+
+
+                if (e.key === " ") {
+                    freamwork.state.ws.send(JSON.stringify({
+                        type: "boomb",
+                        playerId: freamwork.state.me.id
+                    }));
+                }
+            },
+            keyup: (e) => {
+                if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    const index = freamwork.state.me.pressedKeys.indexOf(e.key);
+                    if (index > -1) {
+                        freamwork.state.me.pressedKeys.splice(index, 1);
+                    }
+                }
+            }
+        },*/
         children: [
             createElement({
                 tag: "div",
@@ -79,8 +109,8 @@ export default function GameScreen() {
 
                                 },
                                 events: {
-                                   click: () => {
-                                      location.reload()
+                                    click: () => {
+                                        location.reload()
                                     }
                                 },
                                 children: ["Rejouer"]
