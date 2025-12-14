@@ -14,26 +14,26 @@ export class Boomb {
         this.id = id;
         this.img = '/tools/bomb.png';
     }
-
-
     draw() {
-        const size = Math.round(variables.GRID_CELL_SIZE_h);
+        const size = variables.GRID_CELL_SIZE_h;
         const left = Math.round(this.x);
         const top = Math.round(this.y);
+         //  image-rendering == Keeps pixels sharp (useful for pixel-art games)
+         // pointer-events ==  // Ignores mouse events (clicks pass through this element)
 
         return createElement({
             tag: "img",
             attrs: {
                 src: this.img,
                 class: "boom",
-                draggable: "false",
+                draggable: "false", // Prevents the element from being dragged with the mouse
                 style: `
                     position: absolute;
                     left: ${left}px;
                     top: ${top}px;
                     width: ${size}px;
                     height: ${size}px;
-                    object-fit: contain;
+                    object-fit: contain; 
                     image-rendering: pixelated;
                     pointer-events: none;
                     z-index: 5; 
@@ -83,7 +83,6 @@ class Explosion {
             }
         });
     }
-
     animate() {
         if (this.finished) return;
         const now = Date.now();

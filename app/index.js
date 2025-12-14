@@ -26,8 +26,6 @@ freamwork.state = {
   eroor : false,
   map :null , 
   winner : false
-
- 
 };
 freamwork.addRoute("/", NicknameScreen);
 freamwork.addRoute("/lobby", LobbyScreen);

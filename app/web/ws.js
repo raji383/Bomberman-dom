@@ -201,8 +201,6 @@ function playerwinnerId() {
 
 function startGameLoop() {
   let lastTime = performance.now();
-  let frameCount = 0;
-
   function gameLoop(timestamp) {
     if (freamwork.state.number != 1) {
       requestAnimationFrame(gameLoop);
@@ -227,12 +225,6 @@ function startGameLoop() {
         exp.animate();
       });
     }
-
-
-    freamwork.setState(prev => ({ ...prev }))
-    frameCount++;
-
-
   }
   if (freamwork.state.number != 1) {
 

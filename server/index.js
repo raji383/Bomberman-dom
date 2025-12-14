@@ -161,7 +161,6 @@ class GameRoom {
       players: playerList,
       map: this.map.map,
       number: playerList.length
-
     });
     this.gameStarted = true;
   }
@@ -307,7 +306,6 @@ function handlePlayerMove(ws, data) {
 function handlePlayerWin(ws, data) {
   const player = Array.from(players.values()).find(p => p.ws === ws);
   if (!player || !player.roomId) return;
-
   const room = rooms.get(player.roomId);
   if (!room) return;
   room.broadcast({
@@ -331,7 +329,6 @@ function PowerUp(ws, data) {
     id: data.playerId
   });
 }
-
 function sliding(ws, data) {
   const player = Array.from(players.values()).find(p => p.ws === ws);
   if (!player || !player.roomId) return;

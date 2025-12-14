@@ -20,7 +20,6 @@ export default function GameScreen() {
                 message: chatInput.trim(),
                 playerId: freamwork.state.myId
             }));
-
             freamwork.setState({ chatInput: "" });
 
             const form = e.target;
@@ -28,7 +27,6 @@ export default function GameScreen() {
 
             if (chatSection) {
                 const chatMessages = chatSection.children[1];
-
                 if (chatMessages && chatMessages.classList.contains('chat-messages')) {
                     setTimeout(() => {
                         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -190,7 +188,6 @@ function MapDraw(mapElement, x, y) {
         }
     });
 }
-
 function playersInfoVDOM() {
     return {
         tag: "div",
