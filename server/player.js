@@ -121,13 +121,16 @@ export class Player {
                     this.speed += 1; 
                     setTimeout(()=>{
                         this.speed--
-                    },10000)
+                    },12000)
                     powerType = "energy";
                     consumed = true;
                 } else if (tile === 5 && this.maxBombs < 6) {
                     this.maxBombs++;
                     powerType = "bombNbr";
                     consumed = true;
+                    setTimeout(()=>{
+                      this.maxBombs--
+                    },12000)
                 } else if (tile === 6 && this.bombRange < 6) {
                     this.bombRange++;
                     powerType = "bombRange";

@@ -14,7 +14,6 @@ export class Players {
         });
     }
 }
-
 class Player {
     constructor(i, x, y, name, id) {
         this.name = name;
@@ -43,7 +42,6 @@ class Player {
         this.y = y;
         this.gridX = Math.round(this.x / variables.GRID_CELL_SIZE_w);
         this.gridY = Math.round(this.y / variables.GRID_CELL_SIZE_h);
-
         this.initInputListeners();
     }
 
@@ -57,8 +55,6 @@ class Player {
                             this.pressedKeys.push(e.key);
                         }
                     }
-
-
                     if (e.key === " ") {
                         freamwork.state.ws.send(JSON.stringify({
                             type: "boomb",
@@ -66,7 +62,6 @@ class Player {
                         }));
                     }
                 });
-
                 window.addEventListener('keyup', (e) => {
                     if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
                         const index = this.pressedKeys.indexOf(e.key);
@@ -80,7 +75,6 @@ class Player {
     }
 
     Spritesheet(delta) {
-
         if (this.lastKey === "ArrowLeft") this.inagif = 'left';
         else if (this.lastKey === "ArrowRight") this.inagif = 'right';
         else if (this.lastKey === "ArrowUp") this.inagif = 'up';
@@ -98,7 +92,6 @@ class Player {
         } else {
             this.frameIndex = 1;
         }
-
         this.xOffset = -(this.frameIndex * this.renderW);
         this.yOffset = -(dirRow * this.renderH);
     }
@@ -117,7 +110,6 @@ class Player {
                 }));
             }
         }
-
         this.Spritesheet(this.deltaTime);
         freamwork.setState(prev => ({ ...prev }));
     }

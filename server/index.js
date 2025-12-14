@@ -170,14 +170,9 @@ class GameRoom {
     return Array.from(this.players.values()).map(p => ({
       id: p.id,
       nickname: p.nickname,
-      lives: p.lives || 3,
-      color: p.color,
       index: p.index
     }));
   }
-
-
-
   sendSystemMessage(text) {
     this.broadcast({
       type: 'chat_message',
@@ -217,11 +212,8 @@ const server = createServer(async (req, res) => {
       res.end('Invalid path');
       return;
     }
-
-    // map some special folders into the `app` directory
     let fullPath;
     if (safePath.startsWith('tools/')) {
-      // serve /tools/* from app/tools
       const rel = safePath.replace(/^tools\//, '');
       fullPath = join(ROOT, 'app', 'tools', rel);
     } else {
@@ -328,7 +320,6 @@ function handlePlayerWin(ws, data) {
 function PowerUp(ws, data) {
   const player = Array.from(players.values()).find(p => p.ws === ws);
   if (!player || !player.roomId) return;
-
   const room = rooms.get(player.roomId);
   if (!room) return;
   const map = room.map.map
@@ -410,15 +401,13 @@ function handleExplosion(room, player, bx, by) {
       if (tile === 1) {
         break;
       } else if (tile === 2) {
-        const randomNbm = Math.floor(Math.random() * 3) + 4;
+        const values = [0, 4, 5, 6 ,0];
+        const randomNbm = values[Math.floor(Math.random() * values.length)];
         map[ty][tx] = randomNbm;
-        console.log(randomNbm);
-
         destroyedBlocks.push({ x: tx, y: ty });
         affectedCells.push({ x: tx, y: ty });
         break;
       } else {
-
         affectedCells.push({ x: tx, y: ty });
       }
     }

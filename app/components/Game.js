@@ -8,11 +8,9 @@ export default function GameScreen() {
     if (!ws) {
         push('/')
     }
-    // Chat input handler
     const handleChatInput = (e) => {
         freamwork.setState({ chatInput: e.target.value });
     };
-    // Chat message send handler
     const handleSendMessage = (e) => {
         e.preventDefault();
 
@@ -42,39 +40,9 @@ export default function GameScreen() {
     if (!freamwork.state.player || freamwork.state.player.list.length == 0) {
         freamwork.state.player = new Players(freamwork.state.players)
     }
-   /* freamwork.state.player.list.forEach(element => {
-        if (freamwork.state?.myId && element.id == freamwork.state.myId) {
-            freamwork.setState({ me: element })
-        }
-    });*/
     return createElement({
         tag: "div",
         attrs: { class: "game-container" },
-       /* events: {
-            keydown: (e) => {
-                if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                    if (!freamwork.state.me.pressedKeys.includes(e.key)) {
-                        freamwork.state.me.pressedKeys.push(e.key);
-                    }
-                }
-
-
-                if (e.key === " ") {
-                    freamwork.state.ws.send(JSON.stringify({
-                        type: "boomb",
-                        playerId: freamwork.state.me.id
-                    }));
-                }
-            },
-            keyup: (e) => {
-                if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                    const index = freamwork.state.me.pressedKeys.indexOf(e.key);
-                    if (index > -1) {
-                        freamwork.state.me.pressedKeys.splice(index, 1);
-                    }
-                }
-            }
-        },*/
         children: [
             createElement({
                 tag: "div",
@@ -94,7 +62,7 @@ export default function GameScreen() {
                         children: [
                             {
                                 tag: "h1",
-                                children: [`${winner ? "you win ." : "hhhh you lose"}`]
+                                children: [`${winner ? "you win " : "hhhh you lose"}`]
 
                             },
 
@@ -232,7 +200,6 @@ function playersInfoVDOM() {
                 tag: "div",
                 attrs: { class: "playerBox" },
                 children: [
-                    // Header (player name)
                     {
                         tag: "div",
                         attrs: { class: "playerHeader" },

@@ -137,15 +137,12 @@ function handleServerMessage(data) {
         });
       }
       freamwork.state.map = data.map;
-
-
       if (data.fire) {
         data.fire.forEach(cell => {
           createExplosion(cell.x, cell.y);
         });
       }
-      break;
-
+     break;
     case 'player_died':
       const playersList = freamwork.state.player?.list || [];
       playersList.forEach(p => {
@@ -217,16 +214,13 @@ function startGameLoop() {
         message: playerwinner(),
         playerId: playerwinnerId()
       }));
-
     }
-
     const delta = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
     const player = freamwork.state.player?.list || [];
     for (let i = 0; i < player.length; i++) {
       const p = player[i];
       p.update(delta)
-
     }
     if (freamwork.state.explosion) {
       freamwork.state.explosion.forEach((exp) => {

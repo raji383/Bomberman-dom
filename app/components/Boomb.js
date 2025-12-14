@@ -86,7 +86,6 @@ class Explosion {
 
     animate() {
         if (this.finished) return;
-
         const now = Date.now();
         const elapsed = now - this.startTime;
         
@@ -108,7 +107,6 @@ class Explosion {
             this.vnode = this.createVNode();
         }
     }
-
     draw() {
         return this.vnode;
     }
