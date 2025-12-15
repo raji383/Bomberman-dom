@@ -158,7 +158,20 @@ class GameRoom {
     }
   }
   startGame() {
+    let positions = [
+      [1, 1],
+      [15, 1],
+      [1, 15],
+      [15, 15]
+    ];
     const playerList = Array.from(this.players.values());
+    for (let i = 0; i < playerList.length; i++) {
+      playerList[i].x = positions[i][0] * playerList[i].cell
+      playerList[i].y = positions[i][1] * playerList[i].cell
+      playerList[i].initialX = positions[i][0] * playerList[i].cell
+      playerList[i].initialY = positions[i][1] * playerList[i].cell
+
+    }
     this.broadcast({
       type: 'game_start',
       message: 'The game has started!',
@@ -199,7 +212,6 @@ class GameRoom {
     });
   }
 }
-
 // HTTP Server
 const server = createServer(async (req, res) => {
   try {
@@ -460,16 +472,8 @@ function handleJoin(ws, data) {
     room = new GameRoom(newRoomId);
     rooms.set(newRoomId, room);
   }
-
-  let positions = [
-    [1, 1],
-    [15, 1],
-    [1, 15],
-    [15, 15]
-  ];
-
-  const playerList = room.getPlayersList()
-  let [x, y] = positions[playerList.length] || [1, 1];
+  let x = 1
+  let y = 1
   const player = new Player(x, y, id, nickname, roomId, ws, room, data.cell)
 
   players.set(playerId, player);
