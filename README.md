@@ -4,6 +4,7 @@ A web-based, high-performance Bomberman game built using only DOM manipulation ,
 
 ## Project Overview
 
+
 This project is based on the following subject:
 
 > In the beginning there are 4 players, and only one comes out alive. Each player starts in a different corner of the map. The game must run at a minimum of 60fps at all times, with no frame drops, and proper use of `requestAnimationFrame`. Performance measurement is required to ensure smooth gameplay. Canvas, or external frameworks are **not** allowed; only DOM and your own mini-framework may be used.
