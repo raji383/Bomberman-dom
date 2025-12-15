@@ -22,7 +22,7 @@ export function connectToServer(nickname) {
       }
     };
     ws.onclose = () => {
-      console.log('Déconnecté du serveur');
+     // console.log('Déconnecté du serveur');
     };
 
     ws.onerror = (error) => {
