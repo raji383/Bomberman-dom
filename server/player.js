@@ -19,6 +19,7 @@ export class Player {
         this.maxBombs = 1;
         this.activeBombs = 0;
         this.bombRange = 1;
+        this.candie = true;
 
         this.size = this.cell;
     }
@@ -160,7 +161,6 @@ export class Player {
 
         const gx = Math.floor(centerX / this.cell);
         const gy = Math.floor(centerY / this.cell);
-
 
         this.activeBombs++;
         return { x: gx, y: gy };

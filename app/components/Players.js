@@ -37,7 +37,6 @@ class Player {
         this.renderH = variables.GRID_CELL_SIZE_h;
         this.xOffset = 0;
         this.yOffset = 0;
-        this.candie = true
 
         this.x = x;
         this.y = y;

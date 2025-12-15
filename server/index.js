@@ -96,17 +96,17 @@ class GameRoom {
     }
     if (this.gameStarted) return;
 
-    if (count <= 1) {
+    // if (count <= 1) {
 
-      this.stopJoinTimer();
-      this.stopStartTimer();
-      if (count == 1 && !this.joinTimer) {
-        this.joinTimeLeft = 0
-        this.broadcast({ type: "join_timer", value: this.joinTimeLeft });
+    //   this.stopJoinTimer();
+    //   this.stopStartTimer();
+    //   if (count == 1 && !this.joinTimer) {
+    //     this.joinTimeLeft = 0
+    //     this.broadcast({ type: "join_timer", value: this.joinTimeLeft });
 
-      }
-      return;
-    }
+    //   }
+    //   return;
+    // }
   }
   startJoinTimer() {
     this.stopJoinTimer();
@@ -423,7 +423,11 @@ function checkPlayerHit(room, fireCells) {
 
     const isHit = fireCells.some(cell => cell.x === pGx && cell.y === pGy);
 
-    if (isHit) {
+    if (isHit && p.candie) {
+      p.candie = false
+      setTimeout(()=>{
+        p.candie =true
+      },3000)
       p.x = p.initialX
       p.y = p.initialY
       room.broadcast({

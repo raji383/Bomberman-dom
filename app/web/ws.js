@@ -93,11 +93,8 @@ function handleServerMessage(data) {
     case 'playerMove':
       const players = freamwork.state.player?.list || [];
       for (let i = 0; i < players.length; i++) {
-
         const p = players[i];
-
         if (p.id == data.playerId) {
-
           p.x = data.x
           p.y = data.y
           p.speed = data.speed
@@ -143,11 +140,7 @@ function handleServerMessage(data) {
     case 'player_died':
       const playersList = freamwork.state.player?.list || [];
       playersList.forEach(p => {
-        if (p.id === data.id && p.alive && p.candie) {
-          p.candie = false
-          setTimeout(()=>{
-            p.candie =true
-          },3000)
+        if (p.id === data.id && p.alive ) {         
            p.lives--
           if (p.lives <= 0) {
             if (freamwork.state.number > 1) {
