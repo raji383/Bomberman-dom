@@ -168,6 +168,9 @@ class GameRoom {
     for (let i = 0; i < playerList.length; i++) {
       playerList[i].x = positions[i][0] * playerList[i].cell
       playerList[i].y = positions[i][1] * playerList[i].cell
+      playerList[i].initialX = positions[i][0] * playerList[i].cell
+      playerList[i].initialY = positions[i][1] * playerList[i].cell
+
     }
     this.broadcast({
       type: 'game_start',
