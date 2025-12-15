@@ -158,8 +158,8 @@ export class Player {
         const centerX = this.x + (this.size / 2);
         const centerY = this.y + (this.size / 2);
 
-        const gx = Math.round(centerX / this.cell);
-        const gy = Math.round(centerY / this.cell);
+        const gx = Math.floor(centerX / this.cell);
+        const gy = Math.floor(centerY / this.cell);
 
 
         this.activeBombs++;
