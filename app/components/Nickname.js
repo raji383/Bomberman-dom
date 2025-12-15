@@ -15,7 +15,7 @@ export default function NicknameScreen() {
     } else {
       freamwork.setState(prev => ({
         ...prev,
-        eroor: "i want name last of  10"
+        eroor: "i want name last of  10 or bigger then 0"
       }));
       setTimeout(() => {
         freamwork.setState(prev => ({
