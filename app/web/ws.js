@@ -2,9 +2,6 @@ import { freamwork } from "../../framework/index.js";
 import { push, router } from "../../framework/route.js";
 import { variables } from "../../variables.js";
 import { Boomb, createExplosion } from "../components/Boomb.js";
-
-
-
 export function connectToServer(nickname) {
   try {
     const ws = new WebSocket(`ws://${location.hostname}:8080`);
@@ -32,7 +29,7 @@ export function connectToServer(nickname) {
       console.error(' Erreur WebSocket:', error);
     };
 
-    freamwork.setState({ ws: ws });
+      freamwork.setState({ ws: ws });
   } catch (error) {
     console.error(' Erreur connexion:', error);
   }
@@ -150,13 +147,11 @@ function handleServerMessage(data) {
           p.lives--
           if (p.lives <= 0) {
             if (freamwork.state.number > 1) {
-              p.alive = false
+                p.alive = false
               if (freamwork.state.number) {
                 freamwork.state.number--;
               }
             }
-
-
           } else {
             p.x = data.x
             p.y = data.y
@@ -204,7 +199,6 @@ function startGameLoop() {
     if (freamwork.state.number != 1) {
       requestAnimationFrame(gameLoop);
     }
-
     if (freamwork.state.number <= 1 && freamwork.state.number != null) {
       freamwork.state.ws.send(JSON.stringify({
         type: 'winning',

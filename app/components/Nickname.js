@@ -10,8 +10,6 @@ export default function NicknameScreen() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-
-
     if (playerName && playerName.trim() && playerName.trim().length <= 10) {
       connectToServer(playerName.trim());
     } else {
@@ -57,7 +55,7 @@ export default function NicknameScreen() {
             attrs: {
               type: "text",
               placeholder: "Enter your nickname",
-              maxlength: "15",
+              maxlength: "10",
               required: true,
               value: playerName || "",
               autofocus: true

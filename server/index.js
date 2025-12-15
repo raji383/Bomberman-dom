@@ -110,7 +110,7 @@ class GameRoom {
   }
   startJoinTimer() {
     this.stopJoinTimer();
-    this.joinTimeLeft = 3;
+    this.joinTimeLeft = 10;
 
     this.joinTimer = setInterval(() => {
       this.joinTimeLeft--;

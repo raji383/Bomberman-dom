@@ -14,26 +14,29 @@ export default function GameScreen() {
     const handleSendMessage = (e) => {
         e.preventDefault();
 
-        if (chatInput.trim().length <= 100 && freamwork.state.ws) {
-            freamwork.state.ws.send(JSON.stringify({
-                type: 'chat_message',
-                message: chatInput.trim(),
-                playerId: freamwork.state.myId
-            }));
-            freamwork.setState({ chatInput: "" });
-
-            const form = e.target;
-            const chatSection = form.parentElement;
-
-            if (chatSection) {
-                const chatMessages = chatSection.children[1];
-                if (chatMessages && chatMessages.classList.contains('chat-messages')) {
-                    setTimeout(() => {
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }, 100);
+        if (chatInput.trim()){
+            if (chatInput.trim().length <= 100 && freamwork.state.ws) {
+                freamwork.state.ws.send(JSON.stringify({
+                    type: 'chat_message',
+                    message: chatInput.trim(),
+                    playerId: freamwork.state.myId
+                }));
+                freamwork.setState({ chatInput: "" });
+    
+                const form = e.target;
+                const chatSection = form.parentElement;
+    
+                if (chatSection) {
+                    const chatMessages = chatSection.children[1];
+                    if (chatMessages && chatMessages.classList.contains('chat-messages')) {
+                        setTimeout(() => {
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }, 100);
+                    }
                 }
             }
         }
+
     };
     if (!freamwork.state.player || freamwork.state.player.list.length == 0) {
         freamwork.state.player = new Players(freamwork.state.players)
