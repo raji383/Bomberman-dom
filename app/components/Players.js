@@ -20,7 +20,7 @@ class Player {
         this.id = id;
 
         this.img = `/tools/player${i + 1}.png`;
-        this.lives = 3;
+        this.lives = 50;
         this.power = 1;
         this.speed = 1;
         this.bombs = 1;
@@ -73,7 +73,6 @@ class Player {
             }
         }, 100);
     }
-
     Spritesheet(delta) {
         if (this.lastKey === "ArrowLeft") this.inagif = 'left';
         else if (this.lastKey === "ArrowRight") this.inagif = 'right';
@@ -115,7 +114,6 @@ class Player {
     }
 
     draw() {
-
         this.gridX = Math.round(this.x / variables.GRID_CELL_SIZE_w);
         this.gridY = Math.round(this.y / variables.GRID_CELL_SIZE_h);
 

@@ -159,7 +159,6 @@ function handleServerMessage(data) {
           }
         }
       });
-      freamwork.setState(prev => ({ ...prev }));
       break;
     case 'winning':
       console.log(data);
