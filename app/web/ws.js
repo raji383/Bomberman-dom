@@ -143,8 +143,12 @@ function handleServerMessage(data) {
     case 'player_died':
       const playersList = freamwork.state.player?.list || [];
       playersList.forEach(p => {
-        if (p.id === data.id && p.alive) {
-          p.lives--
+        if (p.id === data.id && p.alive && p.candie) {
+          p.candie = false
+          setTimeout(()=>{
+            p.candie =true
+          },3000)
+           p.lives--
           if (p.lives <= 0) {
             if (freamwork.state.number > 1) {
                 p.alive = false

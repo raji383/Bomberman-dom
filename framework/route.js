@@ -49,6 +49,6 @@ const component = freamwork.routes[window.location.pathname] || notfound ;
 if (component) {    
     freamwork.mount(component);
 }           
-  window.addEventListener("hashchange",  router);
+ // window.addEventListener("hashchange",  router);
 
 }
