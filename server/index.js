@@ -6,8 +6,8 @@ import { fileURLToPath } from 'url';
 import { WebSocketServer } from 'ws';
 import { GameMap } from './map.js';
 import { handleMessage } from './websocketTools.js';
-import { rooms, players } from './variables.js';
-import { MIME_TYPES } from './variables.js';
+import { variables } from '../variables.js';
+// import { MIME_TYPES } from './variables.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -272,13 +272,13 @@ wss.on('connection', (ws) => {
 
   ws.on('close', (err) => {
     console.log('Client disconnected', err);
-    const player = Array.from(players.values()).find(p => p.ws === ws);
+    const player = Array.from(variables.players.values()).find(p => p.ws === ws);
     if (player && player.roomId) {
-      const room = rooms.get(player.roomId);
+      const room = variables.rooms.get(player.roomId);
       if (room) {
         room.removePlayer(player.id);
       }
-      players.delete(player.id);
+      variables.players.delete(player.id);
     }
   });
 
@@ -288,9 +288,9 @@ wss.on('connection', (ws) => {
 });
 
 setInterval(() => {
-  for (const [roomId, room] of rooms.entries()) {
+  for (const [roomId, room] of variables.rooms.entries()) {
     if (room.players.size === 0) {
-      rooms.delete(roomId);
+      variables.rooms.delete(roomId);
     }
   }
 }, 500);

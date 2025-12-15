@@ -1,4 +1,4 @@
-import { variables } from './variables.js';
+import { variables } from '../variables.js';
 
 export function findAvailableRoom() {
     for (const room of variables.rooms.values()) {

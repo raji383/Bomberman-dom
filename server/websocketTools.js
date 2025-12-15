@@ -1,10 +1,10 @@
-import { variables} from './variables.js';
-import { handleJoin, handleChatMessage } from './joinAndChat.js';
+import { variables } from '../variables.js';
+// import { handleJoin, handleChatMessage } from './joinAndChat.js';
 import { handlePlayerMove, handlePlayerWin } from './playersTools.js';
 import { handleBommb } from './bombsTools.js';
 import { GameRoom } from './index.js';
-import { Player } from './index.js';
-import { generateId } from './func.js';
+import { Player } from './player.js';
+import { generateId, findAvailableRoom } from './func.js';
 
 export function handleMessage(ws, data) {
     switch (data.type) {

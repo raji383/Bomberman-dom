@@ -1,4 +1,4 @@
-import { variables } from './variables.js';
+import { variables } from '../variables.js';
 import { checkPlayerHit } from './playersTools.js';
 
 export function handleBommb(ws, data) {

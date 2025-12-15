@@ -1,4 +1,4 @@
-import { variables } from './variables.js';
+import { variables } from '../variables.js';
 export function handlePlayerMove(ws, data) {
     const player = Array.from(variables.players.values()).find(p => p.ws === ws);
     if (!player || !player.roomId) return;
