@@ -26,7 +26,7 @@ export class Player {
 
     update(direction, delta) {
         const vel = this.speed * this.cell * delta;
-       // const cellSize = this.cell;
+        const cellSize = this.cell;
 
         let dx = 0;
         let dy = 0;
@@ -54,39 +54,39 @@ export class Player {
             this.x = nextX;
             this.y = nextY;
         } else {
-            // const slideAmount = vel * 0.7;
-            // const threshold = cellSize * 0.4;
+            const slideAmount = vel * 0.7;
+            const threshold = cellSize * 0.4;
 
-            // const playerCenterX = this.x + (this.size / 2);
-            // const playerCenterY = this.y + (this.size / 2);
+            const playerCenterX = this.x + (this.size / 2);
+            const playerCenterY = this.y + (this.size / 2);
 
-            // if (dx !== 0) {
-            //     const gridY = Math.floor(playerCenterY / cellSize);
-            //     const idealY = (gridY * cellSize);
-            //     const diff = idealY - this.y;
+            if (dx !== 0) {
+                const gridY = Math.floor(playerCenterY / cellSize);
+                const idealY = (gridY * cellSize);
+                const diff = idealY - this.y;
 
-            //     if (Math.abs(diff) < threshold) {
-            //         const direction = Math.sign(diff); 
-            //         const newY = this.y + (direction * slideAmount);
+                if (Math.abs(diff) < threshold) {
+                    const direction = Math.sign(diff); 
+                    const newY = this.y + (direction * slideAmount);
 
-            //         if (this.checkCollision(this.x, newY)) {
-            //             this.y = newY;
-            //         }
-            //     }
-            // }   else if (dy !== 0) {
-            //     const gridX = Math.floor(playerCenterX / cellSize);
-            //     const idealX = (gridX * cellSize);
-            //     const diff = idealX - this.x;
+                    if (this.checkCollision(this.x, newY)) {
+                        this.y = newY;
+                    }
+                }
+            }   else if (dy !== 0) {
+                const gridX = Math.floor(playerCenterX / cellSize);
+                const idealX = (gridX * cellSize);
+                const diff = idealX - this.x;
 
-            //     if (Math.abs(diff) < threshold) {
-            //         const direction = Math.sign(diff);
-            //         const newX = this.x + (direction * slideAmount);
+                if (Math.abs(diff) < threshold) {
+                    const direction = Math.sign(diff);
+                    const newX = this.x + (direction * slideAmount);
 
-            //         if (this.checkCollision(newX, this.y)) {
-            //             this.x = newX;
-            //         }
-            //     }
-            // }
+                    if (this.checkCollision(newX, this.y)) {
+                        this.x = newX;
+                    }
+                }
+            }
         }
     }
 
@@ -105,6 +105,7 @@ export class Player {
         for (const point of points) {
             const gx = Math.floor(point.x / cellSize);
             const gy = Math.floor(point.y / cellSize);
+
             if (!map[gy] || map[gy][gx] === undefined) return false;
 
             let tile = map[gy][gx];
@@ -112,9 +113,11 @@ export class Player {
             if (tile === 1 || tile === 2) {
                 return false;
             }
+
             if (tile >= 4 && tile <= 6) {
                 let powerType = "";
                 let consumed = false;
+
                 if (tile === 4 && this.speed < 6) { 
                     this.speed += 1; 
                     setTimeout(()=>{
