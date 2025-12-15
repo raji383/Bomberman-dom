@@ -33,7 +33,7 @@ class GameRoom {
     this.joinTimer = null;
     this.startTimer = null;
 
-    this.joinTimeLeft = 3;
+    this.joinTimeLeft = 20;
     this.startTimeLeft = 10;
 
     this.map = new GameMap();
@@ -110,7 +110,7 @@ class GameRoom {
   }
   startJoinTimer() {
     this.stopJoinTimer();
-    this.joinTimeLeft = 10;
+    this.joinTimeLeft = 20;
 
     this.joinTimer = setInterval(() => {
       this.joinTimeLeft--;
@@ -169,7 +169,6 @@ class GameRoom {
     return Array.from(this.players.values()).map(p => ({
       id: p.id,
       nickname: p.nickname,
-      index: p.index
     }));
   }
   sendSystemMessage(text) {
@@ -203,11 +202,12 @@ const server = createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     let pathname = decodeURIComponent(url.pathname || '/');
 
-    if (pathname === '/') pathname = '/app/index.html';
-
+    if (pathname === '/') pathname = '/app/index.html';            
     const safePath = pathname.replace(/^\/+/, '');
+    
     if (safePath.includes('..')) {
       res.writeHead(400, { 'Content-Type': 'text/plain' });
+      // Directory Traversal Attack
       res.end('Invalid path');
       return;
     }
@@ -250,13 +250,10 @@ const wss = new WebSocketServer({ server });
 
 wss.on('connection', (ws) => {
   console.log("upgrade is good");
-
-
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
       setTimeout(() => {
-
         handleMessage(ws, data);
       }, 0)
     } catch (error) {
@@ -315,32 +312,32 @@ function handlePlayerWin(ws, data) {
   });
 }
 
-function PowerUp(ws, data) {
-  const player = Array.from(players.values()).find(p => p.ws === ws);
-  if (!player || !player.roomId) return;
-  const room = rooms.get(player.roomId);
-  if (!room) return;
-  const map = room.map.map
-  map[data.message.y][data.message.x] = 0;
-  room.broadcast({
-    type: data.type,
-    message: map,
-    power: data.message.power,
-    id: data.playerId
-  });
-}
-function sliding(ws, data) {
-  const player = Array.from(players.values()).find(p => p.ws === ws);
-  if (!player || !player.roomId) return;
+// function PowerUp(ws, data) {
+//   const player = Array.from(players.values()).find(p => p.ws === ws);
+//   if (!player || !player.roomId) return;
+//   const room = rooms.get(player.roomId);
+//   if (!room) return;
+//   const map = room.map.map
+//   map[data.message.y][data.message.x] = 0;
+//   room.broadcast({
+//     type: data.type,
+//     message: map,
+//     power: data.message.power,
+//     id: data.playerId
+//   });
+// }
+// function sliding(ws, data) {
+//   const player = Array.from(players.values()).find(p => p.ws === ws);
+//   if (!player || !player.roomId) return;
 
-  const room = rooms.get(player.roomId);
-  if (!room) return;
-  room.broadcast({
-    type: data.type,
-    message: data.message,
-    id: data.playerId
-  });
-}
+//   const room = rooms.get(player.roomId);
+//   if (!room) return;
+//   room.broadcast({
+//     type: data.type,
+//     message: data.message,
+//     id: data.playerId
+//   });
+// }
 function handleBommb(ws, data) {
   const player = Array.from(players.values()).find(p => p.ws === ws);
   if (!player || !player.roomId) return;
@@ -374,7 +371,6 @@ function handleExplosion(room, player, bx, by) {
   const map = room.map.map;
   const affectedCells = [];
   const destroyedBlocks = [];
-
   const directions = [
     { x: 0, y: 0 },
     { x: 0, y: -1 },
@@ -456,16 +452,13 @@ function handleMessage(ws, data) {
     case 'winning':
       handlePlayerWin(ws, data)
       break
-    case 'boxdestroy':
-      reDrawMap(ws, data)
-      break
-    case 'powerUp':
-      PowerUp(ws, data)
-      break
-    case 'sliding':
-      sliding(ws, data)
+    // case 'powerUp':
+    //   PowerUp(ws, data)
+    //   break
+  //  case 'sliding':
+  //     sliding(ws, data)
 
-      break
+  //     break 
     default:
       console.log('Unknown message type:', data.type);
   }
@@ -477,8 +470,6 @@ function handleJoin(ws, data) {
   const id = playerId
   const nickname = data.nickname
   const roomId = null
-  const joinedAt = Date.now()
-
   let room = findAvailableRoom();
 
   if (!room) {
@@ -561,5 +552,4 @@ setInterval(() => {
 
 server.listen(PORT, () => {
   console.log(`Server started: http://localhost:${PORT}/`);
-  console.log(`WebSocket: ws://localhost:${PORT}/`);
 });

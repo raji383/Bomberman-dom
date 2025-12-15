@@ -136,14 +136,14 @@ export class Player {
                 if (consumed) {
                     map[gy][gx] = 0;
 
-                    this.room.broadcast({
-                        type: 'powerUp',
-                        playerId: this.id, 
-                        power: powerType,
-                        message: map, 
-                        x: gx,
-                        y: gy
-                    });
+                    // this.room.broadcast({
+                    //     type: 'powerUp',
+                    //     playerId: this.id, 
+                    //     power: powerType,
+                    //     message: map, 
+                    //     x: gx,
+                    //     y: gy
+                    // });
                 }
             }
         }

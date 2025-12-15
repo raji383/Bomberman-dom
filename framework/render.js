@@ -171,7 +171,6 @@ for (let i = 0; i < newChildren.length; i++) {
     el.appendChild(realDOMNode);
   }
 }
-
 }
 oldKeyedMap.forEach((oldChild) => {
   if (oldChild.el && el.contains(oldChild.el)) {
