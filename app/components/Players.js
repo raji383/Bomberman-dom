@@ -19,7 +19,7 @@ class Player {
         this.name = name;
         this.id = id;
 
-        this.img = `/tools/player${i + 1}.png`;
+        this.img = `/tools/player${4 - i}.png`;
         this.lives = 3;
         this.power = 1;
         this.speed = 1;
@@ -46,39 +46,40 @@ class Player {
     }
 
     initInputListeners() {
-        setTimeout(() => {
-            if (freamwork.state?.myId && this.id === freamwork.state.myId) {
+        if (freamwork.state?.myId && this.id === freamwork.state.myId) {
 
-                window.addEventListener('keydown', (e) => {
-                    if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                        if (!this.pressedKeys.includes(e.key)) {
-                            this.pressedKeys.push(e.key);
-                        }
+            window.addEventListener('keydown', (e) => {
+                if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    if (!this.pressedKeys.includes(e.key)) {
+                        this.pressedKeys.push(e.key);
                     }
-                    if (e.key === " ") {
-                        freamwork.state.ws.send(JSON.stringify({
-                            type: "boomb",
-                            playerId: this.id
-                        }));
+                }
+                if (e.key === " ") {
+                    freamwork.state.ws.send(JSON.stringify({
+                        type: "boomb",
+                        playerId: this.id
+                    }));
+                }
+            });
+            window.addEventListener('keyup', (e) => {
+                if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    const index = this.pressedKeys.indexOf(e.key);
+                    if (index > -1) {
+                        this.pressedKeys.splice(index, 1);
                     }
-                });
-                window.addEventListener('keyup', (e) => {
-                    if (['ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                        const index = this.pressedKeys.indexOf(e.key);
-                        if (index > -1) {
-                            this.pressedKeys.splice(index, 1);
-                        }
-                    }
-                });
-            }
-        }, 100);
+                }
+            });
+        }
     }
     Spritesheet(delta) {
         if (this.lastKey === "ArrowLeft") this.inagif = 'left';
         else if (this.lastKey === "ArrowRight") this.inagif = 'right';
         else if (this.lastKey === "ArrowUp") this.inagif = 'up';
         else if (this.lastKey === "ArrowDown") this.inagif = 'down';
-
+        else this.inagif = '';
+        if (this.inagif=='') {
+            return;
+        }
         const dirMap = { down: 0, left: 1, right: 2, up: 3 };
         const dirRow = dirMap[this.inagif] ?? 0;
 
@@ -105,6 +106,11 @@ class Player {
                     type: "playerMove",
                     direction: lastKey,
                     delta: this.deltaTime,
+                    playerId: this.id
+                }));
+            }else{
+                freamwork.state.ws.send(JSON.stringify({
+                    type: "playerStop",
                     playerId: this.id
                 }));
             }

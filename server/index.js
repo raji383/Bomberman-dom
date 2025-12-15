@@ -99,14 +99,14 @@ class GameRoom {
     if (this.gameStarted) return;
 
     if (count <= 1) {
-      if (!this.startTimer){
+      if (!this.startTimer) {
         this.stopJoinTimer();
-       this.stopStartTimer();
-  
-       this.broadcast({ type: "join_timer", value: null });
+        this.stopStartTimer();
+
+        this.broadcast({ type: "join_timer", value: null });
       }
 
-     // this.broadcast({ type: "join_timer", value: null });
+      // this.broadcast({ type: "join_timer", value: null });
 
 
 
@@ -423,6 +423,18 @@ function handleMessage(ws, data) {
       break;
     case 'playerMove':
       handlePlayerMove(ws, data)
+      break
+    case 'playerStop':
+      const player = Array.from(players.values()).find(p => p.ws === ws);
+      if (!player || !player.roomId) return;
+
+      const room = rooms.get(player.roomId);
+      if (!room) return;
+
+      room.broadcast({
+        type: "playerStop",
+        playerId: player.id
+      });
       break
     case 'boomb':
       handleBommb(ws, data)

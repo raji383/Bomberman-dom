@@ -29,7 +29,7 @@ export function connectToServer(nickname) {
       console.error(' Erreur WebSocket:', error);
     };
 
-      freamwork.setState({ ws: ws });
+    freamwork.setState({ ws: ws });
   } catch (error) {
     console.error(' Erreur connexion:', error);
   }
@@ -106,6 +106,18 @@ function handleServerMessage(data) {
       }
       freamwork.state.map = data.map
       break
+    case 'playerStop':
+      const playerss = freamwork.state.player?.list || [];
+      for (let i = 0; i < playerss.length; i++) {
+        const p = playerss[i];
+        if (p.id == data.playerId) {
+          p.lastKey = ''
+
+        }
+
+      }
+
+      break
     case 'boomb':
 
       var bom = new Boomb(data.message, data.id)
@@ -125,15 +137,15 @@ function handleServerMessage(data) {
           createExplosion(cell.x, cell.y);
         });
       }
-     break;
+      break;
     case 'player_died':
       const playersList = freamwork.state.player?.list || [];
       playersList.forEach(p => {
-        if (p.id === data.id && p.alive ) {         
-           p.lives--
+        if (p.id === data.id && p.alive) {
+          p.lives--
           if (p.lives <= 0) {
             if (freamwork.state.number > 1) {
-                p.alive = false
+              p.alive = false
               if (freamwork.state.number) {
                 freamwork.state.number--;
               }
