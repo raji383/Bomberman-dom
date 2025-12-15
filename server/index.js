@@ -53,20 +53,22 @@ class GameRoom {
     if (this.gameStarted) return;
 
     const count = this.players.size;
-
-    if (count === 1) {
+    if (count == 1) {
       this.chatMessage = []
 
+    }
+
+    if (count == 2) {
       this.startJoinTimer();
       return;
     }
 
-    if (count >= 2 && count < 4) {
-      if (this.joinTimeLeft == 0) {
-        this.startStartTimer();
-      }
-      return;
-    }
+    // if (count >= 2 && count < 4) {
+    //   if (this.joinTimeLeft == 0) {
+    //     this.startStartTimer();
+    //   }
+    //   return;
+    // }
     if (count === 4) {
       this.stopJoinTimer();
       this.startStartTimer();
@@ -96,17 +98,19 @@ class GameRoom {
     }
     if (this.gameStarted) return;
 
-    // if (count <= 1) {
+    if (count <= 1) {
+      if (!this.startTimer){
+        this.stopJoinTimer();
+       this.stopStartTimer();
+  
+       this.broadcast({ type: "join_timer", value: null });
+      }
 
-    //   this.stopJoinTimer();
-    //   this.stopStartTimer();
-    //   if (count == 1 && !this.joinTimer) {
-    //     this.joinTimeLeft = 0
-    //     this.broadcast({ type: "join_timer", value: this.joinTimeLeft });
+     // this.broadcast({ type: "join_timer", value: null });
 
-    //   }
-    //   return;
-    // }
+
+
+    }
   }
   startJoinTimer() {
     this.stopJoinTimer();
@@ -202,9 +206,9 @@ const server = createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
     let pathname = decodeURIComponent(url.pathname || '/');
 
-    if (pathname === '/') pathname = '/app/index.html';            
+    if (pathname === '/') pathname = '/app/index.html';
     const safePath = pathname.replace(/^\/+/, '');
-    
+
     if (safePath.includes('..')) {
       res.writeHead(400, { 'Content-Type': 'text/plain' });
       // Directory Traversal Attack
@@ -394,7 +398,7 @@ function handleExplosion(room, player, bx, by) {
       if (tile === 1) {
         break;
       } else if (tile === 2) {
-        const values = [0, 4, 5, 6 ,0];
+        const values = [0, 4, 5, 6, 0];
         const randomNbm = values[Math.floor(Math.random() * values.length)];
         map[ty][tx] = randomNbm;
         destroyedBlocks.push({ x: tx, y: ty });
@@ -425,9 +429,9 @@ function checkPlayerHit(room, fireCells) {
 
     if (isHit && p.candie) {
       p.candie = false
-      setTimeout(()=>{
-        p.candie =true
-      },3000)
+      setTimeout(() => {
+        p.candie = true
+      }, 3000)
       p.x = p.initialX
       p.y = p.initialY
       room.broadcast({
@@ -459,10 +463,10 @@ function handleMessage(ws, data) {
     // case 'powerUp':
     //   PowerUp(ws, data)
     //   break
-  //  case 'sliding':
-  //     sliding(ws, data)
+    //  case 'sliding':
+    //     sliding(ws, data)
 
-  //     break 
+    //     break 
     default:
       console.log('Unknown message type:', data.type);
   }
