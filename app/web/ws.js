@@ -105,17 +105,6 @@ function handleServerMessage(data) {
 
       }
       freamwork.state.map = data.map
-
-      break
-    case 'playerstop':
-
-      // for (let index = 0; index < freamwork.state.player.list.length; index++) {
-      //   const element = freamwork.state.player.list[index];
-      //   if (element.id == data.id) {
-      //     element.event = null
-      //   }
-      // }
-      freamwork.setState(prev => ({ ...prev }))
       break
     case 'boomb':
 

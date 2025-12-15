@@ -315,33 +315,6 @@ function handlePlayerWin(ws, data) {
     id: data.playerId
   });
 }
-
-// function PowerUp(ws, data) {
-//   const player = Array.from(players.values()).find(p => p.ws === ws);
-//   if (!player || !player.roomId) return;
-//   const room = rooms.get(player.roomId);
-//   if (!room) return;
-//   const map = room.map.map
-//   map[data.message.y][data.message.x] = 0;
-//   room.broadcast({
-//     type: data.type,
-//     message: map,
-//     power: data.message.power,
-//     id: data.playerId
-//   });
-// }
-// function sliding(ws, data) {
-//   const player = Array.from(players.values()).find(p => p.ws === ws);
-//   if (!player || !player.roomId) return;
-
-//   const room = rooms.get(player.roomId);
-//   if (!room) return;
-//   room.broadcast({
-//     type: data.type,
-//     message: data.message,
-//     id: data.playerId
-//   });
-// }
 function handleBommb(ws, data) {
   const player = Array.from(players.values()).find(p => p.ws === ws);
   if (!player || !player.roomId) return;
@@ -374,7 +347,6 @@ function handleExplosion(room, player, bx, by) {
   const range = player.bombRange;
   const map = room.map.map;
   const affectedCells = [];
-  const destroyedBlocks = [];
   const directions = [
     { x: 0, y: 0 },
     { x: 0, y: -1 },
@@ -401,7 +373,6 @@ function handleExplosion(room, player, bx, by) {
         const values = [0, 4, 5, 6, 0];
         const randomNbm = values[Math.floor(Math.random() * values.length)];
         map[ty][tx] = randomNbm;
-        destroyedBlocks.push({ x: tx, y: ty });
         affectedCells.push({ x: tx, y: ty });
         break;
       } else {
@@ -413,7 +384,6 @@ function handleExplosion(room, player, bx, by) {
   room.broadcast({
     type: "explosion",
     fire: affectedCells,
-    destroyed: destroyedBlocks,
     map: map
   });
 
@@ -460,13 +430,6 @@ function handleMessage(ws, data) {
     case 'winning':
       handlePlayerWin(ws, data)
       break
-    // case 'powerUp':
-    //   PowerUp(ws, data)
-    //   break
-    //  case 'sliding':
-    //     sliding(ws, data)
-
-    //     break 
     default:
       console.log('Unknown message type:', data.type);
   }
