@@ -5,26 +5,19 @@ import { join, extname, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { WebSocketServer } from 'ws';
 import { GameMap } from './map.js';
-import { Player } from './player.js';
+import { handleMessage } from './websocketTools.js';
+import { rooms, players } from './variables.js';
+import { MIME_TYPES } from './variables.js';
 
 const __filename = fileURLToPath(import.meta.url);
-
 const __dirname = dirname(__filename);
 
 
 const ROOT = join(__dirname, '..');
 const PORT = 8080;
 
-const MIME_TYPES = {
-  '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css',
-  '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg',
-  '.gif': 'image/gif', '.ico': 'image/x-icon'
-};
 
-const rooms = new Map();
-const players = new Map();
-
-class GameRoom {
+export class GameRoom {
   constructor(id) {
     this.id = id;
     this.players = new Map();
@@ -239,7 +232,7 @@ const server = createServer(async (req, res) => {
 
       const fileContent = await readFile(fullPath);
       const ext = extname(fullPath) || '.html';
-      const mimeType = MIME_TYPES[ext] || 'application/octet-stream';
+      const mimeType = variables.MIME_TYPES[ext] || 'application/octet-stream';
       res.writeHead(200, { 'Content-Type': mimeType });
       res.end(fileContent);
     } catch (err) {
@@ -293,242 +286,7 @@ wss.on('connection', (ws) => {
     console.error('WebSocket error:', error);
   });
 });
-function handlePlayerMove(ws, data) {
-  const player = Array.from(players.values()).find(p => p.ws === ws);
-  if (!player || !player.roomId) return;
 
-  player.update(data.direction, data.delta);
-
-  const room = rooms.get(player.roomId);
-  if (!room) return;
-
-  room.broadcast({
-    type: "playerMove",
-    id: player.id,
-    x: player.x,
-    y: player.y,
-    direction: data.direction,
-    playerId: data.playerId,
-    map: room.map.map,
-    range: player.bombRange,
-    speed: player.speed,
-    bomb: player.maxBombs
-  });
-}
-
-function handlePlayerWin(ws, data) {
-  const player = Array.from(players.values()).find(p => p.ws === ws);
-  if (!player || !player.roomId) return;
-  const room = rooms.get(player.roomId);
-  if (!room) return;
-  room.broadcast({
-    type: data.type,
-    message: data.message,
-    id: data.playerId
-  });
-}
-function handleBommb(ws, data) {
-  const player = Array.from(players.values()).find(p => p.ws === ws);
-  if (!player || !player.roomId) return;
-
-  const room = rooms.get(player.roomId);
-  if (!room) return;
-
-  const bombPos = player.tryPlaceBomb();
-
-  if (!bombPos) return;
-
-  room.broadcast({
-    type: "boomb",
-    id: player.id,
-    message: {
-      x: bombPos.x,
-      y: bombPos.y,
-      range: player.bombRange
-    }
-  });
-
-  setTimeout(() => {
-    handleExplosion(room, player, bombPos.x, bombPos.y);
-  }, 3000);
-}
-
-function handleExplosion(room, player, bx, by) {
-  player.activeBombs--;
-
-  const range = player.bombRange;
-  const map = room.map.map;
-  const affectedCells = [];
-  const directions = [
-    { x: 0, y: 0 },
-    { x: 0, y: -1 },
-    { x: 0, y: 1 },
-    { x: -1, y: 0 },
-    { x: 1, y: 0 }
-  ];
-
-  affectedCells.push({ x: bx, y: by });
-  for (let i = 1; i < directions.length; i++) {
-    const dir = directions[i];
-
-    for (let r = 1; r <= range; r++) {
-      const tx = bx + (dir.x * r);
-      const ty = by + (dir.y * r);
-
-      if (ty < 0 || ty >= map.length || tx < 0 || tx >= map[0].length) break;
-
-      const tile = map[ty][tx];
-
-      if (tile === 1) {
-        break;
-      } else if (tile === 2) {
-        const values = [0, 4, 5, 6, 0];
-        const randomNbm = values[Math.floor(Math.random() * values.length)];
-        map[ty][tx] = randomNbm;
-        affectedCells.push({ x: tx, y: ty });
-        break;
-      } else {
-        affectedCells.push({ x: tx, y: ty });
-      }
-    }
-  }
-
-  room.broadcast({
-    type: "explosion",
-    fire: affectedCells,
-    map: map
-  });
-
-  checkPlayerHit(room, affectedCells);
-}
-
-function checkPlayerHit(room, fireCells) {
-  room.players.forEach(p => {
-    const pGx = Math.floor((p.x + p.size / 2) / p.cell);
-    const pGy = Math.floor((p.y + p.size / 2) / p.cell);
-
-    const isHit = fireCells.some(cell => cell.x === pGx && cell.y === pGy);
-
-    if (isHit && p.candie) {
-      p.candie = false
-      setTimeout(() => {
-        p.candie = true
-      }, 3000)
-      p.x = p.initialX
-      p.y = p.initialY
-      room.broadcast({
-        type: "player_died",
-        id: p.id,
-        x: p.x,
-        y: p.y
-      });
-    }
-  });
-}
-function handleMessage(ws, data) {
-  switch (data.type) {
-    case 'join':
-      handleJoin(ws, data);
-      break;
-    case 'chat_message':
-      handleChatMessage(ws, data);
-      break;
-    case 'playerMove':
-      handlePlayerMove(ws, data)
-      break
-    case 'playerStop':
-      const player = Array.from(players.values()).find(p => p.ws === ws);
-      if (!player || !player.roomId) return;
-
-      const room = rooms.get(player.roomId);
-      if (!room) return;
-
-      room.broadcast({
-        type: "playerStop",
-        playerId: player.id
-      });
-      break
-    case 'boomb':
-      handleBommb(ws, data)
-      break
-    case 'winning':
-      handlePlayerWin(ws, data)
-      break
-    default:
-      console.log('Unknown message type:', data.type);
-  }
-}
-
-function handleJoin(ws, data) {
-
-  const playerId = generateId();
-  const id = playerId
-  const nickname = data.nickname
-  const roomId = null
-  let room = findAvailableRoom();
-
-  if (!room) {
-    const newRoomId = generateId();
-    room = new GameRoom(newRoomId);
-    rooms.set(newRoomId, room);
-  }
-  let x = 1
-  let y = 1
-  const player = new Player(x, y, id, nickname, roomId, ws, room, data.cell)
-
-  players.set(playerId, player);
-
-  room.addPlayer(player);
-  player.roomId = room.id;
-
-
-  ws.send(JSON.stringify({
-    type: 'room_assigned',
-    roomId: room.id,
-    playerId: playerId,
-    players: room.getPlayersList(),
-    chatMessage: room.chatMessage
-  }));
-
-}
-
-function findAvailableRoom() {
-  for (const room of rooms.values()) {
-    if (!room.gameStarted && room.players.size < 4 && room.startTimer === null) {
-      return room;
-    }
-  }
-  return null;
-}
-
-function handleChatMessage(ws, data) {
-  const player = Array.from(players.values()).find(p => p.ws === ws);
-  if (!player || !player.roomId) return;
-
-  const room = rooms.get(player.roomId);
-  if (!room) return;
-
-  const chatMessage = {
-    player: player.nickname,
-    text: data.message,
-    timestamp: Date.now(),
-    isSystem: false
-  };
-  room.chatMessage.push({
-    player: player.nickname,
-    text: data.message,
-    timestamp: Date.now(),
-    isSystem: false
-  })
-
-  room.broadcast({
-    type: 'chat_message',
-    message: chatMessage
-  });
-}
-function generateId() {
-  return Math.random().toString(36).substr(2, 9);
-}
 setInterval(() => {
   for (const [roomId, room] of rooms.entries()) {
     if (room.players.size === 0) {
