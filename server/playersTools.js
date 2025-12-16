@@ -48,11 +48,13 @@ export function checkPlayerHit(room, fireCells) {
             }, 3000)
             p.x = p.initialX
             p.y = p.initialY
+            p.lives--
             room.broadcast({
                 type: "player_died",
                 id: p.id,
                 x: p.x,
-                y: p.y
+                y: p.y,
+                live : p.lives
             });
         }
     });

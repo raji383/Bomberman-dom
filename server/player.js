@@ -19,6 +19,7 @@ export class Player {
         this.maxBombs = 1;
         this.activeBombs = 0;
         this.bombRange = 1;
+        this.lives = 3;
         this.candie = true;
 
         this.size = this.cell;
@@ -49,6 +50,7 @@ export class Player {
                 break;
             default: return;
         }
+         if (this.lives<=0)return
 
         if (this.checkCollision(nextX, nextY)) {
             this.x = nextX;
@@ -66,14 +68,14 @@ export class Player {
                 const diff = idealY - this.y;
 
                 if (Math.abs(diff) < threshold) {
-                    const direction = Math.sign(diff); 
+                    const direction = Math.sign(diff);
                     const newY = this.y + (direction * slideAmount);
 
                     if (this.checkCollision(this.x, newY)) {
                         this.y = newY;
                     }
                 }
-            }   else if (dy !== 0) {
+            } else if (dy !== 0) {
                 const gridX = Math.floor(playerCenterX / cellSize);
                 const idealX = (gridX * cellSize);
                 const diff = idealX - this.x;
@@ -93,7 +95,7 @@ export class Player {
     checkCollision(newX, newY) {
         const map = this.room.map.map;
         const cellSize = this.cell;
-        const padding = 1; 
+        const padding = 1;
 
         const points = [
             { x: newX + padding, y: newY + padding }, // Top-Left
@@ -118,11 +120,11 @@ export class Player {
                 let powerType = "";
                 let consumed = false;
 
-                if (tile === 4 && this.speed < 6) { 
-                    this.speed += 1; 
-                    setTimeout(()=>{
+                if (tile === 4 && this.speed < 6) {
+                    this.speed += 1;
+                    setTimeout(() => {
                         this.speed--
-                    },12000)
+                    }, 12000)
                     powerType = "energy";
                     consumed = true;
                 } else if (tile === 5 && this.maxBombs < 6) {

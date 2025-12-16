@@ -142,8 +142,8 @@ function handleServerMessage(data) {
       const playersList = freamwork.state.player?.list || [];
       playersList.forEach(p => {
         if (p.id === data.id && p.alive) {
-          p.lives--
-          if (p.lives <= 0) {
+           p.lives = data.live
+           if (p.lives <= 0) {
             if (freamwork.state.number > 1) {
               p.alive = false
               if (freamwork.state.number) {

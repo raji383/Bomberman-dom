@@ -7,7 +7,9 @@ export function handleBommb(ws, data) {
 
     const room = variables.rooms.get(player.roomId);
     if (!room) return;
-
+    if (player.lives <= 0) {
+        return
+    }
     const bombPos = player.tryPlaceBomb();
 
     if (!bombPos) return;
