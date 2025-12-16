@@ -14,7 +14,7 @@ export default function GameScreen() {
     const handleSendMessage = (e) => {
         e.preventDefault();
 
-        if (chatInput.trim()){
+        if (chatInput.trim()) {
             if (chatInput.trim().length <= 100 && freamwork.state.ws) {
                 freamwork.state.ws.send(JSON.stringify({
                     type: 'chat_message',
@@ -22,10 +22,10 @@ export default function GameScreen() {
                     playerId: freamwork.state.myId
                 }));
                 freamwork.setState({ chatInput: "" });
-    
+
                 const form = e.target;
                 const chatSection = form.parentElement;
-    
+
                 if (chatSection) {
                     const chatMessages = chatSection.children[1];
                     if (chatMessages && chatMessages.classList.contains('chat-messages')) {
@@ -219,8 +219,12 @@ function playersInfoVDOM() {
                                 attrs: { class: "statItem" },
                                 children: [
                                     { tag: "span", children: ["❤️"] },
-                                    { tag: "span", children: [`${player.lives}`] }
+                                    { tag: "span", children: [String(player.lives)] },
+                                    ...(!player.alive
+                                        ? [{ tag: "span", children: ["die"] }]
+                                        : [])
                                 ]
+
                             },
                             // Speed
                             {
