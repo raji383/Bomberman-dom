@@ -41,7 +41,7 @@ export function checkPlayerHit(room, fireCells) {
 
         const isHit = fireCells.some(cell => cell.x === pGx && cell.y === pGy);
 
-        if (isHit && p.candie) {
+        if (isHit && p.candie && p.lives>0) {
             p.candie = false
             setTimeout(() => {
                 p.candie = true

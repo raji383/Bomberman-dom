@@ -139,6 +139,7 @@ function handleServerMessage(data) {
       }
       break;
     case 'player_died':
+      console.log(data);   
       const playersList = freamwork.state.player?.list || [];
       playersList.forEach(p => {
         if (p.id === data.id && p.alive) {

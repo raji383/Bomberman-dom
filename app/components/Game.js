@@ -67,10 +67,10 @@ export default function GameScreen() {
 
                             },
 
-                            {
-                                tag: "h1",
-                                children: [`${freamwork.state.gameOver}`]
-                            },
+                            // {
+                            //     tag: "h1",
+                            //     children: [`${freamwork.state.gameOver}`]
+                            // },
                             {
                                 tag: "button",
                                 attrs: {
